@@ -1,0 +1,282 @@
+- type: custom:mushroom-title-card
+  title: Räume
+  subtitle: Alles Wichtige direkt im Blick
+  view_layout:
+    grid-column: 1 / -1
+
+- type: custom:stack-in-card
+  mode: vertical
+  cards:
+    - type: custom:button-card
+      template: room_visual_v5
+      name: Wohnzimmer
+      icon: mdi:sofa-outline
+      variables:
+        room_path: wohnzimmer
+        accent: '#6faeff'
+        light_count_entity: sensor.magguu_wohnzimmer_lichter_an
+        temperature_entity: sensor.magguu_wohnzimmer_temperatur_c
+        humidity_entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
+        opening_entity: binary_sensor.magguu_wohnzimmer_oeffnung
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.wohnzimmer_wohnzimmer
+          name: Hauptlicht
+          icon: mdi:lightbulb-group
+          variables: {accent: '#ffd166'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: switch.wohnzimmer_wohnzimmer_fernseher
+          name: Fernseher
+          icon: mdi:television
+          variables: {accent: '#b48cff'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: switch.wohnzimmer_wohnzimmer_computer
+          name: Computer
+          icon: mdi:desktop-tower-monitor
+          variables: {accent: '#70d6c8'}
+        - type: custom:button-card
+          template: room_link_v5
+          name: Rollläden
+          icon: mdi:window-shutter
+          variables: {accent: '#71b7ff', room_path: wohnzimmer, link_label: 3 Rollläden}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: media_player.av_samsung_soundbar_q90r
+          name: Soundbar
+          icon: mdi:soundbar
+          tap_action: {action: more-info}
+          variables: {accent: '#b48cff', active_label: Aktiv, inactive_label: Bereit}
+  card_mod: &room_shell
+    style: |
+      ha-card {
+        border-radius: var(--mag-radius-card, 24px);
+        background: var(--mag-surface, rgba(24,25,39,.94));
+        border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+        box-shadow: var(--mag-shadow-card, none);
+        overflow: hidden;
+      }
+
+- type: custom:stack-in-card
+  mode: vertical
+  cards:
+    - type: custom:button-card
+      template: room_visual_v5
+      name: Esszimmer
+      icon: mdi:table-furniture
+      variables:
+        room_path: esszimmer
+        accent: '#f3a84b'
+        light_count_entity: sensor.magguu_esszimmer_lichter_an
+        temperature_entity: sensor.magguu_esszimmer_temperatur_c
+        humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.esszimmer_esszimmer
+          name: Deckenlicht
+          icon: mdi:ceiling-light
+          variables: {accent: '#ffd166'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.esszimmer_signe_gradient
+          name: Signe
+          icon: mdi:floor-lamp
+          variables: {accent: '#f3a84b'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: climate.esszimmer_thermostat
+          name: Heizung
+          icon: mdi:radiator
+          tap_action: {action: more-info}
+          variables: {accent: '#ff9868'}
+  card_mod: *room_shell
+
+- type: custom:stack-in-card
+  mode: vertical
+  cards:
+    - type: custom:button-card
+      template: room_visual_v5
+      name: Küche
+      icon: mdi:fridge-outline
+      variables:
+        room_path: kueche
+        accent: '#79d98c'
+        light_count_entity: sensor.magguu_kueche_lichter_an
+        opening_entity: binary_sensor.magguu_kueche_oeffnung
+        device_text: Licht, Rollladen und Fenster
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: room_action_v5
+          entity: switch.kuche_kuche_licht
+          name: Licht
+          icon: mdi:ceiling-light
+          variables: {accent: '#ffd166'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: cover.kuche_kuche_rollade
+          name: Rollladen
+          icon: mdi:window-shutter
+          tap_action: {action: more-info}
+          variables: {accent: '#71b7ff'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: binary_sensor.magguu_kueche_oeffnung
+          name: Fenster / Tür
+          icon: mdi:window-open-variant
+          tap_action: {action: more-info}
+          variables: {accent: '#ff9f43', active_label: Offen, inactive_label: Geschlossen}
+  card_mod: *room_shell
+
+- type: custom:stack-in-card
+  mode: vertical
+  cards:
+    - type: custom:button-card
+      template: room_visual_v5
+      name: Badezimmer
+      icon: mdi:bathtub-outline
+      variables:
+        room_path: badezimmer
+        accent: '#57cbd3'
+        light_count_entity: sensor.magguu_badezimmer_lichter_an
+        temperature_entity: sensor.magguu_badezimmer_temperatur_c
+        humidity_entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: room_action_v5
+          entity: switch.badezimmer_badezimmer_licht
+          name: Hauptlicht
+          icon: mdi:ceiling-light
+          variables: {accent: '#ffd166'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.badezimmer_badezimmer_licht_ch8
+          name: Farblicht oben
+          icon: mdi:led-strip-variant
+          variables: {accent: '#ff7eb6'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.badezimmer_badezimmer_licht_ch12
+          name: Farblicht unten
+          icon: mdi:led-strip-variant
+          variables: {accent: '#b48cff'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: climate.badezimmer_badezimmer_thermostat
+          name: Heizung
+          icon: mdi:radiator
+          tap_action: {action: more-info}
+          variables: {accent: '#ff9868'}
+  card_mod: *room_shell
+
+- type: custom:stack-in-card
+  mode: vertical
+  cards:
+    - type: custom:button-card
+      template: room_visual_v5
+      name: Schlafzimmer
+      icon: mdi:bed-king-outline
+      variables:
+        room_path: schlafzimmer
+        accent: '#a891ff'
+        light_count_entity: sensor.magguu_schlafzimmer_lichter_an
+        temperature_entity: sensor.magguu_schlafzimmer_temperatur_c
+        humidity_entity: sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte
+        opening_entity: binary_sensor.magguu_schlafzimmer_oeffnung
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.schlafzimmer_schlafzimmer
+          name: Hauptlicht
+          icon: mdi:ceiling-light
+          variables: {accent: '#ffd166'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.schlafzimmer_bett_links
+          name: Bett links
+          icon: mdi:lamp
+          variables: {accent: '#b48cff'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.schlafzimmer_bett_rechts
+          name: Bett rechts
+          icon: mdi:lamp
+          variables: {accent: '#b48cff'}
+        - type: custom:button-card
+          template: room_link_v5
+          name: Rollläden
+          icon: mdi:window-shutter
+          variables: {accent: '#71b7ff', room_path: schlafzimmer, link_label: 2 Rollläden}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: climate.schlafzimmer_schlafzimmer_thermostat
+          name: Heizung
+          icon: mdi:radiator
+          tap_action: {action: more-info}
+          variables: {accent: '#ff9868'}
+  card_mod: *room_shell
+
+- type: custom:stack-in-card
+  mode: vertical
+  cards:
+    - type: custom:button-card
+      template: room_visual_v5
+      name: Kinderzimmer
+      icon: mdi:teddy-bear
+      variables:
+        room_path: kinderzimmer
+        accent: '#e886ad'
+        light_count_entity: sensor.magguu_kinderzimmer_lichter_an
+        temperature_entity: sensor.magguu_kinderzimmer_temperatur_c
+        humidity_entity: sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte
+        opening_entity: binary_sensor.magguu_kinderzimmer_oeffnung
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.kinderzimmer_kinderzimmer
+          name: Hauptlicht
+          icon: mdi:ceiling-light
+          variables: {accent: '#ffd166'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: light.kinderzimmer_schrank_licht
+          name: Schranklicht
+          icon: mdi:wardrobe-outline
+          variables: {accent: '#e886ad'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: cover.kinderzimmer_kinderzimmer_rollade
+          name: Rollladen
+          icon: mdi:window-shutter
+          tap_action: {action: more-info}
+          variables: {accent: '#71b7ff'}
+        - type: custom:button-card
+          template: room_action_v5
+          entity: climate.kinderzimmer_kinderzimmer_thermostat
+          name: Heizung
+          icon: mdi:radiator
+          tap_action: {action: more-info}
+          variables: {accent: '#ff9868'}
+  card_mod: *room_shell
+
+- !include ../navbar.yaml

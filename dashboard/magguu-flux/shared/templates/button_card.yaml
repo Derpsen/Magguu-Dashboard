@@ -9,10 +9,10 @@ mag_card:
     action: none
   styles:
     card:
-      - border-radius: 24px
-      - padding: 16px
-      - background: rgba(24, 25, 39, 0.92)
-      - border: 1px solid rgba(255,255,255,0.055)
+      - border-radius: var(--mag-radius-card, 24px)
+      - padding: var(--mag-space-card, 16px)
+      - background: var(--mag-surface, rgba(24, 25, 39, 0.92))
+      - border: 1px solid var(--mag-border, rgba(255,255,255,0.055))
       - box-shadow: none
       - overflow: hidden
     name:
@@ -85,6 +85,16 @@ room_visual_v5:
     opening_entity: null
     light_count_entity: null
     device_text: ''
+    room_path: ''
+  tap_action:
+    action: navigate
+    navigation_path: |
+      [[[
+        const root = window.location.pathname.split('/').filter(Boolean)[0] || 'magguu-mobile';
+        return `/${root}/${variables.room_path}`;
+      ]]]
+  hold_action:
+    action: none
   show_icon: true
   size: 82px
   label: |
@@ -92,19 +102,22 @@ room_visual_v5:
       const S=id=>id?states[id]:null;
       const t=S(variables.temperature_entity), h=S(variables.humidity_entity);
       const values=[];
-      if(t&&!['unknown','unavailable'].includes(t.state)) values.push(`${Number(t.state).toFixed(1).replace('.',',')} °C`);
-      if(h&&!['unknown','unavailable'].includes(h.state)) values.push(`${Math.round(Number(h.state))} %`);
+      const tv=Number(t?.state), hv=Number(h?.state);
+      if(t&&!['unknown','unavailable'].includes(t.state)&&Number.isFinite(tv)) values.push(`${tv.toFixed(1).replace('.',',')} °C`);
+      if(h&&!['unknown','unavailable'].includes(h.state)&&Number.isFinite(hv)) values.push(`${Math.round(hv)} %`);
       return values.length?values.join('  ·  '):(variables.device_text||'Raumsteuerung');
     ]]]
   custom_fields:
     meta: |
       [[[
         const c=Number(states[variables.light_count_entity]?.state||0);
-        const open=variables.opening_entity && states[variables.opening_entity]?.state==='on';
+        const opening=variables.opening_entity ? states[variables.opening_entity] : null;
+        const open=opening?.state==='on';
         const a=[];
         a.push(c?`${c} ${c===1?'Licht':'Lichter'} an`:'Licht aus');
         if(open) a.push('Fenster offen');
-        else if(variables.opening_entity) a.push('Fenster zu');
+        else if(opening && !['unknown','unavailable'].includes(opening.state)) a.push('Fenster zu');
+        else if(variables.opening_entity) a.push('Fensterstatus fehlt');
         return a.join(' · ');
       ]]]
     orb: |
@@ -113,16 +126,16 @@ room_visual_v5:
       ]]]
   styles:
     card:
-      - height: 218px
-      - padding: 17px
-      - border-radius: 24px 24px 0 0
+      - min-height: 196px
+      - padding: 20px
+      - border-radius: var(--mag-radius-card, 24px) var(--mag-radius-card, 24px) 0 0
       - border-bottom: none
       - background: |
           [[[
             const c=Number(states[variables.light_count_entity]?.state||0);
             const open=variables.opening_entity && states[variables.opening_entity]?.state==='on';
             const accent=variables.accent||'#9b8cff';
-            if(open) return 'linear-gradient(145deg, rgba(255,107,107,.18), rgba(24,25,39,.96) 58%)';
+            if(open) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 22%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 62%)';
             if(c>0) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 20%, rgba(24,25,39,.96)), rgba(24,25,39,.96) 60%)`;
             return 'rgba(24,25,39,.92)';
           ]]]
@@ -132,12 +145,12 @@ room_visual_v5:
             return c>0?`inset 0 0 0 1px ${variables.accent||'#9b8cff'}, 0 0 18px color-mix(in srgb, ${variables.accent||'#9b8cff'} 24%, transparent)`:'none';
           ]]]
     grid:
-      - grid-template-areas: '"n n" "l l" "i ." "meta meta" "orb orb"'
+      - grid-template-areas: '"n n" "l l" "meta meta" "i ." "orb orb"'
       - grid-template-columns: min-content 1fr
       - grid-template-rows: min-content min-content 1fr min-content 0px
     name:
       - justify-self: start
-      - font-size: 21px
+      - font-size: 23px
       - letter-spacing: -.45px
     label:
       - justify-self: start
@@ -146,22 +159,21 @@ room_visual_v5:
     img_cell:
       - justify-self: start
       - align-self: end
-      - width: 150px
-      - height: 105px
-      - margin-left: -20px
-      - margin-bottom: -24px
+      - width: 136px
+      - height: 88px
+      - margin-left: -18px
+      - margin-bottom: -20px
       - border-radius: 0 100% 0 0
       - background: rgba(255,255,255,.032)
       - z-index: 2
     icon:
-      - width: 76px
+      - width: 68px
       - color: rgba(210,211,232,.35)
     custom_fields:
       meta:
-        - position: absolute
-        - top: 66px
-        - left: 17px
-        - font-size: 11px
+        - justify-self: start
+        - padding-top: 9px
+        - font-size: 12px
         - color: var(--secondary-text-color)
       orb:
         - position: absolute
@@ -178,32 +190,86 @@ room_visual_v5:
 
 room_action_v5:
   template: mag_card
-  show_name: false
-  show_label: false
-  size: 22px
+  show_name: true
+  show_label: true
+  size: 24px
   variables:
     accent: '#ffd166'
+    inactive_label: Aus
+    active_label: An
+  label: |
+    [[[
+      if (!entity || ['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
+      if (entity.entity_id.startsWith('cover.')) {
+        if (entity.state === 'open') return 'Geöffnet';
+        if (entity.state === 'closed') return 'Geschlossen';
+        return entity.state === 'opening' ? 'Öffnet' : entity.state === 'closing' ? 'Schließt' : 'Bedienen';
+      }
+      if (entity.entity_id.startsWith('climate.')) {
+        const value = entity.attributes?.current_temperature;
+        return Number.isFinite(Number(value)) ? `${Number(value).toFixed(1).replace('.', ',')} °C` : 'Heizung';
+      }
+      return ['on','playing','heat'].includes(entity.state) ? (variables.active_label || 'An') : (variables.inactive_label || 'Aus');
+    ]]]
   tap_action:
     action: toggle
   hold_action:
     action: more-info
   styles:
     card:
-      - min-height: 56px
-      - padding: 8px
-      - border-radius: 15px
+      - min-height: 72px
+      - padding: 10px 12px
+      - border-radius: var(--mag-radius-control, 17px)
       - background: |
           [[[
             const active=['on','open','opening','playing','heat'].includes(entity?.state);
-            return active?`color-mix(in srgb, ${variables.accent||'#ffd166'} 18%, rgba(255,255,255,.035))`:'rgba(255,255,255,.035)';
+            return active?`color-mix(in srgb, ${variables.accent||'#ffd166'} 18%, var(--mag-surface-soft, rgba(255,255,255,.035)))`:'var(--mag-surface-soft, rgba(255,255,255,.035))';
           ]]]
-      - border: 1px solid rgba(255,255,255,.04)
+      - border: 1px solid var(--mag-border, rgba(255,255,255,.04))
+    grid:
+      - grid-template-areas: '"i n" "i l"'
+      - grid-template-columns: 34px 1fr
+      - column-gap: 9px
+    img_cell:
+      - width: 34px
+      - height: 34px
+      - border-radius: 12px
+      - background: rgba(255,255,255,.035)
     icon:
       - color: |
           [[[
             const active=['on','open','opening','playing','heat'].includes(entity?.state);
             return active?(variables.accent||'#ffd166'):'var(--secondary-text-color)';
           ]]]
+    name:
+      - justify-self: start
+      - align-self: end
+      - font-size: 12px
+      - font-weight: 700
+      - white-space: normal
+      - text-align: left
+    label:
+      - justify-self: start
+      - align-self: start
+      - font-size: 10px
+
+room_link_v5:
+  template: room_action_v5
+  variables:
+    accent: '#71b7ff'
+    room_path: ''
+    link_label: Details
+  entity: null
+  label: '[[[ return variables.link_label || "Details"; ]]]'
+  tap_action:
+    action: navigate
+    navigation_path: |
+      [[[
+        const root = window.location.pathname.split('/').filter(Boolean)[0] || 'magguu-mobile';
+        return `/${root}/${variables.room_path}`;
+      ]]]
+  hold_action:
+    action: none
 
 quick_v5:
   template: mag_card

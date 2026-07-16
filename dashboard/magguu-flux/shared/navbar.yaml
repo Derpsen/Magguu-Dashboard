@@ -1,0 +1,56 @@
+type: custom:navbar-card
+view_layout:
+  grid-column: 1 / -1
+layout:
+  auto_padding:
+    enabled: true
+    desktop_px: 86
+    mobile_px: 74
+    media_player_px: 90
+desktop:
+  position: left
+  min_width: 768
+  show_labels: true
+mobile:
+  show_labels: false
+routes:
+  - url: overview
+    icon: mdi:home-outline
+    icon_selected: mdi:home
+    label: Zuhause
+  - url: raeume
+    icon: mdi:floor-plan
+    label: Räume
+    badge:
+      show: >-
+        [[[ return Number(states['sensor.magguu_lichter_an']?.state || 0) > 0; ]]]
+      count: >-
+        [[[ return Number(states['sensor.magguu_lichter_an']?.state || 0); ]]]
+  - url: klima
+    icon: mdi:home-thermometer-outline
+    label: Klima
+  - url: kalender
+    icon: mdi:calendar-month-outline
+    icon_selected: mdi:calendar-month
+    label: Kalender
+  - url: system
+    icon: mdi:cog-outline
+    icon_selected: mdi:cog
+    label: System
+    badge:
+      show: >-
+        [[[
+          return Number(states['sensor.magguu_updates_verfuegbar']?.state || 0) > 0 ||
+                 Number(states['sensor.openccu_servicemeldungen']?.state || 0) > 0;
+        ]]]
+      count: >-
+        [[[
+          return Number(states['sensor.magguu_updates_verfuegbar']?.state || 0) +
+                 Number(states['sensor.openccu_servicemeldungen']?.state || 0);
+        ]]]
+styles: |
+  .navbar {
+    --navbar-primary-color: var(--primary-color);
+    --navbar-background-color: color-mix(in srgb, var(--ha-card-background) 92%, transparent);
+    backdrop-filter: blur(20px);
+  }

@@ -4,21 +4,22 @@
 
 - [x] gesamte Include-Struktur prüfen
 - [x] verwendete Custom Cards inventarisieren
-- [ ] doppelte Mobile-/Tablet-Blöcke reduzieren
-- [ ] zentralisierte Design-Tokens definieren
+- [x] Rooms-Duplikate zwischen Mobile und Tablet entfernen
+- [x] zentralisierte Design-Tokens definieren
 - [x] YAML-Prüfung automatisieren (`validate.py` vorhanden; lokale Ausführung benötigt Python)
 - [x] Architektur, Risiken und Migrationsplan in `docs/audit.md` dokumentieren
 
 ## Phase 2 – Räume
 
-- [ ] ein wiederverwendbares Room-Card-Template fertigstellen
-- [ ] Wohnzimmer
-- [ ] Esszimmer
-- [ ] Küche
-- [ ] Badezimmer
-- [ ] Schlafzimmer
-- [ ] Kinderzimmer
-- [ ] responsive Verhalten prüfen
+- [x] ein wiederverwendbares Room-Card-Template fertigstellen
+- [x] Wohnzimmer
+- [x] Esszimmer
+- [x] Küche
+- [x] Badezimmer
+- [x] Schlafzimmer
+- [x] Kinderzimmer
+- [x] responsive Raster für Mobile, Tablet und Desktop definieren
+- [ ] visuelle Prüfung auf realen Zielgeräten durchführen
 
 ## Phase 3 – Home
 

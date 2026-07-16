@@ -20,10 +20,13 @@ Installierte Frontend-Erweiterungen:
 - Navbar Card
 - Clock Weather Card HUI Icons
 - Simple Tabs Card
+- Stack In Card
 
 ## Struktur
 
 - `dashboard/magguu-flux/` – aktives YAML-Dashboard
+- `dashboard/magguu-flux/shared/cards/rooms.yaml` – gemeinsame Raumkarten für Mobile und Tablet
+- `dashboard/magguu-flux/shared/templates/button_card.yaml` – zentrale UI-Templates
 - `packages/` – Template-Sensoren und Hilfslogik
 - `themes/` – Magguu Midnight Theme
 - `docs/entities.md` – verifizierte Entitäts-IDs
@@ -37,6 +40,10 @@ Installierte Frontend-Erweiterungen:
 Das Repository nach `/config/repos/Magguu-Dashboard` klonen und anschließend ausführen:
 
 ```bash
+cd /config
+mkdir -p repos
+git clone https://github.com/Derpsen/Magguu-Dashboard.git repos/Magguu-Dashboard
+cd repos/Magguu-Dashboard
 bash install.sh
 ```
 
@@ -73,3 +80,13 @@ bash update.sh
 ```
 
 Danach Home Assistant neu starten und den Browser vollständig neu laden.
+
+## Aktualisierung
+
+Im geklonten Repository ausführen:
+
+```bash
+bash update.sh
+```
+
+Das Skript lädt ausschließlich Fast-Forward-Updates und installiert danach Dashboard, Package und Theme mit vorherigem Backup neu. Ein HACS-Dashboard-Repository ist für diese Struktur nicht geeignet, weil HACS-Dashboard-Downloads Frontend-JavaScript unter `www/community` verwalten, nicht YAML-Dashboards und Packages unter mehreren `/config`-Zielen.

@@ -115,6 +115,34 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `update.mushroom_update`
 - `update.openccu_system_update`
 
+## Durch dieses Repository erzeugt
+
+- `group.magguu_alle_lichter`
+- `script.magguu_alle_lichter_aus`
+- `script.magguu_alle_rollladen_auf`
+- `script.magguu_alle_rollladen_zu`
+- `sensor.magguu_lichter_an`
+- `sensor.magguu_offene_fenster`
+- `sensor.magguu_updates_verfuegbar`
+- `sensor.magguu_nicht_verfuegbar`
+- `sensor.magguu_wohnzimmer_temperatur_c`
+- `sensor.magguu_esszimmer_temperatur_c`
+- `sensor.magguu_badezimmer_temperatur_c`
+- `sensor.magguu_schlafzimmer_temperatur_c`
+- `sensor.magguu_kinderzimmer_temperatur_c`
+- `sensor.magguu_durchschnittstemperatur`
+- `sensor.magguu_durchschnitt_luftfeuchtigkeit`
+- `sensor.magguu_wohnzimmer_lichter_an`
+- `sensor.magguu_esszimmer_lichter_an`
+- `sensor.magguu_badezimmer_lichter_an`
+- `sensor.magguu_schlafzimmer_lichter_an`
+- `sensor.magguu_kinderzimmer_lichter_an`
+- `sensor.magguu_kueche_lichter_an`
+- `binary_sensor.magguu_wohnzimmer_oeffnung`
+- `binary_sensor.magguu_kueche_oeffnung`
+- `binary_sensor.magguu_schlafzimmer_oeffnung`
+- `binary_sensor.magguu_kinderzimmer_oeffnung`
+
 ## Noch zu ergänzen
 
 - Ring-Kamera und Klingelsensoren
