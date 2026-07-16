@@ -1,0 +1,276 @@
+mag_card:
+  show_icon: true
+  show_name: true
+  show_state: false
+  show_label: true
+  tap_action:
+    action: none
+  hold_action:
+    action: none
+  styles:
+    card:
+      - border-radius: 24px
+      - padding: 16px
+      - background: rgba(24, 25, 39, 0.92)
+      - border: 1px solid rgba(255,255,255,0.055)
+      - box-shadow: none
+      - overflow: hidden
+    name:
+      - font-weight: 700
+      - color: var(--primary-text-color)
+    label:
+      - color: var(--secondary-text-color)
+
+hero_v5:
+  template: mag_card
+  show_icon: false
+  name: |
+    [[[
+      const h = new Date().getHours();
+      const greeting = h < 5 ? 'Gute Nacht' : h < 11 ? 'Guten Morgen' : h < 17 ? 'Guten Tag' : h < 22 ? 'Guten Abend' : 'Gute Nacht';
+      return `${greeting}, Marco`;
+    ]]]
+  label: |
+    [[[
+      return new Intl.DateTimeFormat('de-DE', {weekday:'long', day:'2-digit', month:'long'}).format(new Date());
+    ]]]
+  custom_fields:
+    chips: |
+      [[[
+        const S = id => states[id];
+        const lights = Number(S('sensor.magguu_lichter_an')?.state || 0);
+        const windows = Number(S('sensor.magguu_offene_fenster')?.state || 0);
+        const battery = S('sensor.iphone_von_marco_battery_level');
+        const avg = S('sensor.magguu_durchschnittstemperatur');
+        const home = S('person.magguu')?.state === 'home';
+        const pill=(icon,text,color)=>`<span class="v5-pill"><ha-icon icon="${icon}" style="color:${color}"></ha-icon>${text}</span>`;
+        return `<div class="v5-pills">
+          ${pill(home?'mdi:home-account':'mdi:account-arrow-right-outline',home?'Marco zuhause':'Marco unterwegs',home?'#79d98c':'#9aa0b4')}
+          ${pill('mdi:lightbulb-group',`${lights} an`,lights?'#ffd166':'#9aa0b4')}
+          ${pill(windows?'mdi:window-open-variant':'mdi:window-closed-variant',windows?`${windows} offen`:'Alles zu',windows?'#ff9f43':'#79d98c')}
+          ${pill('mdi:thermometer',avg&&!['unknown','unavailable'].includes(avg.state)?`${avg.state} °C`:'—','#71b7ff')}
+          ${pill('mdi:battery',battery&&!['unknown','unavailable'].includes(battery.state)?`${battery.state} %`:'—','#b48cff')}
+        </div>`;
+      ]]]
+  styles:
+    card:
+      - min-height: 190px
+      - padding: 25px
+      - background: linear-gradient(140deg, rgba(90,76,170,.34), rgba(24,25,39,.96) 52%, rgba(24,25,39,.96))
+    grid:
+      - grid-template-areas: '"n" "l" "chips"'
+      - grid-template-rows: min-content min-content 1fr
+    name:
+      - justify-self: start
+      - font-size: 32px
+      - letter-spacing: -1.1px
+    label:
+      - justify-self: start
+      - font-size: 13px
+      - padding-top: 4px
+    custom_fields:
+      chips:
+        - align-self: end
+        - justify-self: start
+        - padding-top: 28px
+  extra_styles: |
+    .v5-pills{display:flex;flex-wrap:wrap;gap:8px}.v5-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.055);font-size:12px;font-weight:650;white-space:nowrap}.v5-pill ha-icon{width:16px;height:16px}
+
+room_visual_v5:
+  template: mag_card
+  variables:
+    accent: '#9b8cff'
+    temperature_entity: null
+    humidity_entity: null
+    opening_entity: null
+    light_count_entity: null
+    device_text: ''
+  show_icon: true
+  size: 82px
+  label: |
+    [[[
+      const S=id=>id?states[id]:null;
+      const t=S(variables.temperature_entity), h=S(variables.humidity_entity);
+      const values=[];
+      if(t&&!['unknown','unavailable'].includes(t.state)) values.push(`${Number(t.state).toFixed(1).replace('.',',')} °C`);
+      if(h&&!['unknown','unavailable'].includes(h.state)) values.push(`${Math.round(Number(h.state))} %`);
+      return values.length?values.join('  ·  '):(variables.device_text||'Raumsteuerung');
+    ]]]
+  custom_fields:
+    meta: |
+      [[[
+        const c=Number(states[variables.light_count_entity]?.state||0);
+        const open=variables.opening_entity && states[variables.opening_entity]?.state==='on';
+        const a=[];
+        a.push(c?`${c} ${c===1?'Licht':'Lichter'} an`:'Licht aus');
+        if(open) a.push('Fenster offen');
+        else if(variables.opening_entity) a.push('Fenster zu');
+        return a.join(' · ');
+      ]]]
+    orb: |
+      [[[
+        return `<div class="room-orb"></div>`;
+      ]]]
+  styles:
+    card:
+      - height: 218px
+      - padding: 17px
+      - border-radius: 24px 24px 0 0
+      - border-bottom: none
+      - background: |
+          [[[
+            const c=Number(states[variables.light_count_entity]?.state||0);
+            const open=variables.opening_entity && states[variables.opening_entity]?.state==='on';
+            const accent=variables.accent||'#9b8cff';
+            if(open) return 'linear-gradient(145deg, rgba(255,107,107,.18), rgba(24,25,39,.96) 58%)';
+            if(c>0) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 20%, rgba(24,25,39,.96)), rgba(24,25,39,.96) 60%)`;
+            return 'rgba(24,25,39,.92)';
+          ]]]
+      - box-shadow: |
+          [[[
+            const c=Number(states[variables.light_count_entity]?.state||0);
+            return c>0?`inset 0 0 0 1px ${variables.accent||'#9b8cff'}, 0 0 18px color-mix(in srgb, ${variables.accent||'#9b8cff'} 24%, transparent)`:'none';
+          ]]]
+    grid:
+      - grid-template-areas: '"n n" "l l" "i ." "meta meta" "orb orb"'
+      - grid-template-columns: min-content 1fr
+      - grid-template-rows: min-content min-content 1fr min-content 0px
+    name:
+      - justify-self: start
+      - font-size: 21px
+      - letter-spacing: -.45px
+    label:
+      - justify-self: start
+      - font-size: 12px
+      - padding-top: 3px
+    img_cell:
+      - justify-self: start
+      - align-self: end
+      - width: 150px
+      - height: 105px
+      - margin-left: -20px
+      - margin-bottom: -24px
+      - border-radius: 0 100% 0 0
+      - background: rgba(255,255,255,.032)
+      - z-index: 2
+    icon:
+      - width: 76px
+      - color: rgba(210,211,232,.35)
+    custom_fields:
+      meta:
+        - position: absolute
+        - top: 66px
+        - left: 17px
+        - font-size: 11px
+        - color: var(--secondary-text-color)
+      orb:
+        - position: absolute
+        - right: -40px
+        - bottom: -70px
+        - width: 170px
+        - height: 170px
+        - border-radius: 50%
+        - background: |
+            [[[
+              return `color-mix(in srgb, ${variables.accent||'#9b8cff'} 7%, transparent)`;
+            ]]]
+        - pointer-events: none
+
+room_action_v5:
+  template: mag_card
+  show_name: false
+  show_label: false
+  size: 22px
+  variables:
+    accent: '#ffd166'
+  tap_action:
+    action: toggle
+  hold_action:
+    action: more-info
+  styles:
+    card:
+      - min-height: 56px
+      - padding: 8px
+      - border-radius: 15px
+      - background: |
+          [[[
+            const active=['on','open','opening','playing','heat'].includes(entity?.state);
+            return active?`color-mix(in srgb, ${variables.accent||'#ffd166'} 18%, rgba(255,255,255,.035))`:'rgba(255,255,255,.035)';
+          ]]]
+      - border: 1px solid rgba(255,255,255,.04)
+    icon:
+      - color: |
+          [[[
+            const active=['on','open','opening','playing','heat'].includes(entity?.state);
+            return active?(variables.accent||'#ffd166'):'var(--secondary-text-color)';
+          ]]]
+
+quick_v5:
+  template: mag_card
+  variables:
+    accent: '#9b8cff'
+    sub: ''
+  label: '[[[ return variables.sub || ""; ]]]'
+  styles:
+    card:
+      - min-height: 86px
+      - padding: 13px
+    grid:
+      - grid-template-areas: '"i n" "i l"'
+      - grid-template-columns: 44px 1fr
+      - column-gap: 10px
+    img_cell:
+      - width: 42px
+      - height: 42px
+      - border-radius: 15px
+      - background: '[[[ return `color-mix(in srgb, ${variables.accent} 15%, transparent)`; ]]]'
+    icon:
+      - width: 23px
+      - color: '[[[ return variables.accent; ]]]'
+    name:
+      - justify-self: start
+      - font-size: 13px
+    label:
+      - justify-self: start
+      - font-size: 11px
+
+next_event_v5:
+  template: quick_v5
+  variables:
+    accent: '#9b8cff'
+    empty: Kein Eintrag
+  label: |
+    [[[
+      if(!entity||['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
+      const start=entity.attributes?.start_time;
+      if(!start) return variables.empty||'Kein Eintrag';
+      const raw=String(start); const d=new Date(raw.length===10?`${raw}T00:00:00`:raw);
+      if(Number.isNaN(d.getTime())) return raw;
+      const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+      const target=new Date(d.getFullYear(),d.getMonth(),d.getDate()); const diff=Math.round((target-today)/86400000);
+      const day=diff===0?'Heute':diff===1?'Morgen':new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}).format(d);
+      const allDay=entity.attributes?.all_day===true||raw.length===10;
+      return allDay?day:`${day} · ${new Intl.DateTimeFormat('de-DE',{hour:'2-digit',minute:'2-digit'}).format(d)}`;
+    ]]]
+  custom_fields:
+    event: |
+      [[[
+        return entity?.attributes?.message || variables.empty || 'Kein Eintrag';
+      ]]]
+  styles:
+    card:
+      - min-height: 104px
+    grid:
+      - grid-template-areas: '"i n" "i event" "i l"'
+      - grid-template-columns: 46px 1fr
+      - grid-template-rows: min-content min-content min-content
+    custom_fields:
+      event:
+        - justify-self: start
+        - font-size: 12px
+        - font-weight: 700
+        - color: var(--primary-text-color)
+        - overflow: hidden
+        - text-overflow: ellipsis
+        - white-space: nowrap
+        - max-width: 210px

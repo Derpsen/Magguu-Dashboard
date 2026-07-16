@@ -1,0 +1,56 @@
+- title: Kalender
+  path: kalender
+  icon: mdi:calendar-month-outline
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    margin: 0 auto
+    padding: 10px 10px 92px
+    grid-gap: 12px
+    grid-template-columns: 1fr
+  cards:
+    - type: vertical-stack
+      cards:
+        - type: custom:mushroom-title-card
+          title: Nächste Ereignisse
+          subtitle: Arbeit, Abfuhr und private Termine
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.arbeiten
+              name: Arbeit
+              icon: mdi:briefcase-outline
+              variables: { accent: '#b48cff' }
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.abfuhr
+              name: Abfuhr
+              icon: mdi:trash-can-outline
+              variables: { accent: '#79d98c' }
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.privat
+              name: Privat
+              icon: mdi:account-heart-outline
+              variables: { accent: '#e886ad' }
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.termine
+              name: Termine
+              icon: mdi:calendar-star
+              variables: { accent: '#71b7ff' }
+    - type: calendar
+      title: Die nächsten 7 Tage
+      initial_view: listWeek
+      entities:
+        - calendar.arbeiten
+        - calendar.abfuhr
+        - calendar.privat
+        - calendar.termine
+      card_mod:
+        style: |
+          ha-card { border-radius:28px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }
+    - !include ../cards/navbar.yaml

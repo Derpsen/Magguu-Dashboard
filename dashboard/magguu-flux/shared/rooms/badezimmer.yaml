@@ -1,0 +1,119 @@
+title: Badezimmer
+path: badezimmer
+icon: mdi:shower
+subview: true
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    cards:
+      - type: custom:mushroom-title-card
+        title: Badezimmer
+        subtitle: Licht, Klima und Geräte
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.magguu_badezimmer_temperatur_c
+            name: Temperatur
+            icon: mdi:thermometer
+            icon_color: orange
+          - type: custom:mushroom-entity-card
+            entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
+            name: Luftfeuchte
+            icon: mdi:water-percent
+            icon_color: blue
+  - type: grid
+    cards:
+      - type: heading
+        heading: Beleuchtung
+        icon: mdi:lightbulb-group-outline
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.badezimmer_badezimmer
+        name: Badezimmer gesamt
+        icon: mdi:lightbulb-group-outline
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.badezimmer_licht_bad
+        name: Hue Licht Bad
+        icon: mdi:ceiling-light
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.badezimmer_badezimmer_licht_ch8
+        name: Farblicht oben
+        icon: mdi:led-strip-variant
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.badezimmer_badezimmer_licht_ch12
+        name: Farblicht unten
+        icon: mdi:led-strip-variant
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:mushroom-entity-card
+        entity: switch.badezimmer_badezimmer_licht
+        name: Hauptlicht
+        icon: mdi:ceiling-light
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+  - type: grid
+    cards:
+      - type: heading
+        heading: Klima
+        icon: mdi:radiator
+      - type: custom:mushroom-climate-card
+        entity: climate.badezimmer_badezimmer_thermostat
+        name: Badezimmer
+        show_temperature_control: true
+        collapsible_controls: false
+      - type: custom:mini-graph-card
+        name: Temperatur · Badezimmer
+        hours_to_show: 48
+        points_per_hour: 1
+        line_width: 2
+        show:
+          labels: true
+          legend: false
+          fill: fade
+        entities:
+          - sensor.magguu_badezimmer_temperatur_c
+        card_mod:
+          style: |
+            ha-card { border-radius: 22px; box-shadow: none; }

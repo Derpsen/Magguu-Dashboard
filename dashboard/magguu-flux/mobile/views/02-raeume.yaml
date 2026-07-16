@@ -1,0 +1,361 @@
+- title: Räume
+  path: raeume
+  icon: mdi:floor-plan
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    margin: 0 auto
+    padding: 10px 10px 92px
+    grid-gap: 10px
+    grid-template-columns: 1fr
+  cards:
+    - type: custom:mushroom-title-card
+      title: Räume
+      subtitle: Licht, Klima, Fenster und Rollläden
+    - type: custom:stack-in-card
+      mode: vertical
+      cards:
+        - type: custom:button-card
+          template: room_visual_v5
+          name: Wohnzimmer
+          icon: mdi:sofa-outline
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-mobile/wohnzimmer
+          variables:
+            accent: '#6faeff'
+            light_count_entity: sensor.magguu_wohnzimmer_lichter_an
+            temperature_entity: sensor.magguu_wohnzimmer_temperatur_c
+            humidity_entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
+            opening_entity: binary_sensor.magguu_wohnzimmer_oeffnung
+        - type: grid
+          columns: 4
+          square: false
+          cards:
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.wohnzimmer_wohnzimmer
+              icon: mdi:lightbulb-group
+              variables:
+                accent: '#ffd166'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: switch.wohnzimmer_wohnzimmer_fernseher
+              icon: mdi:television
+              variables:
+                accent: '#b48cff'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: switch.wohnzimmer_wohnzimmer_computer
+              icon: mdi:desktop-tower-monitor
+              variables:
+                accent: '#70d6c8'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: cover.wohnzimmer_wohnzimmer_rollade_mitte
+              icon: mdi:window-shutter
+              variables:
+                accent: '#71b7ff'
+              tap_action:
+                action: toggle
+      card_mod:
+        style: |
+          ha-card {
+            border-radius: 24px;
+            background: rgba(24,25,39,.92);
+            border: 1px solid rgba(255,255,255,.055);
+            box-shadow: none;
+            overflow: hidden;
+          }
+    - type: custom:stack-in-card
+      mode: vertical
+      cards:
+        - type: custom:button-card
+          template: room_visual_v5
+          name: Esszimmer
+          icon: mdi:table-furniture
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-mobile/esszimmer
+          variables:
+            accent: '#f3a84b'
+            light_count_entity: sensor.magguu_esszimmer_lichter_an
+            temperature_entity: sensor.magguu_esszimmer_temperatur_c
+            humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+        - type: grid
+          columns: 3
+          square: false
+          cards:
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.esszimmer_esszimmer
+              icon: mdi:ceiling-light
+              variables:
+                accent: '#ffd166'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.esszimmer_signe_gradient
+              icon: mdi:floor-lamp
+              variables:
+                accent: '#f3a84b'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: climate.esszimmer_thermostat
+              icon: mdi:radiator
+              variables:
+                accent: '#ff9868'
+              tap_action:
+                action: more-info
+      card_mod:
+        style: |
+          ha-card {
+            border-radius: 24px;
+            background: rgba(24,25,39,.92);
+            border: 1px solid rgba(255,255,255,.055);
+            box-shadow: none;
+            overflow: hidden;
+          }
+    - type: custom:stack-in-card
+      mode: vertical
+      cards:
+        - type: custom:button-card
+          template: room_visual_v5
+          name: Küche
+          icon: mdi:fridge-outline
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-mobile/kueche
+          variables:
+            accent: '#79d98c'
+            light_count_entity: sensor.magguu_kueche_lichter_an
+            opening_entity: binary_sensor.magguu_kueche_oeffnung
+        - type: grid
+          columns: 3
+          square: false
+          cards:
+            - type: custom:button-card
+              template: room_action_v5
+              entity: switch.kuche_kuche_licht
+              icon: mdi:ceiling-light
+              variables:
+                accent: '#ffd166'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: cover.kuche_kuche_rollade
+              icon: mdi:window-shutter
+              variables:
+                accent: '#71b7ff'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: binary_sensor.magguu_kueche_oeffnung
+              icon: mdi:window-open-variant
+              variables:
+                accent: '#ff9f43'
+              tap_action:
+                action: more-info
+      card_mod:
+        style: |
+          ha-card {
+            border-radius: 24px;
+            background: rgba(24,25,39,.92);
+            border: 1px solid rgba(255,255,255,.055);
+            box-shadow: none;
+            overflow: hidden;
+          }
+    - type: custom:stack-in-card
+      mode: vertical
+      cards:
+        - type: custom:button-card
+          template: room_visual_v5
+          name: Badezimmer
+          icon: mdi:bathtub-outline
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-mobile/badezimmer
+          variables:
+            accent: '#57cbd3'
+            light_count_entity: sensor.magguu_badezimmer_lichter_an
+            temperature_entity: sensor.magguu_badezimmer_temperatur_c
+            humidity_entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
+        - type: grid
+          columns: 4
+          square: false
+          cards:
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.badezimmer_badezimmer
+              icon: mdi:ceiling-light
+              variables:
+                accent: '#ffd166'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.badezimmer_badezimmer_licht_ch8
+              icon: mdi:led-strip-variant
+              variables:
+                accent: '#ff7eb6'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.badezimmer_badezimmer_licht_ch12
+              icon: mdi:led-strip-variant
+              variables:
+                accent: '#b48cff'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: climate.badezimmer_badezimmer_thermostat
+              icon: mdi:radiator
+              variables:
+                accent: '#ff9868'
+              tap_action:
+                action: more-info
+      card_mod:
+        style: |
+          ha-card {
+            border-radius: 24px;
+            background: rgba(24,25,39,.92);
+            border: 1px solid rgba(255,255,255,.055);
+            box-shadow: none;
+            overflow: hidden;
+          }
+    - type: custom:stack-in-card
+      mode: vertical
+      cards:
+        - type: custom:button-card
+          template: room_visual_v5
+          name: Schlafzimmer
+          icon: mdi:bed-king-outline
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-mobile/schlafzimmer
+          variables:
+            accent: '#a891ff'
+            light_count_entity: sensor.magguu_schlafzimmer_lichter_an
+            temperature_entity: sensor.magguu_schlafzimmer_temperatur_c
+            humidity_entity: sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte
+            opening_entity: binary_sensor.magguu_schlafzimmer_oeffnung
+        - type: grid
+          columns: 4
+          square: false
+          cards:
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.schlafzimmer_schlafzimmer
+              icon: mdi:ceiling-light
+              variables:
+                accent: '#ffd166'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.schlafzimmer_bett_links
+              icon: mdi:lamp
+              variables:
+                accent: '#b48cff'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.schlafzimmer_bett_rechts
+              icon: mdi:lamp
+              variables:
+                accent: '#b48cff'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: cover.schlafzimmer_schlafzimmer_rollade_links
+              icon: mdi:window-shutter
+              variables:
+                accent: '#71b7ff'
+              tap_action:
+                action: toggle
+      card_mod:
+        style: |
+          ha-card {
+            border-radius: 24px;
+            background: rgba(24,25,39,.92);
+            border: 1px solid rgba(255,255,255,.055);
+            box-shadow: none;
+            overflow: hidden;
+          }
+    - type: custom:stack-in-card
+      mode: vertical
+      cards:
+        - type: custom:button-card
+          template: room_visual_v5
+          name: Kinderzimmer
+          icon: mdi:teddy-bear
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-mobile/kinderzimmer
+          variables:
+            accent: '#e886ad'
+            light_count_entity: sensor.magguu_kinderzimmer_lichter_an
+            temperature_entity: sensor.magguu_kinderzimmer_temperatur_c
+            humidity_entity: sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte
+            opening_entity: binary_sensor.magguu_kinderzimmer_oeffnung
+        - type: grid
+          columns: 4
+          square: false
+          cards:
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.kinderzimmer_kinderzimmer
+              icon: mdi:ceiling-light
+              variables:
+                accent: '#ffd166'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: light.kinderzimmer_schrank_licht
+              icon: mdi:wardrobe-outline
+              variables:
+                accent: '#e886ad'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: cover.kinderzimmer_kinderzimmer_rollade
+              icon: mdi:window-shutter
+              variables:
+                accent: '#71b7ff'
+              tap_action:
+                action: toggle
+            - type: custom:button-card
+              template: room_action_v5
+              entity: climate.kinderzimmer_kinderzimmer_thermostat
+              icon: mdi:radiator
+              variables:
+                accent: '#ff9868'
+              tap_action:
+                action: more-info
+      card_mod:
+        style: |
+          ha-card {
+            border-radius: 24px;
+            background: rgba(24,25,39,.92);
+            border: 1px solid rgba(255,255,255,.055);
+            box-shadow: none;
+            overflow: hidden;
+          }
+    - !include ../cards/navbar.yaml

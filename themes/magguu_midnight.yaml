@@ -1,0 +1,27 @@
+Magguu Midnight:
+  primary-color: '#a891ff'
+  accent-color: '#a891ff'
+  primary-background-color: '#0e0f18'
+  secondary-background-color: '#151624'
+  card-background-color: 'rgba(24,25,39,0.94)'
+  ha-card-background: 'rgba(24,25,39,0.94)'
+  primary-text-color: '#f2f2fb'
+  secondary-text-color: '#989caf'
+  divider-color: 'rgba(255,255,255,0.06)'
+  app-header-background-color: '#12131f'
+  app-header-text-color: '#f2f2fb'
+  sidebar-background-color: '#11121c'
+  sidebar-selected-background-color: 'rgba(168,145,255,0.14)'
+  sidebar-selected-icon-color: '#b9a6ff'
+  sidebar-selected-text-color: '#f2f2fb'
+  paper-item-icon-active-color: '#ffd166'
+  state-light-active-color: '#ffd166'
+  state-cover-active-color: '#71b7ff'
+  state-climate-heat-color: '#ff9868'
+  ha-card-border-radius: '24px'
+  ha-section-border-radius: '28px'
+  ha-section-background-color: 'rgba(255,255,255,0.018)'
+  lovelace-background: >-
+    radial-gradient(circle at 20% -10%, rgba(100,76,190,.18), transparent 35%),
+    radial-gradient(circle at 100% 5%, rgba(63,105,190,.10), transparent 32%),
+    #0e0f18

@@ -1,0 +1,303 @@
+group:
+  magguu_alle_lichter:
+    name: Alle Lichter
+    icon: mdi:lightbulb-group
+    entities:
+      - light.badezimmer_badezimmer
+      - light.badezimmer_badezimmer_licht_ch12
+      - light.badezimmer_badezimmer_licht_ch8
+      - light.badezimmer_licht_bad
+      - light.computerbereich
+      - light.esszimmer_esszimmer
+      - light.esszimmer_signe_gradient
+      - light.kinderzimmer_kinderzimmer
+      - light.kinderzimmer_schrank_licht
+      - light.schlafzimmer_bett_links
+      - light.schlafzimmer_bett_rechts
+      - light.schlafzimmer_schlafzimmer
+      - light.sonstiges_festavia_string_lights
+      - light.sonstiges_sonstiges
+      - light.wohnzimmer_hue_play_links
+      - light.wohnzimmer_hue_play_rechts
+      - light.wohnzimmer_licht_fenster
+      - light.wohnzimmer_licht_sideboard
+      - light.wohnzimmer_wohnzimmer
+      - switch.badezimmer_badezimmer_licht
+      - switch.esszimmer_esszimmer_licht
+      - switch.flur_flur_licht
+      - switch.kinderzimmer_kinderzimmer_licht
+      - switch.kuche_kuche_licht
+      - switch.schlafzimmer_schlafzimmer_licht
+
+script:
+  magguu_alle_lichter_aus:
+    alias: Alle Lichter aus
+    icon: mdi:lightbulb-group-off
+    mode: restart
+    sequence:
+      - action: homeassistant.turn_off
+        target:
+          entity_id: group.magguu_alle_lichter
+
+  magguu_alle_rollladen_auf:
+    alias: Alle Rollläden öffnen
+    icon: mdi:window-shutter-open
+    mode: restart
+    sequence:
+      - action: cover.open_cover
+        target:
+          entity_id:
+            - cover.kinderzimmer_kinderzimmer_rollade
+            - cover.kuche_kuche_rollade
+            - cover.schlafzimmer_schlafzimmer_rollade_links
+            - cover.schlafzimmer_schlafzimmer_rollade_rechts
+            - cover.wohnzimmer_wohnzimmer_rollade_links
+            - cover.wohnzimmer_wohnzimmer_rollade_mitte
+            - cover.wohnzimmer_wohnzimmer_rollade_rechts
+
+  magguu_alle_rollladen_zu:
+    alias: Alle Rollläden schließen
+    icon: mdi:window-shutter
+    mode: restart
+    sequence:
+      - action: cover.close_cover
+        target:
+          entity_id:
+            - cover.kinderzimmer_kinderzimmer_rollade
+            - cover.kuche_kuche_rollade
+            - cover.schlafzimmer_schlafzimmer_rollade_links
+            - cover.schlafzimmer_schlafzimmer_rollade_rechts
+            - cover.wohnzimmer_wohnzimmer_rollade_links
+            - cover.wohnzimmer_wohnzimmer_rollade_mitte
+            - cover.wohnzimmer_wohnzimmer_rollade_rechts
+
+template:
+  - sensor:
+      - name: Magguu Lichter an
+        unique_id: magguu_lichter_an
+        icon: mdi:lightbulb-group
+        state: >-
+          {% set ids = [
+            'light.badezimmer_badezimmer',
+            'light.computerbereich',
+            'light.esszimmer_esszimmer',
+            'light.kinderzimmer_kinderzimmer',
+            'light.schlafzimmer_schlafzimmer',
+            'light.sonstiges_sonstiges',
+            'light.wohnzimmer_wohnzimmer',
+            'switch.flur_flur_licht',
+            'switch.kuche_kuche_licht'
+          ] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Offene Fenster
+        unique_id: magguu_offene_fenster
+        icon: mdi:window-open-variant
+        state: >-
+          {% set ids = [
+            'binary_sensor.kinderzimmer_kinderzimmer_fenster',
+            'sensor.kuche_kuche_fenstertur',
+            'binary_sensor.schlafzimmer_schlafzimmer_fenstertur',
+            'binary_sensor.wohnzimmer_wohnzimmer_fenster',
+            'sensor.wohnzimmer_wohnzimmer_fenstertur'
+          ] %}
+          {% set ns = namespace(count=0) %}
+          {% for id in ids %}
+            {% if states(id) in ['on', 'open', 'tilted'] %}
+              {% set ns.count = ns.count + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.count }}
+
+      - name: Magguu Updates verfuegbar
+        unique_id: magguu_updates_verfuegbar
+        icon: mdi:update
+        state: >-
+          {{ states.update | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Nicht verfuegbar
+        unique_id: magguu_nicht_verfuegbar
+        icon: mdi:lan-disconnect
+        state: >-
+          {% set ids = [
+            'weather.forecast_home',
+            'climate.badezimmer_badezimmer_thermostat',
+            'climate.esszimmer_thermostat',
+            'climate.kinderzimmer_kinderzimmer_thermostat',
+            'climate.schlafzimmer_schlafzimmer_thermostat',
+            'climate.wohnzimmer_wohnzimmer_thermostat',
+            'media_player.av_samsung_soundbar_q90r',
+            'light.badezimmer_badezimmer',
+            'light.esszimmer_esszimmer',
+            'light.kinderzimmer_kinderzimmer',
+            'light.schlafzimmer_schlafzimmer',
+            'light.wohnzimmer_wohnzimmer'
+          ] %}
+          {% set ns = namespace(count=0) %}
+          {% for id in ids %}
+            {% if states(id) in ['unknown', 'unavailable'] %}
+              {% set ns.count = ns.count + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.count }}
+
+      - name: Magguu Wohnzimmer Temperatur C
+        unique_id: magguu_wohnzimmer_temperatur_c
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        availability: "{{ states('sensor.wohnzimmer_wohnzimmer_thermostat_temperatur') not in ['unknown', 'unavailable'] }}"
+        state: >-
+          {% set value = states('sensor.wohnzimmer_wohnzimmer_thermostat_temperatur') | float(0) %}
+          {{ (((value - 32) * 5 / 9) if state_attr('sensor.wohnzimmer_wohnzimmer_thermostat_temperatur', 'unit_of_measurement') in ['°F', 'F'] else value) | round(1) }}
+
+      - name: Magguu Esszimmer Temperatur C
+        unique_id: magguu_esszimmer_temperatur_c
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        availability: "{{ states('sensor.esszimmer_thermostat_temperatur') not in ['unknown', 'unavailable'] }}"
+        state: >-
+          {% set value = states('sensor.esszimmer_thermostat_temperatur') | float(0) %}
+          {{ (((value - 32) * 5 / 9) if state_attr('sensor.esszimmer_thermostat_temperatur', 'unit_of_measurement') in ['°F', 'F'] else value) | round(1) }}
+
+      - name: Magguu Badezimmer Temperatur C
+        unique_id: magguu_badezimmer_temperatur_c
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        availability: "{{ states('sensor.badezimmer_badezimmer_thermostat_temperatur') not in ['unknown', 'unavailable'] }}"
+        state: >-
+          {% set value = states('sensor.badezimmer_badezimmer_thermostat_temperatur') | float(0) %}
+          {{ (((value - 32) * 5 / 9) if state_attr('sensor.badezimmer_badezimmer_thermostat_temperatur', 'unit_of_measurement') in ['°F', 'F'] else value) | round(1) }}
+
+      - name: Magguu Schlafzimmer Temperatur C
+        unique_id: magguu_schlafzimmer_temperatur_c
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        availability: "{{ states('sensor.schlafzimmer_schlafzimmer_thermostat_temperatur') not in ['unknown', 'unavailable'] }}"
+        state: >-
+          {% set value = states('sensor.schlafzimmer_schlafzimmer_thermostat_temperatur') | float(0) %}
+          {{ (((value - 32) * 5 / 9) if state_attr('sensor.schlafzimmer_schlafzimmer_thermostat_temperatur', 'unit_of_measurement') in ['°F', 'F'] else value) | round(1) }}
+
+      - name: Magguu Kinderzimmer Temperatur C
+        unique_id: magguu_kinderzimmer_temperatur_c
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        availability: "{{ states('sensor.kinderzimmer_kinderzimmer_thermostat_temperatur') not in ['unknown', 'unavailable'] }}"
+        state: >-
+          {% set value = states('sensor.kinderzimmer_kinderzimmer_thermostat_temperatur') | float(0) %}
+          {{ (((value - 32) * 5 / 9) if state_attr('sensor.kinderzimmer_kinderzimmer_thermostat_temperatur', 'unit_of_measurement') in ['°F', 'F'] else value) | round(1) }}
+
+      - name: Magguu Durchschnittstemperatur
+        unique_id: magguu_durchschnittstemperatur
+        unit_of_measurement: °C
+        device_class: temperature
+        state_class: measurement
+        state: >-
+          {% set values = [
+            states('sensor.magguu_badezimmer_temperatur_c') | float(none),
+            states('sensor.magguu_esszimmer_temperatur_c') | float(none),
+            states('sensor.magguu_kinderzimmer_temperatur_c') | float(none),
+            states('sensor.magguu_schlafzimmer_temperatur_c') | float(none),
+            states('sensor.magguu_wohnzimmer_temperatur_c') | float(none)
+          ] | reject('eq', none) | list %}
+          {{ (values | sum / values | count) | round(1) if values | count else 0 }}
+
+      - name: Magguu Durchschnitt Luftfeuchtigkeit
+        unique_id: magguu_durchschnitt_luftfeuchtigkeit
+        unit_of_measurement: '%'
+        device_class: humidity
+        state_class: measurement
+        state: >-
+          {% set values = [
+            states('sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte') | float(none),
+            states('sensor.esszimmer_thermostat_rel_luftfeuchte') | float(none),
+            states('sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte') | float(none),
+            states('sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte') | float(none),
+            states('sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte') | float(none)
+          ] | reject('eq', none) | list %}
+          {{ (values | sum / values | count) | round(0) if values | count else 0 }}
+
+      - name: Magguu Wohnzimmer Lichter an
+        unique_id: magguu_wohnzimmer_lichter_an
+        state: >-
+          {% set ids = [
+            'light.wohnzimmer_wohnzimmer',
+            'light.wohnzimmer_licht_sideboard',
+            'light.wohnzimmer_licht_fenster',
+            'light.wohnzimmer_hue_play_links',
+            'light.wohnzimmer_hue_play_rechts',
+            'light.computerbereich',
+            'light.sonstiges_festavia_string_lights'
+          ] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Esszimmer Lichter an
+        unique_id: magguu_esszimmer_lichter_an
+        state: >-
+          {% set ids = ['light.esszimmer_esszimmer', 'light.esszimmer_signe_gradient'] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Badezimmer Lichter an
+        unique_id: magguu_badezimmer_lichter_an
+        state: >-
+          {% set ids = [
+            'light.badezimmer_badezimmer',
+            'light.badezimmer_licht_bad',
+            'light.badezimmer_badezimmer_licht_ch8',
+            'light.badezimmer_badezimmer_licht_ch12',
+            'switch.badezimmer_badezimmer_licht'
+          ] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Schlafzimmer Lichter an
+        unique_id: magguu_schlafzimmer_lichter_an
+        state: >-
+          {% set ids = [
+            'light.schlafzimmer_schlafzimmer',
+            'light.schlafzimmer_bett_links',
+            'light.schlafzimmer_bett_rechts',
+            'switch.schlafzimmer_schlafzimmer_licht'
+          ] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Kinderzimmer Lichter an
+        unique_id: magguu_kinderzimmer_lichter_an
+        state: >-
+          {% set ids = [
+            'light.kinderzimmer_kinderzimmer',
+            'light.kinderzimmer_schrank_licht',
+            'switch.kinderzimmer_kinderzimmer_licht'
+          ] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu Kueche Lichter an
+        unique_id: magguu_kueche_lichter_an
+        state: "{{ 1 if is_state('switch.kuche_kuche_licht', 'on') else 0 }}"
+
+  - binary_sensor:
+      - name: Magguu Wohnzimmer Oeffnung
+        unique_id: magguu_wohnzimmer_oeffnung
+        device_class: window
+        state: >-
+          {{ is_state('binary_sensor.wohnzimmer_wohnzimmer_fenster', 'on')
+             or states('sensor.wohnzimmer_wohnzimmer_fenstertur') in ['on', 'open', 'tilted'] }}
+
+      - name: Magguu Kueche Oeffnung
+        unique_id: magguu_kueche_oeffnung
+        device_class: window
+        state: >-
+          {{ states('sensor.kuche_kuche_fenstertur') in ['on', 'open', 'tilted'] }}
+
+      - name: Magguu Schlafzimmer Oeffnung
+        unique_id: magguu_schlafzimmer_oeffnung
+        device_class: window
+        state: "{{ is_state('binary_sensor.schlafzimmer_schlafzimmer_fenstertur', 'on') }}"
+
+      - name: Magguu Kinderzimmer Oeffnung
+        unique_id: magguu_kinderzimmer_oeffnung
+        device_class: window
+        state: "{{ is_state('binary_sensor.kinderzimmer_kinderzimmer_fenster', 'on') }}"

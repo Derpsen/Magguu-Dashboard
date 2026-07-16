@@ -1,0 +1,83 @@
+title: Esszimmer
+path: esszimmer
+icon: mdi:table-furniture
+subview: true
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    cards:
+      - type: custom:mushroom-title-card
+        title: Esszimmer
+        subtitle: Licht, Klima und Geräte
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.magguu_esszimmer_temperatur_c
+            name: Temperatur
+            icon: mdi:thermometer
+            icon_color: orange
+          - type: custom:mushroom-entity-card
+            entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+            name: Luftfeuchte
+            icon: mdi:water-percent
+            icon_color: blue
+  - type: grid
+    cards:
+      - type: heading
+        heading: Beleuchtung
+        icon: mdi:lightbulb-group-outline
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.esszimmer_esszimmer
+        name: Esszimmer gesamt
+        icon: mdi:lightbulb-group-outline
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.esszimmer_signe_gradient
+        name: Signe Gradient
+        icon: mdi:floor-lamp
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+  - type: grid
+    cards:
+      - type: heading
+        heading: Klima
+        icon: mdi:radiator
+      - type: custom:mushroom-climate-card
+        entity: climate.esszimmer_thermostat
+        name: Esszimmer
+        show_temperature_control: true
+        collapsible_controls: false
+      - type: custom:mini-graph-card
+        name: Temperatur · Esszimmer
+        hours_to_show: 48
+        points_per_hour: 1
+        line_width: 2
+        show:
+          labels: true
+          legend: false
+          fill: fade
+        entities:
+          - sensor.magguu_esszimmer_temperatur_c
+        card_mod:
+          style: |
+            ha-card { border-radius: 22px; box-shadow: none; }

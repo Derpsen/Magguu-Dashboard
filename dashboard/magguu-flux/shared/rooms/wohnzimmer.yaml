@@ -1,0 +1,212 @@
+title: Wohnzimmer
+path: wohnzimmer
+icon: mdi:sofa-outline
+subview: true
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    cards:
+      - type: custom:mushroom-title-card
+        title: Wohnzimmer
+        subtitle: Licht, Klima und Geräte
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: sensor.magguu_wohnzimmer_temperatur_c
+            name: Temperatur
+            icon: mdi:thermometer
+            icon_color: orange
+          - type: custom:mushroom-entity-card
+            entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
+            name: Luftfeuchte
+            icon: mdi:water-percent
+            icon_color: blue
+      - type: custom:mushroom-template-card
+        entity: binary_sensor.magguu_wohnzimmer_oeffnung
+        primary: Fenster / Tür
+        secondary: "{{ 'Geöffnet' if is_state(entity, 'on') else 'Geschlossen' }}"
+        icon: "{{ 'mdi:window-open-variant' if is_state(entity, 'on') else 'mdi:window-closed-variant' }}"
+        color: "{{ 'orange' if is_state(entity, 'on') else 'green' }}"
+        tap_action:
+          action: more-info
+  - type: grid
+    cards:
+      - type: heading
+        heading: Beleuchtung
+        icon: mdi:lightbulb-group-outline
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.wohnzimmer_wohnzimmer
+        name: Wohnzimmer gesamt
+        icon: mdi:lightbulb-group-outline
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.wohnzimmer_licht_sideboard
+        name: Sideboard
+        icon: mdi:lamps-outline
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.wohnzimmer_licht_fenster
+        name: Fensterlicht
+        icon: mdi:window-open-variant
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.wohnzimmer_hue_play_links
+        name: Hue Play links
+        icon: mdi:wall-sconce-flat
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.wohnzimmer_hue_play_rechts
+        name: Hue Play rechts
+        icon: mdi:wall-sconce-flat
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.computerbereich
+        name: Computerbereich
+        icon: mdi:monitor-dashboard
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+      - type: custom:bubble-card
+        card_type: button
+        button_type: slider
+        entity: light.sonstiges_festavia_string_lights
+        name: Festavia
+        icon: mdi:string-lights
+        show_state: true
+        card_layout: large
+        styles: |
+          ha-card {
+            --bubble-border-radius: 22px;
+            --bubble-box-shadow: none;
+            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+          }
+  - type: grid
+    cards:
+      - type: heading
+        heading: Klima
+        icon: mdi:radiator
+      - type: custom:mushroom-climate-card
+        entity: climate.wohnzimmer_wohnzimmer_thermostat
+        name: Wohnzimmer
+        show_temperature_control: true
+        collapsible_controls: false
+      - type: custom:mini-graph-card
+        name: Temperatur · Wohnzimmer
+        hours_to_show: 48
+        points_per_hour: 1
+        line_width: 2
+        show:
+          labels: true
+          legend: false
+          fill: fade
+        entities:
+          - sensor.magguu_wohnzimmer_temperatur_c
+        card_mod:
+          style: |
+            ha-card { border-radius: 22px; box-shadow: none; }
+      - type: heading
+        heading: Rollläden
+        icon: mdi:window-shutter
+      - type: custom:mushroom-cover-card
+        entity: cover.wohnzimmer_wohnzimmer_rollade_links
+        name: Rollladen links
+        show_buttons_control: true
+        show_position_control: true
+      - type: custom:mushroom-cover-card
+        entity: cover.wohnzimmer_wohnzimmer_rollade_mitte
+        name: Rollladen Mitte
+        show_buttons_control: true
+        show_position_control: true
+      - type: custom:mushroom-cover-card
+        entity: cover.wohnzimmer_wohnzimmer_rollade_rechts
+        name: Rollladen rechts
+        show_buttons_control: true
+        show_position_control: true
+  - type: grid
+    cards:
+      - type: heading
+        heading: Medien & Geräte
+        icon: mdi:television-speaker
+      - type: custom:mushroom-entity-card
+        entity: switch.wohnzimmer_wohnzimmer_fernseher
+        name: Fernseher
+        icon: mdi:television
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+      - type: custom:mushroom-entity-card
+        entity: switch.wohnzimmer_wohnzimmer_computer
+        name: Computer
+        icon: mdi:desktop-tower-monitor
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+      - type: custom:mushroom-media-player-card
+        entity: media_player.av_samsung_soundbar_q90r
+        name: Samsung Soundbar
+        icon: mdi:soundbar
+        use_media_info: true
+        show_volume_level: true
+        media_controls:
+          - play_pause_stop
+        volume_controls:
+          - volume_mute
+          - volume_set
+        collapsible_controls: true

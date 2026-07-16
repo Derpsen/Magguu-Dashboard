@@ -1,0 +1,421 @@
+- title: Home
+  path: overview
+  icon: mdi:home
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    max-width: 1460px
+    margin: 0 auto
+    padding: 18px 18px 40px
+    grid-gap: 14px
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr) minmax(310px, .82fr)
+    grid-template-areas: |
+      "hero hero weather"
+      "agenda agenda weather"
+      "rooms rooms side"
+      "media media side"
+    mediaquery:
+      "(max-width: 1080px)":
+        grid-template-columns: 1fr 1fr
+        grid-template-areas: |
+          "hero weather"
+          "agenda agenda"
+          "rooms rooms"
+          "media side"
+      "(max-width: 760px)":
+        grid-template-columns: 1fr
+        grid-template-areas: |
+          "hero"
+          "weather"
+          "agenda"
+          "rooms"
+          "side"
+          "media"
+  cards:
+    - type: custom:button-card
+      template: hero_v5
+      view_layout:
+        grid-area: hero
+
+    - type: vertical-stack
+      view_layout:
+        grid-area: weather
+      cards:
+        - type: custom:clock-weather-card
+          entity: weather.forecast_home
+          title: Wetter
+          sun_entity: sun.sun
+          temperature_sensor: sensor.magguu_durchschnittstemperatur
+          humidity_sensor: sensor.magguu_durchschnitt_luftfeuchtigkeit
+          weather_icon_type: fill
+          animated_icon: true
+          forecast_rows: 5
+          locale: de-DE
+          time_pattern: HH:mm
+          date_pattern: EEE, dd.MM.
+          hide_today_section: false
+          hide_forecast_section: false
+          card_mod:
+            style: |
+              ha-card { border-radius:28px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+            - type: custom:button-card
+              template: quick_v5
+              entity: weather.forecast_home
+              name: Luftfeuchte
+              icon: mdi:water-percent
+              variables:
+                accent: '#57cbd3'
+                sub: "[[[ return `${entity?.attributes?.humidity ?? '—'} %`; ]]]"
+            - type: custom:button-card
+              template: quick_v5
+              entity: weather.forecast_home
+              name: Wind
+              icon: mdi:weather-windy
+              variables:
+                accent: '#70d6c8'
+                sub: "[[[ return `${Math.round(entity?.attributes?.wind_speed ?? 0)} km/h`; ]]]"
+
+    - type: vertical-stack
+      view_layout:
+        grid-area: agenda
+      cards:
+        - type: custom:mushroom-title-card
+          title: Als Nächstes
+          subtitle: Arbeit, Abfuhr und Termine auf einen Blick
+        - type: grid
+          columns: 4
+          square: false
+          cards:
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.arbeiten
+              name: Arbeit
+              icon: mdi:briefcase-outline
+              variables:
+                accent: '#b48cff'
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.abfuhr
+              name: Abfuhr
+              icon: mdi:trash-can-outline
+              variables:
+                accent: '#79d98c'
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.privat
+              name: Privat
+              icon: mdi:account-heart-outline
+              variables:
+                accent: '#e886ad'
+            - type: custom:button-card
+              template: next_event_v5
+              entity: calendar.termine
+              name: Termine
+              icon: mdi:calendar-star
+              variables:
+                accent: '#71b7ff'
+
+    - type: vertical-stack
+      view_layout:
+        grid-area: rooms
+      cards:
+        - type: custom:mushroom-title-card
+          title: Wohnbereiche
+          subtitle: Direkte Steuerung – alle Räume auf der Raumseite
+        - type: custom:grid-layout
+          layout:
+            grid-template-columns: repeat(3, minmax(0, 1fr))
+            grid-gap: 12px
+            mediaquery:
+              "(max-width: 950px)":
+                grid-template-columns: 1fr
+          cards:
+        - type: custom:stack-in-card
+          mode: vertical
+          cards:
+            - type: custom:button-card
+              template: room_visual_v5
+              name: Wohnzimmer
+              icon: mdi:sofa-outline
+              tap_action:
+                action: navigate
+                navigation_path: /magguu-tablet/wohnzimmer
+              variables:
+                accent: '#6faeff'
+                light_count_entity: sensor.magguu_wohnzimmer_lichter_an
+                temperature_entity: sensor.magguu_wohnzimmer_temperatur_c
+                humidity_entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
+                opening_entity: binary_sensor.magguu_wohnzimmer_oeffnung
+            - type: grid
+              columns: 4
+              square: false
+              cards:
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: light.wohnzimmer_wohnzimmer
+                  icon: mdi:lightbulb-group
+                  variables:
+                    accent: '#ffd166'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: switch.wohnzimmer_wohnzimmer_fernseher
+                  icon: mdi:television
+                  variables:
+                    accent: '#b48cff'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: switch.wohnzimmer_wohnzimmer_computer
+                  icon: mdi:desktop-tower-monitor
+                  variables:
+                    accent: '#70d6c8'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: cover.wohnzimmer_wohnzimmer_rollade_mitte
+                  icon: mdi:window-shutter
+                  variables:
+                    accent: '#71b7ff'
+                  tap_action:
+                    action: toggle
+          card_mod:
+            style: |
+              ha-card {
+                border-radius: 24px;
+                background: rgba(24,25,39,.92);
+                border: 1px solid rgba(255,255,255,.055);
+                box-shadow: none;
+                overflow: hidden;
+              }
+        - type: custom:stack-in-card
+          mode: vertical
+          cards:
+            - type: custom:button-card
+              template: room_visual_v5
+              name: Esszimmer
+              icon: mdi:table-furniture
+              tap_action:
+                action: navigate
+                navigation_path: /magguu-tablet/esszimmer
+              variables:
+                accent: '#f3a84b'
+                light_count_entity: sensor.magguu_esszimmer_lichter_an
+                temperature_entity: sensor.magguu_esszimmer_temperatur_c
+                humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+            - type: grid
+              columns: 3
+              square: false
+              cards:
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: light.esszimmer_esszimmer
+                  icon: mdi:ceiling-light
+                  variables:
+                    accent: '#ffd166'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: light.esszimmer_signe_gradient
+                  icon: mdi:floor-lamp
+                  variables:
+                    accent: '#f3a84b'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: climate.esszimmer_thermostat
+                  icon: mdi:radiator
+                  variables:
+                    accent: '#ff9868'
+                  tap_action:
+                    action: more-info
+          card_mod:
+            style: |
+              ha-card {
+                border-radius: 24px;
+                background: rgba(24,25,39,.92);
+                border: 1px solid rgba(255,255,255,.055);
+                box-shadow: none;
+                overflow: hidden;
+              }
+        - type: custom:stack-in-card
+          mode: vertical
+          cards:
+            - type: custom:button-card
+              template: room_visual_v5
+              name: Küche
+              icon: mdi:fridge-outline
+              tap_action:
+                action: navigate
+                navigation_path: /magguu-tablet/kueche
+              variables:
+                accent: '#79d98c'
+                light_count_entity: sensor.magguu_kueche_lichter_an
+                opening_entity: binary_sensor.magguu_kueche_oeffnung
+            - type: grid
+              columns: 3
+              square: false
+              cards:
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: switch.kuche_kuche_licht
+                  icon: mdi:ceiling-light
+                  variables:
+                    accent: '#ffd166'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: cover.kuche_kuche_rollade
+                  icon: mdi:window-shutter
+                  variables:
+                    accent: '#71b7ff'
+                  tap_action:
+                    action: toggle
+                - type: custom:button-card
+                  template: room_action_v5
+                  entity: binary_sensor.magguu_kueche_oeffnung
+                  icon: mdi:window-open-variant
+                  variables:
+                    accent: '#ff9f43'
+                  tap_action:
+                    action: more-info
+          card_mod:
+            style: |
+              ha-card {
+                border-radius: 24px;
+                background: rgba(24,25,39,.92);
+                border: 1px solid rgba(255,255,255,.055);
+                box-shadow: none;
+                overflow: hidden;
+              }
+        - type: custom:mushroom-template-card
+          primary: Alle Räume öffnen
+          secondary: Wohnzimmer, Küche, Bad, Schlaf- und Kinderzimmer
+          icon: mdi:floor-plan
+          icon_color: purple
+          tap_action:
+            action: navigate
+            navigation_path: /magguu-tablet/raeume
+          card_mod:
+            style: |
+              ha-card { border-radius:20px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.045); }
+
+    - type: vertical-stack
+      view_layout:
+        grid-area: side
+      cards:
+        - type: custom:mushroom-title-card
+          title: Schnellzugriff
+          subtitle: Die häufigsten Aktionen
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+            - type: custom:button-card
+              template: quick_v5
+              entity: script.magguu_alle_lichter_aus
+              name: Licht aus
+              icon: mdi:lightbulb-group-off-outline
+              variables: { accent: '#ffd166', sub: Hausweit }
+              tap_action: { action: call-service, service: script.turn_on, service_data: { entity_id: script.magguu_alle_lichter_aus } }
+            - type: custom:button-card
+              template: quick_v5
+              entity: script.magguu_alle_rollladen_auf
+              name: Rollläden auf
+              icon: mdi:window-shutter-open
+              variables: { accent: '#71b7ff', sub: Alle Räume }
+              tap_action: { action: call-service, service: script.turn_on, service_data: { entity_id: script.magguu_alle_rollladen_auf } }
+            - type: custom:button-card
+              template: quick_v5
+              entity: script.magguu_alle_rollladen_zu
+              name: Rollläden zu
+              icon: mdi:window-shutter
+              variables: { accent: '#8d83ff', sub: Alle Räume }
+              tap_action: { action: call-service, service: script.turn_on, service_data: { entity_id: script.magguu_alle_rollladen_zu } }
+            - type: custom:button-card
+              template: quick_v5
+              entity: switch.wohnzimmer_wohnzimmer_fernseher
+              name: Fernseher
+              icon: mdi:television
+              variables: { accent: '#b48cff', sub: Wohnzimmer }
+              tap_action: { action: toggle }
+        - type: custom:mushroom-title-card
+          title: Hinweise
+          subtitle: Nur relevante Meldungen
+        - type: conditional
+          conditions:
+            - entity: sensor.magguu_offene_fenster
+              state_not: '0'
+          card:
+            type: custom:mushroom-template-card
+            entity: sensor.magguu_offene_fenster
+            primary: Fenster geöffnet
+            secondary: "{{ states(entity) }} Öffnung(en) prüfen"
+            icon: mdi:window-open-variant
+            icon_color: orange
+        - type: conditional
+          conditions:
+            - entity: sensor.openccu_servicemeldungen
+              state_not: '0'
+          card:
+            type: custom:mushroom-template-card
+            entity: sensor.openccu_servicemeldungen
+            primary: OpenCCU-Meldung
+            secondary: "{{ states(entity) }} Servicemeldung(en)"
+            icon: mdi:alert-circle-outline
+            icon_color: red
+        - type: conditional
+          conditions:
+            - entity: sensor.magguu_updates_verfuegbar
+              state_not: '0'
+          card:
+            type: custom:mushroom-template-card
+            entity: sensor.magguu_updates_verfuegbar
+            primary: Updates verfügbar
+            secondary: "{{ states(entity) }} Aktualisierung(en)"
+            icon: mdi:update
+            icon_color: blue
+
+    - type: vertical-stack
+      view_layout:
+        grid-area: media
+      cards:
+        - type: custom:mushroom-title-card
+          title: Medien & Raumklima
+          subtitle: Nur das Wesentliche
+        - type: grid
+          columns: 2
+          square: false
+          cards:
+            - type: media-control
+              entity: media_player.av_samsung_soundbar_q90r
+            - type: custom:mini-graph-card
+              name: Raumtemperaturen
+              icon: mdi:chart-line
+              hours_to_show: 24
+              points_per_hour: 2
+              line_width: 2
+              show:
+                labels: false
+                legend: true
+                fill: fade
+              entities:
+                - entity: sensor.magguu_wohnzimmer_temperatur_c
+                  name: Wohnzimmer
+                - entity: sensor.magguu_schlafzimmer_temperatur_c
+                  name: Schlafzimmer
+                - entity: sensor.magguu_badezimmer_temperatur_c
+                  name: Bad
+              card_mod:
+                style: |
+                  ha-card { border-radius:24px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }

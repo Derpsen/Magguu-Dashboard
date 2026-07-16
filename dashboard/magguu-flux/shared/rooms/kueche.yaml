@@ -1,0 +1,43 @@
+title: Küche
+path: kueche
+icon: mdi:countertop-outline
+subview: true
+type: sections
+max_columns: 3
+sections:
+  - type: grid
+    cards:
+      - type: custom:mushroom-title-card
+        title: Küche
+        subtitle: Licht, Klima und Geräte
+      - type: custom:mushroom-template-card
+        entity: binary_sensor.magguu_kueche_oeffnung
+        primary: Fenster / Tür
+        secondary: "{{ 'Geöffnet' if is_state(entity, 'on') else 'Geschlossen' }}"
+        icon: "{{ 'mdi:window-open-variant' if is_state(entity, 'on') else 'mdi:window-closed-variant' }}"
+        color: "{{ 'orange' if is_state(entity, 'on') else 'green' }}"
+        tap_action:
+          action: more-info
+  - type: grid
+    cards:
+      - type: heading
+        heading: Beleuchtung
+        icon: mdi:lightbulb-group-outline
+      - type: custom:mushroom-entity-card
+        entity: switch.kuche_kuche_licht
+        name: Küchenlicht
+        icon: mdi:ceiling-light
+        tap_action:
+          action: toggle
+        hold_action:
+          action: more-info
+  - type: grid
+    cards:
+      - type: heading
+        heading: Rollläden
+        icon: mdi:window-shutter
+      - type: custom:mushroom-cover-card
+        entity: cover.kuche_kuche_rollade
+        name: Rollladen Küche
+        show_buttons_control: true
+        show_position_control: true
