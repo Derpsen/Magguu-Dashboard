@@ -24,10 +24,25 @@ jobs:
         env:
           HA_CONFIG_DIR: ${{ runner.temp }}/config
         run: |
-          mkdir -p "$HA_CONFIG_DIR"
+          mkdir -p "$HA_CONFIG_DIR/dashboard/magguu-flux" "$HA_CONFIG_DIR/packages"
+          touch "$HA_CONFIG_DIR/dashboard/magguu-flux/legacy.yaml"
+          touch "$HA_CONFIG_DIR/packages/magguu_flux.yaml"
+          cat > "$HA_CONFIG_DIR/configuration.yaml" <<'EOF'
+          lovelace:
+            dashboards:
+              magguu-mobile:
+                filename: /config/dashboard/magguu-flux/mobile/dashboard.yaml
+              magguu-tablet:
+                filename: /config/dashboard/magguu-flux/tablet/dashboard.yaml
+          EOF
           sh update-ha.sh
-          test -f "$HA_CONFIG_DIR/dashboard/magguu-flux/mobile/dashboard.yaml"
-          test -f "$HA_CONFIG_DIR/dashboard/magguu-flux/tablet/dashboard.yaml"
-          test -f "$HA_CONFIG_DIR/packages/magguu_flux.yaml"
+          test -f "$HA_CONFIG_DIR/dashboard/magguu-dashboard/mobile/dashboard.yaml"
+          test -f "$HA_CONFIG_DIR/dashboard/magguu-dashboard/tablet/dashboard.yaml"
+          test -f "$HA_CONFIG_DIR/packages/magguu_dashboard.yaml"
           test -f "$HA_CONFIG_DIR/themes/magguu_midnight.yaml"
           test -x "$HA_CONFIG_DIR/magguu-dashboard-update.sh"
+          test ! -e "$HA_CONFIG_DIR/dashboard/magguu-flux"
+          test ! -e "$HA_CONFIG_DIR/packages/magguu_flux.yaml"
+          grep -q '/config/dashboard/magguu-dashboard/mobile/dashboard.yaml' "$HA_CONFIG_DIR/configuration.yaml"
+          grep -q '/config/dashboard/magguu-dashboard/tablet/dashboard.yaml' "$HA_CONFIG_DIR/configuration.yaml"
+          ! grep -q 'magguu-flux\|magguu_flux' "$HA_CONFIG_DIR/configuration.yaml"

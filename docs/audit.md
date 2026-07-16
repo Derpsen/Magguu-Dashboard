@@ -10,10 +10,10 @@ Eine visuelle Neugestaltung wurde in Phase 1 nicht begonnen. Unmittelbar defekte
 
 ## Architekturüberblick
 
-- `dashboard/magguu-flux/mobile/` und `tablet/` sind eigenständige Lovelace-Einstiege. Beide laden gemeinsame Button-Card-Templates und ihre Views über `!include_dir_merge_list`.
+- `dashboard/magguu-dashboard/mobile/` und `tablet/` sind eigenständige Lovelace-Einstiege. Beide laden gemeinsame Button-Card-Templates und ihre Views über `!include_dir_merge_list`.
 - Die sechs Raumdetailseiten unter `shared/rooms/` werden von Mobile und Tablet gemeinsam eingebunden. Das ist die derzeit stärkste Wiederverwendung im Repository.
 - Die Hauptseiten Overview, Räume, Klima, System und Kalender existieren dagegen je Gerätetyp separat. Klima und System sind nahezu identisch; Räume unterscheiden sich hauptsächlich durch Layout und Navigationspfade; Overview weist erhebliche inhaltliche Abweichungen auf.
-- `packages/magguu_flux.yaml` definiert Gruppen, globale Aktionen, normalisierte Temperaturwerte, Zähler und kombinierte Öffnungssensoren.
+- `packages/magguu_dashboard.yaml` definiert Gruppen, globale Aktionen, normalisierte Temperaturwerte, Zähler und kombinierte Öffnungssensoren.
 - `shared/templates/button_card.yaml` bündelt sechs UI-Templates, enthält aber zugleich viele feste Maße, Inline-Farben und längere JavaScript-Ausdrücke.
 - `themes/magguu_midnight.yaml` stellt eine gute Midnight-Basis bereit, deckt aber Abstände, Typografie, Schatten, Statusflächen und responsive Tokens noch nicht zentral ab.
 
@@ -35,7 +35,7 @@ Eine visuelle Neugestaltung wurde in Phase 1 nicht begonnen. Unmittelbar defekte
 
 ## Entity-Audit
 
-`docs/entities.md` wurde als verbindliche Quelle verwendet. Repository-eigene `sensor.magguu_*`, `binary_sensor.magguu_*`, Scripts und die Lichtgruppe werden aus `packages/magguu_flux.yaml` erzeugt und sind damit nachvollziehbar.
+`docs/entities.md` wurde als verbindliche Quelle verwendet. Repository-eigene `sensor.magguu_*`, `binary_sensor.magguu_*`, Scripts und die Lichtgruppe werden aus `packages/magguu_dashboard.yaml` erzeugt und sind damit nachvollziehbar.
 
 Gefundene und in Phase 1 behobene Referenzfehler:
 

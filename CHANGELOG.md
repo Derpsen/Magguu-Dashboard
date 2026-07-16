@@ -2,6 +2,8 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- technische Pfade vollständig von `magguu-flux`/`magguu_flux.yaml` auf `magguu-dashboard`/`magguu_dashboard.yaml` migriert
+- bestehende Installationen werden inklusive `configuration.yaml` automatisch und mit Backup auf die neuen Pfade umgestellt
 - sicheren Dashboard-Updater mit Bestätigung, Backup und Ergebnismeldung auf der System-Seite ergänzt
 - containerkompatibles Update über `curl`, `tar` und POSIX `sh` ergänzt
 - Phase 2: zentrale Design-Tokens für Flächen, Farben, Abstände, Radien und Schatten ergänzt
