@@ -1,3 +1,6 @@
+shell_command:
+  magguu_dashboard_update: "sh /config/magguu-dashboard-update.sh"
+
 group:
   magguu_alle_lichter:
     name: Alle Lichter
@@ -30,6 +33,28 @@ group:
       - switch.schlafzimmer_schlafzimmer_licht
 
 script:
+  magguu_dashboard_aktualisieren:
+    alias: Magguu Dashboard aktualisieren
+    icon: mdi:cloud-download-outline
+    mode: single
+    sequence:
+      - action: shell_command.magguu_dashboard_update
+        response_variable: update_result
+      - if: "{{ update_result.get('returncode', 1) == 0 }}"
+        then:
+          - action: persistent_notification.create
+            data:
+              title: Magguu Dashboard aktualisiert
+              message: >-
+                {{ update_result.get('stdout', 'Update abgeschlossen.') }}
+                Starte Home Assistant neu und lade die App anschließend vollständig neu.
+        else:
+          - action: persistent_notification.create
+            data:
+              title: Dashboard-Update fehlgeschlagen
+              message: >-
+                {{ update_result.get('stderr', 'Keine Fehlerbeschreibung verfügbar.') }}
+
   magguu_alle_lichter_aus:
     alias: Alle Lichter aus
     icon: mdi:lightbulb-group-off

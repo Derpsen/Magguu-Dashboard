@@ -90,3 +90,5 @@ bash update.sh
 ```
 
 Das Skript lädt ausschließlich Fast-Forward-Updates und installiert danach Dashboard, Package und Theme mit vorherigem Backup neu. Ein HACS-Dashboard-Repository ist für diese Struktur nicht geeignet, weil HACS-Dashboard-Downloads Frontend-JavaScript unter `www/community` verwalten, nicht YAML-Dashboards und Packages unter mehreren `/config`-Zielen.
+
+Nach der Erstinstallation steht zusätzlich auf der System-Seite die Aktion **Dashboard aktualisieren** bereit. Sie lädt den aktuellen `main`-Stand direkt von GitHub, erstellt ein Backup und aktualisiert alle Dashboard-Dateien. Die Aktion benötigt im Home-Assistant-Container nur `sh`, `curl` und `tar`, nicht `git` oder ein Terminal-Add-on. Nach einem erfolgreichen Update Home Assistant neu starten und die App vollständig neu laden.

@@ -117,7 +117,9 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 
 ## Durch dieses Repository erzeugt
 
+- `shell_command.magguu_dashboard_update`
 - `group.magguu_alle_lichter`
+- `script.magguu_dashboard_aktualisieren`
 - `script.magguu_alle_lichter_aus`
 - `script.magguu_alle_rollladen_auf`
 - `script.magguu_alle_rollladen_zu`

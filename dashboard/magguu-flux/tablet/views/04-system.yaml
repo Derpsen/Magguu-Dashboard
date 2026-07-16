@@ -131,6 +131,25 @@
     - type: grid
       cards:
         - type: heading
+          heading: Magguu Dashboard
+          icon: mdi:view-dashboard-edit-outline
+        - type: custom:mushroom-template-card
+          entity: script.magguu_dashboard_aktualisieren
+          primary: Dashboard aktualisieren
+          secondary: Lädt den aktuellen Stand mit automatischem Backup
+          multiline_secondary: true
+          icon: mdi:cloud-download-outline
+          color: purple
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            target:
+              entity_id: script.magguu_dashboard_aktualisieren
+            confirmation:
+              text: Dashboard jetzt aktualisieren und ein Backup anlegen?
+          hold_action:
+            action: more-info
+        - type: heading
           heading: Backups
           icon: mdi:cloud-check-outline
         - 
