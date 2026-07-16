@@ -14,3 +14,20 @@ jobs:
           python-version: "3.12"
       - run: pip install PyYAML
       - run: python validate.py
+
+  updater:
+    needs: yaml
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test dashboard self-update
+        env:
+          HA_CONFIG_DIR: ${{ runner.temp }}/config
+        run: |
+          mkdir -p "$HA_CONFIG_DIR"
+          sh update-ha.sh
+          test -f "$HA_CONFIG_DIR/dashboard/magguu-flux/mobile/dashboard.yaml"
+          test -f "$HA_CONFIG_DIR/dashboard/magguu-flux/tablet/dashboard.yaml"
+          test -f "$HA_CONFIG_DIR/packages/magguu_flux.yaml"
+          test -f "$HA_CONFIG_DIR/themes/magguu_midnight.yaml"
+          test -x "$HA_CONFIG_DIR/magguu-dashboard-update.sh"
