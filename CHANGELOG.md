@@ -2,6 +2,13 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- Klima, Kalender und System auf gemeinsame responsive Inhaltsmodule umgestellt
+- alle sechs Raumdetailseiten vom alten Sections-Layout auf das moderne Midnight-Raster migriert
+- einheitliche Seitenheader, Inhaltsbreiten, Abstände und Breakpoints für Mobile, Tablet und Desktop ergänzt
+- Rooms-Seite an den neuen Seitenheader angeglichen
+- Home und alle Hauptseiten auf eine gemeinsame relative Navbar umgestellt und doppelte Navbar-Dateien entfernt
+- Klima um kompakte Kennzahlen, Öffnungshinweise und gemeinsame Temperatur-/Luftfeuchteverläufe erweitert
+- Kalender um gemeinsame nächste Termine und eine 7-Tage-Agenda erweitert
 - fehleranfällige Clock-Weather-Card auf der Home-Seite durch die eingebaute Wettervorhersage ersetzt
 - offene Fenster und Türen auf Mobile und Tablet einzeln anklickbar gemacht
 - Bestätigungen für hausweite Licht- und Rollladenaktionen ergänzt

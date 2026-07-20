@@ -4,7 +4,7 @@ Modulares Home-Assistant-Dashboard für Smartphone, Tablet und Desktop.
 
 ## Aktueller Stand
 
-Diese Repository-Version enthält den funktionierenden V5-Dashboardstand als Basis und zusätzlich eine vollständige Entwicklungsstruktur für VS Code und Codex. Die nächste Entwicklungsphase konzentriert sich auf große zusammenhängende Raumkarten, eine modernisierte Home-Seite und spätere Ring-/Nuki-Integration.
+Diese Repository-Version enthält die moderne V6-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Ring-, Nuki-, Unraid-, Plex- und AdGuard-Erweiterungen folgen erst mit verifizierten Entitäts-IDs.
 
 ## Voraussetzungen
 
@@ -18,13 +18,14 @@ Installierte Frontend-Erweiterungen:
 - Mini Graph Card
 - Auto Entities
 - Navbar Card
-- Simple Tabs Card
 - Stack In Card
 
 ## Struktur
 
 - `dashboard/magguu-dashboard/` – aktives YAML-Dashboard
 - `dashboard/magguu-dashboard/shared/cards/rooms.yaml` – gemeinsame Raumkarten für Mobile und Tablet
+- `dashboard/magguu-dashboard/shared/cards/` – gemeinsame Inhalte für Räume, Klima, Kalender und System
+- `dashboard/magguu-dashboard/shared/rooms/` – gemeinsame responsive Raumdetailseiten
 - `dashboard/magguu-dashboard/shared/templates/button_card.yaml` – zentrale UI-Templates
 - `packages/` – Template-Sensoren und Hilfslogik
 - `themes/` – Magguu Midnight Theme

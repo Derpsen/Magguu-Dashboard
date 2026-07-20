@@ -2,41 +2,80 @@ title: Schlafzimmer
 path: schlafzimmer
 icon: mdi:bed-king-outline
 subview: true
-type: sections
-max_columns: 3
-sections:
-  - type: grid
+theme: Magguu Midnight
+type: custom:grid-layout
+layout:
+  max-width: 1180px
+  margin: 0 auto
+  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
+  grid-gap: 14px
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  grid-template-areas: |
+    "hero hero"
+    "status status"
+    "light climate"
+    "light cover"
+  mediaquery:
+    "(max-width: 760px)":
+      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 28px
+      grid-template-columns: minmax(0, 1fr)
+      grid-template-areas: |
+        "hero"
+        "status"
+        "light"
+        "climate"
+        "cover"
+cards:
+  - type: custom:button-card
+    template: page_header_v6
+    name: Schlafzimmer
+    icon: mdi:bed-king-outline
+    variables:
+      subtitle: Licht, Raumklima und Rollläden
+      accent: '#a891ff'
+    view_layout: {grid-area: hero}
+
+  - type: custom:grid-layout
+    view_layout: {grid-area: status}
+    layout:
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+      grid-gap: 12px
+      mediaquery:
+        "(max-width: 620px)":
+          grid-template-columns: repeat(2, minmax(0, 1fr))
     cards:
-      - type: custom:mushroom-title-card
-        title: Schlafzimmer
-        subtitle: Licht, Klima und Geräte
-      - type: grid
-        columns: 2
-        square: false
-        cards:
-          - type: custom:mushroom-entity-card
-            entity: sensor.magguu_schlafzimmer_temperatur_c
-            name: Temperatur
-            icon: mdi:thermometer
-            icon_color: orange
-          - type: custom:mushroom-entity-card
-            entity: sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte
-            name: Luftfeuchte
-            icon: mdi:water-percent
-            icon_color: blue
+      - type: custom:button-card
+        template: quick_v5
+        entity: sensor.magguu_schlafzimmer_temperatur_c
+        name: Temperatur
+        icon: mdi:thermometer
+        variables:
+          accent: '#ff9868'
+          sub: "[[[ return `${entity?.state ?? '—'} °C`; ]]]"
+        tap_action: {action: more-info}
+      - type: custom:button-card
+        template: quick_v5
+        entity: sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte
+        name: Luftfeuchte
+        icon: mdi:water-percent
+        variables:
+          accent: '#57cbd3'
+          sub: "[[[ return `${entity?.state ?? '—'} %`; ]]]"
+        tap_action: {action: more-info}
       - type: custom:mushroom-template-card
         entity: binary_sensor.magguu_schlafzimmer_oeffnung
         primary: Fenster / Tür
         secondary: "{{ 'Geöffnet' if is_state(entity, 'on') else 'Geschlossen' }}"
         icon: "{{ 'mdi:window-open-variant' if is_state(entity, 'on') else 'mdi:window-closed-variant' }}"
         color: "{{ 'orange' if is_state(entity, 'on') else 'green' }}"
-        tap_action:
-          action: more-info
-  - type: grid
+        tap_action: {action: more-info}
+
+  - type: vertical-stack
+    view_layout: {grid-area: light}
     cards:
-      - type: heading
-        heading: Beleuchtung
-        icon: mdi:lightbulb-group-outline
+      - type: custom:mushroom-title-card
+        title: Beleuchtung
+        subtitle: Raum- und Bettlichter dimmen
       - type: custom:bubble-card
         card_type: button
         button_type: slider
@@ -45,11 +84,11 @@ sections:
         icon: mdi:lightbulb-group-outline
         show_state: true
         card_layout: large
-        styles: |
+        styles: &bubble_style |
           ha-card {
-            --bubble-border-radius: 22px;
-            --bubble-box-shadow: none;
-            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+            --bubble-border-radius: var(--mag-radius-card, 24px);
+            --bubble-box-shadow: var(--mag-shadow-card, none);
+            --bubble-border: 1px solid var(--mag-border, rgba(255,255,255,.06));
           }
       - type: custom:bubble-card
         card_type: button
@@ -59,12 +98,7 @@ sections:
         icon: mdi:lamp-outline
         show_state: true
         card_layout: large
-        styles: |
-          ha-card {
-            --bubble-border-radius: 22px;
-            --bubble-box-shadow: none;
-            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
-          }
+        styles: *bubble_style
       - type: custom:bubble-card
         card_type: button
         button_type: slider
@@ -73,46 +107,52 @@ sections:
         icon: mdi:lamp-outline
         show_state: true
         card_layout: large
-        styles: |
-          ha-card {
-            --bubble-border-radius: 22px;
-            --bubble-box-shadow: none;
-            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
-          }
-  - type: grid
+        styles: *bubble_style
+
+  - type: vertical-stack
+    view_layout: {grid-area: climate}
     cards:
-      - type: heading
-        heading: Klima
-        icon: mdi:radiator
+      - type: custom:mushroom-title-card
+        title: Klima
+        subtitle: Heizung und Verlauf
       - type: custom:mushroom-climate-card
         entity: climate.schlafzimmer_schlafzimmer_thermostat
         name: Schlafzimmer
         show_temperature_control: true
         collapsible_controls: false
+        card_mod: &detail_card
+          style: |
+            ha-card {
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+            }
       - type: custom:mini-graph-card
-        name: Temperatur · Schlafzimmer
+        name: Temperatur · 48 Stunden
         hours_to_show: 48
         points_per_hour: 1
         line_width: 2
-        show:
-          labels: true
-          legend: false
-          fill: fade
+        show: {labels: true, legend: false, fill: fade}
         entities:
           - sensor.magguu_schlafzimmer_temperatur_c
-        card_mod:
-          style: |
-            ha-card { border-radius: 22px; box-shadow: none; }
-      - type: heading
-        heading: Rollläden
-        icon: mdi:window-shutter
+        card_mod: *detail_card
+
+  - type: vertical-stack
+    view_layout: {grid-area: cover}
+    cards:
+      - type: custom:mushroom-title-card
+        title: Rollläden
+        subtitle: Beide Seiten gezielt positionieren
       - type: custom:mushroom-cover-card
         entity: cover.schlafzimmer_schlafzimmer_rollade_links
         name: Rollladen links
         show_buttons_control: true
         show_position_control: true
+        card_mod: *detail_card
       - type: custom:mushroom-cover-card
         entity: cover.schlafzimmer_schlafzimmer_rollade_rechts
         name: Rollladen rechts
         show_buttons_control: true
         show_position_control: true
+        card_mod: *detail_card

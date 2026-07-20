@@ -76,6 +76,47 @@ hero_v5:
   extra_styles: |
     .v5-pills{display:flex;flex-wrap:wrap;gap:8px}.v5-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.055);font-size:12px;font-weight:650;white-space:nowrap}.v5-pill ha-icon{width:16px;height:16px}
 
+page_header_v6:
+  template: mag_card
+  variables:
+    subtitle: ''
+    accent: '#a891ff'
+  show_icon: true
+  show_label: true
+  size: 38px
+  label: '[[[ return variables.subtitle || ""; ]]]'
+  styles:
+    card:
+      - min-height: 132px
+      - padding: 24px
+      - background: |
+          [[[
+            return `linear-gradient(140deg, color-mix(in srgb, ${variables.accent || '#a891ff'} 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 64%)`;
+          ]]]
+      - box-shadow: var(--mag-shadow-card, none)
+    grid:
+      - grid-template-areas: '"i n" "i l"'
+      - grid-template-columns: 58px 1fr
+      - column-gap: 16px
+    img_cell:
+      - width: 52px
+      - height: 52px
+      - border-radius: 18px
+      - background: '[[[ return `color-mix(in srgb, ${variables.accent || "#a891ff"} 18%, transparent)`; ]]]'
+    icon:
+      - color: '[[[ return variables.accent || "#a891ff"; ]]]'
+    name:
+      - justify-self: start
+      - align-self: end
+      - font-size: 26px
+      - letter-spacing: -.6px
+    label:
+      - justify-self: start
+      - align-self: start
+      - padding-top: 5px
+      - font-size: 13px
+      - white-space: normal
+
 room_visual_v5:
   template: mag_card
   variables:

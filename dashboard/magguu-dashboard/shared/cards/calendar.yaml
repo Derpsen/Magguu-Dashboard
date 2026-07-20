@@ -1,0 +1,68 @@
+- type: custom:button-card
+  template: page_header_v6
+  name: Kalender
+  icon: mdi:calendar-month-outline
+  variables:
+    subtitle: Arbeit, Abfuhr und Termine in einer ruhigen gemeinsamen Übersicht
+    accent: '#b48cff'
+
+- type: custom:mushroom-title-card
+  title: Als Nächstes
+  subtitle: Die nächsten Einträge aus allen wichtigen Kalendern
+
+- type: custom:grid-layout
+  layout:
+    grid-template-columns: repeat(4, minmax(0, 1fr))
+    grid-gap: 12px
+    mediaquery:
+      "(max-width: 1050px)":
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+  cards:
+    - type: custom:button-card
+      template: next_event_v5
+      entity: calendar.arbeiten
+      name: Arbeit
+      icon: mdi:briefcase-outline
+      variables: {accent: '#b48cff'}
+      tap_action: {action: more-info}
+    - type: custom:button-card
+      template: next_event_v5
+      entity: calendar.abfuhr
+      name: Abfuhr
+      icon: mdi:trash-can-outline
+      variables: {accent: '#79d98c'}
+      tap_action: {action: more-info}
+    - type: custom:button-card
+      template: next_event_v5
+      entity: calendar.privat
+      name: Privat
+      icon: mdi:account-heart-outline
+      variables: {accent: '#e886ad'}
+      tap_action: {action: more-info}
+    - type: custom:button-card
+      template: next_event_v5
+      entity: calendar.termine
+      name: Termine
+      icon: mdi:calendar-star
+      variables: {accent: '#71b7ff'}
+      tap_action: {action: more-info}
+
+- type: calendar
+  title: Die nächsten 7 Tage
+  initial_view: listWeek
+  entities:
+    - calendar.arbeiten
+    - calendar.abfuhr
+    - calendar.privat
+    - calendar.termine
+  card_mod:
+    style: |
+      ha-card {
+        border-radius: var(--mag-radius-card, 24px);
+        background: var(--mag-surface, rgba(24,25,39,.94));
+        border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+        box-shadow: var(--mag-shadow-card, none);
+        overflow: hidden;
+      }
+
+- !include ../navbar.yaml

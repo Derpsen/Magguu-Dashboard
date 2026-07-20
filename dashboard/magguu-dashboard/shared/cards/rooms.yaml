@@ -1,6 +1,10 @@
-- type: custom:mushroom-title-card
-  title: Räume
-  subtitle: Alles Wichtige direkt im Blick
+- type: custom:button-card
+  template: page_header_v6
+  name: Räume
+  icon: mdi:floor-plan
+  variables:
+    subtitle: Alle Wohnbereiche, Zustände und direkten Aktionen auf einen Blick
+    accent: '#a891ff'
   view_layout:
     grid-column: 1 / -1
 

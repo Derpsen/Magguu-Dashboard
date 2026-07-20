@@ -416,3 +416,4 @@
               card_mod:
                 style: |
                   ha-card { border-radius:24px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }
+    - !include ../../shared/navbar.yaml

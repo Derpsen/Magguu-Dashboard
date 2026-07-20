@@ -1,107 +1,12 @@
 - title: Klima
   path: klima
   icon: mdi:home-thermometer-outline
-  type: sections
-  max_columns: 1
-  sections:
-    - type: grid
-      column_span: 1
-      cards:
-        - type: custom:mushroom-title-card
-          title: Klima & Verbrauch
-          subtitle: Kompakte Steuerung und Verläufe
-        - type: custom:simple-tabs
-          pre-load: true
-          alignment: start
-          active-background: var(--primary-color)
-          active-text-color: var(--text-primary-color)
-          text-color: var(--primary-text-color)
-          hide_inactive_tab_titles: false
-          tabs:
-            - title: Räume
-              icon: mdi:radiator
-              cards:
-                - 
-                  type: grid
-                  columns: 1
-                  square: false
-                  cards:
-                    - type: custom:mushroom-climate-card
-                      entity: climate.wohnzimmer_wohnzimmer_thermostat
-                      name: Wohnzimmer
-                      show_temperature_control: true
-                      collapsible_controls: true
-                    - type: custom:mushroom-climate-card
-                      entity: climate.esszimmer_thermostat
-                      name: Esszimmer
-                      show_temperature_control: true
-                      collapsible_controls: true
-                    - type: custom:mushroom-climate-card
-                      entity: climate.badezimmer_badezimmer_thermostat
-                      name: Badezimmer
-                      show_temperature_control: true
-                      collapsible_controls: true
-                    - type: custom:mushroom-climate-card
-                      entity: climate.schlafzimmer_schlafzimmer_thermostat
-                      name: Schlafzimmer
-                      show_temperature_control: true
-                      collapsible_controls: true
-                    - type: custom:mushroom-climate-card
-                      entity: climate.kinderzimmer_kinderzimmer_thermostat
-                      name: Kinderzimmer
-                      show_temperature_control: true
-                      collapsible_controls: true
-            - title: Temperatur
-              icon: mdi:chart-line
-              cards:
-                - 
-                  type: custom:mini-graph-card
-                  name: Temperatur · 48 Stunden
-                  icon: mdi:chart-line
-                  hours_to_show: 48
-                  points_per_hour: 1
-                  line_width: 2
-                  show:
-                    labels: true
-                    legend: true
-                    fill: fade
-                  entities:
-                    - entity: sensor.magguu_wohnzimmer_temperatur_c
-                      name: Wohnzimmer
-                    - entity: sensor.magguu_esszimmer_temperatur_c
-                      name: Esszimmer
-                    - entity: sensor.magguu_badezimmer_temperatur_c
-                      name: Bad
-                    - entity: sensor.magguu_schlafzimmer_temperatur_c
-                      name: Schlafzimmer
-                    - entity: sensor.magguu_kinderzimmer_temperatur_c
-                      name: Kinderzimmer
-                  card_mod:
-                    style: |
-                      ha-card { border-radius: 24px; box-shadow: none; }
-                - 
-                  type: custom:mini-graph-card
-                  name: Luftfeuchtigkeit · 48 Stunden
-                  icon: mdi:water-percent
-                  hours_to_show: 48
-                  points_per_hour: 1
-                  line_width: 2
-                  show:
-                    labels: true
-                    legend: true
-                    fill: fade
-                  entities:
-                    - entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
-                      name: Wohnzimmer
-                    - entity: sensor.esszimmer_thermostat_rel_luftfeuchte
-                      name: Esszimmer
-                    - entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
-                      name: Bad
-                    - entity: sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte
-                      name: Schlafzimmer
-                    - entity: sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte
-                      name: Kinderzimmer
-                  card_mod:
-                    style: |
-                      ha-card { border-radius: 24px; box-shadow: none; }
-        - !include ../cards/navbar.yaml
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    max-width: 760px
+    margin: 0 auto
+    padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 92px
+    grid-gap: 14px
+    grid-template-columns: minmax(0, 1fr)
+  cards: !include ../../shared/cards/climate.yaml

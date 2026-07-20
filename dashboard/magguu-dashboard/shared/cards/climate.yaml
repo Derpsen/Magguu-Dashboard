@@ -1,0 +1,163 @@
+- type: custom:button-card
+  template: page_header_v6
+  name: Klima
+  icon: mdi:home-thermometer-outline
+  variables:
+    subtitle: Temperaturen, Luftfeuchtigkeit und Heizungen im ganzen Zuhause
+    accent: '#57cbd3'
+
+- type: custom:grid-layout
+  layout:
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    grid-gap: 12px
+  cards:
+    - type: custom:button-card
+      template: quick_v5
+      entity: sensor.magguu_durchschnittstemperatur
+      name: Durchschnitt
+      icon: mdi:thermometer
+      variables:
+        accent: '#71b7ff'
+        sub: >-
+          [[[
+            const value = Number(entity?.state);
+            return Number.isFinite(value) ? `${value.toFixed(1).replace('.', ',')} °C` : 'Nicht verfügbar';
+          ]]]
+      tap_action:
+        action: more-info
+    - type: custom:button-card
+      template: quick_v5
+      entity: sensor.magguu_durchschnitt_luftfeuchtigkeit
+      name: Luftfeuchte
+      icon: mdi:water-percent
+      variables:
+        accent: '#57cbd3'
+        sub: >-
+          [[[
+            const value = Number(entity?.state);
+            return Number.isFinite(value) ? `${Math.round(value)} %` : 'Nicht verfügbar';
+          ]]]
+      tap_action:
+        action: more-info
+
+- !include openings.yaml
+
+- type: custom:mushroom-title-card
+  title: Heizungen
+  subtitle: Zieltemperatur direkt einstellen
+
+- type: custom:grid-layout
+  layout:
+    grid-template-columns: repeat(3, minmax(0, 1fr))
+    grid-gap: 12px
+    mediaquery:
+      "(max-width: 1100px)":
+        grid-template-columns: repeat(2, minmax(0, 1fr))
+      "(max-width: 680px)":
+        grid-template-columns: minmax(0, 1fr)
+  cards:
+    - type: custom:mushroom-climate-card
+      entity: climate.wohnzimmer_wohnzimmer_thermostat
+      name: Wohnzimmer
+      show_temperature_control: true
+      collapsible_controls: false
+      card_mod: &climate_card
+        style: |
+          ha-card {
+            min-height: 138px;
+            padding: 8px;
+            border-radius: var(--mag-radius-card, 24px);
+            background: var(--mag-surface, rgba(24,25,39,.94));
+            border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+            box-shadow: var(--mag-shadow-card, none);
+          }
+    - type: custom:mushroom-climate-card
+      entity: climate.esszimmer_thermostat
+      name: Esszimmer
+      show_temperature_control: true
+      collapsible_controls: false
+      card_mod: *climate_card
+    - type: custom:mushroom-climate-card
+      entity: climate.badezimmer_badezimmer_thermostat
+      name: Badezimmer
+      show_temperature_control: true
+      collapsible_controls: false
+      card_mod: *climate_card
+    - type: custom:mushroom-climate-card
+      entity: climate.schlafzimmer_schlafzimmer_thermostat
+      name: Schlafzimmer
+      show_temperature_control: true
+      collapsible_controls: false
+      card_mod: *climate_card
+    - type: custom:mushroom-climate-card
+      entity: climate.kinderzimmer_kinderzimmer_thermostat
+      name: Kinderzimmer
+      show_temperature_control: true
+      collapsible_controls: false
+      card_mod: *climate_card
+
+- type: custom:mushroom-title-card
+  title: Verlauf
+  subtitle: Temperatur und Luftfeuchtigkeit der letzten 48 Stunden
+
+- type: custom:grid-layout
+  layout:
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+    grid-gap: 14px
+    mediaquery:
+      "(max-width: 850px)":
+        grid-template-columns: minmax(0, 1fr)
+  cards:
+    - type: custom:mini-graph-card
+      name: Temperatur · 48 Stunden
+      icon: mdi:chart-line
+      hours_to_show: 48
+      points_per_hour: 1
+      line_width: 2
+      show:
+        labels: true
+        legend: true
+        fill: fade
+      entities:
+        - entity: sensor.magguu_wohnzimmer_temperatur_c
+          name: Wohnzimmer
+        - entity: sensor.magguu_esszimmer_temperatur_c
+          name: Esszimmer
+        - entity: sensor.magguu_badezimmer_temperatur_c
+          name: Bad
+        - entity: sensor.magguu_schlafzimmer_temperatur_c
+          name: Schlafzimmer
+        - entity: sensor.magguu_kinderzimmer_temperatur_c
+          name: Kinderzimmer
+      card_mod: &graph_card
+        style: |
+          ha-card {
+            border-radius: var(--mag-radius-card, 24px);
+            background: var(--mag-surface, rgba(24,25,39,.94));
+            border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+            box-shadow: var(--mag-shadow-card, none);
+          }
+    - type: custom:mini-graph-card
+      name: Luftfeuchtigkeit · 48 Stunden
+      icon: mdi:water-percent
+      hours_to_show: 48
+      points_per_hour: 1
+      line_width: 2
+      show:
+        labels: true
+        legend: true
+        fill: fade
+      entities:
+        - entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
+          name: Wohnzimmer
+        - entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+          name: Esszimmer
+        - entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
+          name: Bad
+        - entity: sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte
+          name: Schlafzimmer
+        - entity: sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte
+          name: Kinderzimmer
+      card_mod: *graph_card
+
+- !include ../navbar.yaml

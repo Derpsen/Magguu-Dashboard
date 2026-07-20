@@ -23,19 +23,20 @@
 
 ## Phase 3 – Home
 
-- [ ] Begrüßung und Statuschips
-- [ ] kompakte Wetterkarte
-- [ ] nächste Schicht
-- [ ] nächste Müllabfuhr
-- [ ] kombinierte Termine
-- [ ] Schnellaktionen
+- [x] Begrüßung und Statuschips
+- [x] kompakte Wetterkarte
+- [x] nächste Schicht
+- [x] nächste Müllabfuhr
+- [x] kombinierte Termine
+- [x] Schnellaktionen
 - [ ] bedingte Medienkarte
 
 ## Phase 4 – Kalender und Klima
 
-- [ ] Kalenderseite vereinheitlichen
-- [ ] Temperaturdarstellung und Einheiten prüfen
-- [ ] Heizungssteuerung vereinfachen
+- [x] Kalenderseite vereinheitlichen
+- [x] Temperaturdarstellung und Einheiten prüfen
+- [x] Heizungssteuerung vereinfachen
+- [x] gemeinsame responsive Seitenmodule für Mobile und Tablet erstellen
 
 ## Phase 5 – Sicherheit
 
@@ -46,11 +47,11 @@
 
 ## Phase 6 – Medien und System
 
-- [ ] Soundbar und TV
+- [x] Soundbar und TV
 - [ ] Plex/Musik
 - [ ] Unraid/Docker
 - [ ] AdGuard
-- [ ] Backups und Updates
+- [x] Backups und Updates
 
 ## Phase 7 – Veröffentlichung
 

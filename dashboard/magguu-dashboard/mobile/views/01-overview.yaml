@@ -205,4 +205,4 @@
             confirmation:
               text: Wirklich alle Rollläden im Haus schließen?
     - !include ../../shared/cards/openings.yaml
-    - !include ../cards/navbar.yaml
+    - !include ../../shared/navbar.yaml

@@ -2,33 +2,67 @@ title: Esszimmer
 path: esszimmer
 icon: mdi:table-furniture
 subview: true
-type: sections
-max_columns: 3
-sections:
+theme: Magguu Midnight
+type: custom:grid-layout
+layout:
+  max-width: 1180px
+  margin: 0 auto
+  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
+  grid-gap: 14px
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  grid-template-areas: |
+    "hero hero"
+    "status status"
+    "light climate"
+  mediaquery:
+    "(max-width: 760px)":
+      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 28px
+      grid-template-columns: minmax(0, 1fr)
+      grid-template-areas: |
+        "hero"
+        "status"
+        "light"
+        "climate"
+cards:
+  - type: custom:button-card
+    template: page_header_v6
+    name: Esszimmer
+    icon: mdi:table-furniture
+    variables:
+      subtitle: Licht und Raumklima entspannt steuern
+      accent: '#f3a84b'
+    view_layout: {grid-area: hero}
+
   - type: grid
+    columns: 2
+    square: false
+    view_layout: {grid-area: status}
+    cards:
+      - type: custom:button-card
+        template: quick_v5
+        entity: sensor.magguu_esszimmer_temperatur_c
+        name: Temperatur
+        icon: mdi:thermometer
+        variables:
+          accent: '#ff9868'
+          sub: "[[[ return `${entity?.state ?? '—'} °C`; ]]]"
+        tap_action: {action: more-info}
+      - type: custom:button-card
+        template: quick_v5
+        entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+        name: Luftfeuchte
+        icon: mdi:water-percent
+        variables:
+          accent: '#57cbd3'
+          sub: "[[[ return `${entity?.state ?? '—'} %`; ]]]"
+        tap_action: {action: more-info}
+
+  - type: vertical-stack
+    view_layout: {grid-area: light}
     cards:
       - type: custom:mushroom-title-card
-        title: Esszimmer
-        subtitle: Licht, Klima und Geräte
-      - type: grid
-        columns: 2
-        square: false
-        cards:
-          - type: custom:mushroom-entity-card
-            entity: sensor.magguu_esszimmer_temperatur_c
-            name: Temperatur
-            icon: mdi:thermometer
-            icon_color: orange
-          - type: custom:mushroom-entity-card
-            entity: sensor.esszimmer_thermostat_rel_luftfeuchte
-            name: Luftfeuchte
-            icon: mdi:water-percent
-            icon_color: blue
-  - type: grid
-    cards:
-      - type: heading
-        heading: Beleuchtung
-        icon: mdi:lightbulb-group-outline
+        title: Beleuchtung
+        subtitle: Helligkeit direkt anpassen
       - type: custom:bubble-card
         card_type: button
         button_type: slider
@@ -37,11 +71,11 @@ sections:
         icon: mdi:lightbulb-group-outline
         show_state: true
         card_layout: large
-        styles: |
+        styles: &bubble_style |
           ha-card {
-            --bubble-border-radius: 22px;
-            --bubble-box-shadow: none;
-            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
+            --bubble-border-radius: var(--mag-radius-card, 24px);
+            --bubble-box-shadow: var(--mag-shadow-card, none);
+            --bubble-border: 1px solid var(--mag-border, rgba(255,255,255,.06));
           }
       - type: custom:bubble-card
         card_type: button
@@ -51,33 +85,33 @@ sections:
         icon: mdi:floor-lamp
         show_state: true
         card_layout: large
-        styles: |
-          ha-card {
-            --bubble-border-radius: 22px;
-            --bubble-box-shadow: none;
-            --bubble-border: 1px solid color-mix(in srgb, var(--divider-color) 55%, transparent);
-          }
-  - type: grid
+        styles: *bubble_style
+
+  - type: vertical-stack
+    view_layout: {grid-area: climate}
     cards:
-      - type: heading
-        heading: Klima
-        icon: mdi:radiator
+      - type: custom:mushroom-title-card
+        title: Klima
+        subtitle: Heizung und 48-Stunden-Verlauf
       - type: custom:mushroom-climate-card
         entity: climate.esszimmer_thermostat
         name: Esszimmer
         show_temperature_control: true
         collapsible_controls: false
+        card_mod: &detail_card
+          style: |
+            ha-card {
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+            }
       - type: custom:mini-graph-card
-        name: Temperatur · Esszimmer
+        name: Temperatur · 48 Stunden
         hours_to_show: 48
         points_per_hour: 1
         line_width: 2
-        show:
-          labels: true
-          legend: false
-          fill: fade
+        show: {labels: true, legend: false, fill: fade}
         entities:
           - sensor.magguu_esszimmer_temperatur_c
-        card_mod:
-          style: |
-            ha-card { border-radius: 22px; box-shadow: none; }
+        card_mod: *detail_card
