@@ -34,12 +34,20 @@
           name: Fernseher
           icon: mdi:television
           variables: {accent: '#b48cff'}
+          tap_action:
+            action: toggle
+            confirmation:
+              text: Fernseher-Steckdose wirklich umschalten?
         - type: custom:button-card
           template: room_action_v5
           entity: switch.wohnzimmer_wohnzimmer_computer
           name: Computer
           icon: mdi:desktop-tower-monitor
           variables: {accent: '#70d6c8'}
+          tap_action:
+            action: toggle
+            confirmation:
+              text: Computer-Steckdose wirklich umschalten?
         - type: custom:button-card
           template: room_link_v5
           name: Rollläden

@@ -188,6 +188,8 @@ sections:
         icon: mdi:television
         tap_action:
           action: toggle
+          confirmation:
+            text: Fernseher-Steckdose wirklich umschalten?
         hold_action:
           action: more-info
       - type: custom:mushroom-entity-card
@@ -196,6 +198,8 @@ sections:
         icon: mdi:desktop-tower-monitor
         tap_action:
           action: toggle
+          confirmation:
+            text: Computer-Steckdose wirklich umschalten?
         hold_action:
           action: more-info
       - type: custom:mushroom-media-player-card

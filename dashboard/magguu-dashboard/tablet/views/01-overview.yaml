@@ -41,20 +41,10 @@
       view_layout:
         grid-area: weather
       cards:
-        - type: custom:clock-weather-card
+        - type: weather-forecast
           entity: weather.forecast_home
-          title: Wetter
-          sun_entity: sun.sun
-          temperature_sensor: sensor.magguu_durchschnittstemperatur
-          humidity_sensor: sensor.magguu_durchschnitt_luftfeuchtigkeit
-          weather_icon_type: fill
-          animated_icon: true
-          forecast_rows: 5
-          locale: de-DE
-          time_pattern: HH:mm
-          date_pattern: EEE, dd.MM.
-          hide_today_section: false
-          hide_forecast_section: false
+          name: Wetter
+          forecast_type: daily
           card_mod:
             style: |
               ha-card { border-radius:28px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }
@@ -126,14 +116,6 @@
         - type: custom:mushroom-title-card
           title: Wohnbereiche
           subtitle: Direkte Steuerung – alle Räume auf der Raumseite
-        - type: custom:grid-layout
-          layout:
-            grid-template-columns: repeat(3, minmax(0, 1fr))
-            grid-gap: 12px
-            mediaquery:
-              "(max-width: 950px)":
-                grid-template-columns: 1fr
-          cards:
         - type: custom:stack-in-card
           mode: vertical
           cards:
@@ -170,6 +152,8 @@
                     accent: '#b48cff'
                   tap_action:
                     action: toggle
+                    confirmation:
+                      text: Fernseher-Steckdose wirklich umschalten?
                 - type: custom:button-card
                   template: room_action_v5
                   entity: switch.wohnzimmer_wohnzimmer_computer
@@ -178,6 +162,8 @@
                     accent: '#70d6c8'
                   tap_action:
                     action: toggle
+                    confirmation:
+                      text: Computer-Steckdose wirklich umschalten?
                 - type: custom:button-card
                   template: room_action_v5
                   entity: cover.wohnzimmer_wohnzimmer_rollade_mitte
@@ -185,7 +171,7 @@
                   variables:
                     accent: '#71b7ff'
                   tap_action:
-                    action: toggle
+                    action: more-info
           card_mod:
             style: |
               ha-card {
@@ -280,7 +266,7 @@
                   variables:
                     accent: '#71b7ff'
                   tap_action:
-                    action: toggle
+                    action: more-info
                 - type: custom:button-card
                   template: room_action_v5
                   entity: binary_sensor.magguu_kueche_oeffnung
@@ -327,42 +313,53 @@
               name: Licht aus
               icon: mdi:lightbulb-group-off-outline
               variables: { accent: '#ffd166', sub: Hausweit }
-              tap_action: { action: call-service, service: script.turn_on, service_data: { entity_id: script.magguu_alle_lichter_aus } }
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.magguu_alle_lichter_aus
+                confirmation:
+                  text: Wirklich alle Lichter im Haus ausschalten?
             - type: custom:button-card
               template: quick_v5
               entity: script.magguu_alle_rollladen_auf
               name: Rollläden auf
               icon: mdi:window-shutter-open
               variables: { accent: '#71b7ff', sub: Alle Räume }
-              tap_action: { action: call-service, service: script.turn_on, service_data: { entity_id: script.magguu_alle_rollladen_auf } }
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.magguu_alle_rollladen_auf
+                confirmation:
+                  text: Wirklich alle Rollläden im Haus öffnen?
             - type: custom:button-card
               template: quick_v5
               entity: script.magguu_alle_rollladen_zu
               name: Rollläden zu
               icon: mdi:window-shutter
               variables: { accent: '#8d83ff', sub: Alle Räume }
-              tap_action: { action: call-service, service: script.turn_on, service_data: { entity_id: script.magguu_alle_rollladen_zu } }
+              tap_action:
+                action: call-service
+                service: script.turn_on
+                service_data:
+                  entity_id: script.magguu_alle_rollladen_zu
+                confirmation:
+                  text: Wirklich alle Rollläden im Haus schließen?
             - type: custom:button-card
               template: quick_v5
               entity: switch.wohnzimmer_wohnzimmer_fernseher
               name: Fernseher
               icon: mdi:television
               variables: { accent: '#b48cff', sub: Wohnzimmer }
-              tap_action: { action: toggle }
+              tap_action:
+                action: toggle
+                confirmation:
+                  text: Fernseher-Steckdose wirklich umschalten?
         - type: custom:mushroom-title-card
           title: Hinweise
           subtitle: Nur relevante Meldungen
-        - type: conditional
-          conditions:
-            - entity: sensor.magguu_offene_fenster
-              state_not: '0'
-          card:
-            type: custom:mushroom-template-card
-            entity: sensor.magguu_offene_fenster
-            primary: Fenster geöffnet
-            secondary: "{{ states(entity) }} Öffnung(en) prüfen"
-            icon: mdi:window-open-variant
-            icon_color: orange
+        - !include ../../shared/cards/openings.yaml
         - type: conditional
           conditions:
             - entity: sensor.openccu_servicemeldungen

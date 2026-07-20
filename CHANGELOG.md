@@ -2,6 +2,11 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- fehleranfällige Clock-Weather-Card auf der Home-Seite durch die eingebaute Wettervorhersage ersetzt
+- offene Fenster und Türen auf Mobile und Tablet einzeln anklickbar gemacht
+- Bestätigungen für hausweite Licht- und Rollladenaktionen ergänzt
+- Bestätigungen für Fernseher- und Computer-Steckdosen an allen Bedienpunkten ergänzt
+- direkte Rollladen-Toggles auf der Home-Seite durch sichere Detailbedienung ersetzt
 - technische Pfade vollständig von `magguu-flux`/`magguu_flux.yaml` auf `magguu-dashboard`/`magguu_dashboard.yaml` migriert
 - bestehende Installationen werden inklusive `configuration.yaml` automatisch und mit Backup auf die neuen Pfade umgestellt
 - sicheren Dashboard-Updater mit Bestätigung, Backup und Ergebnismeldung auf der System-Seite ergänzt

@@ -18,7 +18,6 @@ Installierte Frontend-Erweiterungen:
 - Mini Graph Card
 - Auto Entities
 - Navbar Card
-- Clock Weather Card HUI Icons
 - Simple Tabs Card
 - Stack In Card
 

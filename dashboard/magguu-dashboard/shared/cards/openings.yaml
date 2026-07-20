@@ -1,0 +1,94 @@
+type: vertical-stack
+cards:
+  - type: conditional
+    conditions:
+      - entity: sensor.magguu_offene_fenster
+        state_not: '0'
+    card:
+      type: custom:mushroom-title-card
+      title: Offene Fenster & Türen
+      subtitle: Antippen öffnet die jeweilige Detailansicht
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.wohnzimmer_wohnzimmer_fenster
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.wohnzimmer_wohnzimmer_fenster
+      primary: Wohnzimmer · Fenster
+      secondary: Geöffnet · Antippen für Details
+      icon: mdi:window-open-variant
+      icon_color: orange
+      tap_action:
+        action: more-info
+
+  - type: conditional
+    conditions:
+      - entity: sensor.wohnzimmer_wohnzimmer_fenstertur
+        state_not: closed
+      - entity: sensor.wohnzimmer_wohnzimmer_fenstertur
+        state_not: 'off'
+      - entity: sensor.wohnzimmer_wohnzimmer_fenstertur
+        state_not: unknown
+      - entity: sensor.wohnzimmer_wohnzimmer_fenstertur
+        state_not: unavailable
+    card:
+      type: custom:mushroom-template-card
+      entity: sensor.wohnzimmer_wohnzimmer_fenstertur
+      primary: Wohnzimmer · Fenstertür
+      secondary: >-
+        {{ 'Gekippt' if states(entity) == 'tilted' else 'Geöffnet' }} · Antippen für Details
+      icon: mdi:door-open
+      icon_color: orange
+      tap_action:
+        action: more-info
+
+  - type: conditional
+    conditions:
+      - entity: sensor.kuche_kuche_fenstertur
+        state_not: closed
+      - entity: sensor.kuche_kuche_fenstertur
+        state_not: 'off'
+      - entity: sensor.kuche_kuche_fenstertur
+        state_not: unknown
+      - entity: sensor.kuche_kuche_fenstertur
+        state_not: unavailable
+    card:
+      type: custom:mushroom-template-card
+      entity: sensor.kuche_kuche_fenstertur
+      primary: Küche · Fenster / Tür
+      secondary: >-
+        {{ 'Gekippt' if states(entity) == 'tilted' else 'Geöffnet' }} · Antippen für Details
+      icon: mdi:door-open
+      icon_color: orange
+      tap_action:
+        action: more-info
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.schlafzimmer_schlafzimmer_fenstertur
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.schlafzimmer_schlafzimmer_fenstertur
+      primary: Schlafzimmer · Fenster / Tür
+      secondary: Geöffnet · Antippen für Details
+      icon: mdi:window-open-variant
+      icon_color: orange
+      tap_action:
+        action: more-info
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.kinderzimmer_kinderzimmer_fenster
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.kinderzimmer_kinderzimmer_fenster
+      primary: Kinderzimmer · Fenster
+      secondary: Geöffnet · Antippen für Details
+      icon: mdi:window-open-variant
+      icon_color: orange
+      tap_action:
+        action: more-info
