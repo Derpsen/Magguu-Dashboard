@@ -208,6 +208,90 @@ page_header_v6:
       - font-size: 13px
       - white-space: normal
 
+room_detail_header_v7:
+  template: page_header_v6
+  variables:
+    temperature_entity: null
+    humidity_entity: null
+    opening_entity: null
+    light_count_entity: null
+    climate_entity: null
+  custom_fields:
+    stats: |
+      [[[
+        const valid = state => state && !['unknown','unavailable'].includes(state.state);
+        const pill = (icon,text,color,alert=false) =>
+          `<span class="room-detail-pill${alert?' room-detail-alert':''}">
+            <ha-icon icon="${icon}" style="color:${color}"></ha-icon>${text}
+          </span>`;
+        const items=[];
+        const temperature=variables.temperature_entity ? states[variables.temperature_entity] : null;
+        const humidity=variables.humidity_entity ? states[variables.humidity_entity] : null;
+        const opening=variables.opening_entity ? states[variables.opening_entity] : null;
+        const lights=variables.light_count_entity ? states[variables.light_count_entity] : null;
+        const climate=variables.climate_entity ? states[variables.climate_entity] : null;
+        const temperatureValue=Number(temperature?.state);
+        const humidityValue=Number(humidity?.state);
+        const lightCount=Number(lights?.state);
+        const isOpen=opening?.state==='on';
+        const isHeating=climate?.attributes?.hvac_action==='heating';
+
+        if(valid(temperature) && Number.isFinite(temperatureValue))
+          items.push(pill('mdi:thermometer',`${temperatureValue.toFixed(1).replace('.',',')} °C`,'#ff9868'));
+        if(valid(humidity) && Number.isFinite(humidityValue))
+          items.push(pill('mdi:water-percent',`${Math.round(humidityValue)} %`,'#57cbd3'));
+        if(valid(lights) && Number.isFinite(lightCount))
+          items.push(pill(lightCount?'mdi:lightbulb-group':'mdi:lightbulb-group-off',lightCount?`${lightCount} an`:'Licht aus',lightCount?'#ffd166':'#9aa0b4'));
+        if(variables.opening_entity) {
+          if(isOpen)
+            items.push(pill('mdi:window-open-variant','Öffnung offen','#ff9f43',true));
+          else if(valid(opening))
+            items.push(pill('mdi:window-closed-variant','Alles geschlossen','#79d98c'));
+          else
+            items.push(pill('mdi:help-circle-outline','Öffnungsstatus fehlt','#ff9f43',true));
+        }
+        if(isOpen && isHeating)
+          items.push(pill('mdi:radiator-off','Heizverlust','#ff6b6b',true));
+        else if(isHeating)
+          items.push(pill('mdi:radiator','Heizung aktiv','#ff9868'));
+
+        return `<div class="room-detail-stats">${items.join('')}</div>`;
+      ]]]
+  styles:
+    card:
+      - min-height: 166px
+      - background: |
+          [[[
+            const opening=variables.opening_entity ? states[variables.opening_entity] : null;
+            const climate=variables.climate_entity ? states[variables.climate_entity] : null;
+            const warning=opening?.state==='on' && climate?.attributes?.hvac_action==='heating';
+            const open=opening?.state==='on';
+            if(warning) return 'linear-gradient(140deg, color-mix(in srgb, var(--mag-accent-danger, #ff6b6b) 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)';
+            if(open) return 'linear-gradient(140deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 20%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)';
+            return `linear-gradient(140deg, color-mix(in srgb, ${variables.accent||'#a891ff'} 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)`;
+          ]]]
+      - border: |
+          [[[
+            const opening=variables.opening_entity ? states[variables.opening_entity] : null;
+            if(opening?.state==='on') return '1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 54%, transparent)';
+            return '1px solid var(--mag-border, rgba(255,255,255,.06))';
+          ]]]
+    grid:
+      - grid-template-areas: '"i n" "i l" "stats stats"'
+      - grid-template-columns: 58px minmax(0, 1fr)
+      - grid-template-rows: min-content min-content 1fr
+    custom_fields:
+      stats:
+        - align-self: end
+        - justify-self: start
+        - padding-top: 22px
+        - width: 100%
+  extra_styles: |
+    .room-detail-stats{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+    .room-detail-pill{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 11px;border-radius:999px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.045);font-size:12px;font-weight:700;white-space:nowrap}
+    .room-detail-pill ha-icon{width:17px;height:17px}
+    .room-detail-alert{background:rgba(255,159,67,.11);border-color:rgba(255,159,67,.28)}
+
 room_visual_v5:
   template: mag_card
   variables:
@@ -542,6 +626,16 @@ next_event_v5:
 
 waste_event_v6:
   template: next_event_v5
+  icon: |
+    [[[
+      const text=String(entity?.attributes?.message||'').toLowerCase();
+      if(text.includes('bio')) return 'mdi:leaf';
+      if(text.includes('gelb')||text.includes('wertstoff')) return 'mdi:recycle';
+      if(text.includes('papier')||text.includes('pappe')) return 'mdi:newspaper-variant-multiple-outline';
+      if(text.includes('rest')) return 'mdi:trash-can-outline';
+      if(text.includes('glas')) return 'mdi:bottle-soda-classic-outline';
+      return 'mdi:trash-can-clock-outline';
+    ]]]
   label: |
     [[[
       if(!entity||['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
@@ -563,6 +657,12 @@ waste_event_v6:
     card:
       - background: |
           [[[
+            const text=String(entity?.attributes?.message||'').toLowerCase();
+            const accent=text.includes('bio')?'#79d98c':
+              text.includes('gelb')||text.includes('wertstoff')?'#ffd166':
+              text.includes('papier')||text.includes('pappe')?'#71b7ff':
+              text.includes('rest')?'#b8bac8':
+              text.includes('glas')?'#70d6c8':'#79d98c';
             const start=entity?.attributes?.start_time;
             if(!start) return 'var(--mag-surface, rgba(24,25,39,.94))';
             const raw=String(start);
@@ -572,7 +672,44 @@ waste_event_v6:
             const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
             const target=new Date(date.getFullYear(),date.getMonth(),date.getDate());
             const days=Math.round((target-today)/86400000);
-            if(days===0) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 25%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 72%)';
-            if(days===1) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-success, #79d98c) 18%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 72%)';
+            if(days===0) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 28%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 72%)`;
+            if(days===1) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 18%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 72%)`;
             return 'var(--mag-surface, rgba(24,25,39,.94))';
+          ]]]
+      - border: |
+          [[[
+            const start=entity?.attributes?.start_time;
+            if(!start) return '1px solid var(--mag-border, rgba(255,255,255,.06))';
+            const raw=String(start);
+            const date=new Date(raw.length===10?`${raw}T00:00:00`:raw);
+            if(Number.isNaN(date.getTime())) return '1px solid var(--mag-border, rgba(255,255,255,.06))';
+            const now=new Date();
+            const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            const target=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+            const days=Math.round((target-today)/86400000);
+            return days===0
+              ? '1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 68%, transparent)'
+              : '1px solid var(--mag-border, rgba(255,255,255,.06))';
+          ]]]
+    img_cell:
+      - background: |
+          [[[
+            const text=String(entity?.attributes?.message||'').toLowerCase();
+            const accent=text.includes('bio')?'#79d98c':
+              text.includes('gelb')||text.includes('wertstoff')?'#ffd166':
+              text.includes('papier')||text.includes('pappe')?'#71b7ff':
+              text.includes('rest')?'#b8bac8':
+              text.includes('glas')?'#70d6c8':'#79d98c';
+            return `color-mix(in srgb, ${accent} 17%, transparent)`;
+          ]]]
+    icon:
+      - color: |
+          [[[
+            const text=String(entity?.attributes?.message||'').toLowerCase();
+            if(text.includes('bio')) return '#79d98c';
+            if(text.includes('gelb')||text.includes('wertstoff')) return '#ffd166';
+            if(text.includes('papier')||text.includes('pappe')) return '#71b7ff';
+            if(text.includes('rest')) return '#b8bac8';
+            if(text.includes('glas')) return '#70d6c8';
+            return '#79d98c';
           ]]]

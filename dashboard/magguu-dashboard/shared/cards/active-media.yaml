@@ -1,0 +1,40 @@
+type: conditional
+conditions:
+  - entity: binary_sensor.magguu_medien_aktiv
+    state: 'on'
+card:
+  type: vertical-stack
+  cards:
+    - type: custom:mushroom-title-card
+      title: Jetzt läuft
+      subtitle: Mediensteuerung nur bei aktiver Wiedergabe
+
+    - type: custom:mushroom-media-player-card
+      entity: media_player.av_samsung_soundbar_q90r
+      name: Samsung Soundbar
+      icon: mdi:soundbar
+      use_media_info: true
+      show_volume_level: true
+      fill_container: true
+      media_controls:
+        - previous
+        - play_pause_stop
+        - next
+      volume_controls:
+        - volume_mute
+        - volume_set
+      collapsible_controls: false
+      tap_action:
+        action: more-info
+      card_mod:
+        style: |
+          ha-card {
+            min-height: 154px;
+            padding: 8px;
+            border-radius: var(--mag-radius-card, 24px);
+            background:
+              radial-gradient(circle at 88% 18%, rgba(180,140,255,.2), transparent 36%),
+              linear-gradient(145deg, rgba(92,72,156,.26), var(--mag-surface, rgba(24,25,39,.96)) 68%);
+            border: 1px solid color-mix(in srgb, var(--mag-accent-media, #b48cff) 34%, transparent);
+            box-shadow: 0 12px 34px rgba(0,0,0,.18);
+          }

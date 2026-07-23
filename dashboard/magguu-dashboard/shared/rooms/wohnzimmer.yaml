@@ -12,7 +12,6 @@ layout:
   grid-template-columns: repeat(2, minmax(0, 1fr))
   grid-template-areas: |
     "hero hero"
-    "status status"
     "light climate"
     "light cover"
     "media cover"
@@ -22,65 +21,24 @@ layout:
       grid-template-columns: minmax(0, 1fr)
       grid-template-areas: |
         "hero"
-        "status"
         "light"
         "climate"
         "cover"
         "media"
 cards:
   - type: custom:button-card
-    template: page_header_v6
+    template: room_detail_header_v7
     name: Wohnzimmer
     icon: mdi:sofa-outline
     variables:
       subtitle: Licht, Klima, Rollläden und Medien
       accent: '#6faeff'
+      temperature_entity: sensor.magguu_wohnzimmer_temperatur_c
+      humidity_entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
+      opening_entity: binary_sensor.magguu_wohnzimmer_oeffnung
+      light_count_entity: sensor.magguu_wohnzimmer_lichter_an
+      climate_entity: climate.wohnzimmer_wohnzimmer_thermostat
     view_layout: {grid-area: hero}
-
-  - type: custom:layout-card
-    layout_type: custom:grid-layout
-    view_layout: {grid-area: status}
-    layout:
-      grid-template-columns: repeat(3, minmax(0, 1fr))
-      grid-gap: 12px
-      mediaquery:
-        "(max-width: 620px)":
-          grid-template-columns: repeat(2, minmax(0, 1fr))
-    cards:
-      - type: custom:button-card
-        template: quick_v5
-        entity: sensor.magguu_wohnzimmer_temperatur_c
-        name: Temperatur
-        icon: mdi:thermometer
-        variables:
-          accent: '#ff9868'
-          sub: "[[[ return `${entity?.state ?? '—'} °C`; ]]]"
-        tap_action: {action: more-info}
-      - type: custom:button-card
-        template: quick_v5
-        entity: sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte
-        name: Luftfeuchte
-        icon: mdi:water-percent
-        variables:
-          accent: '#57cbd3'
-          sub: "[[[ return `${entity?.state ?? '—'} %`; ]]]"
-        tap_action: {action: more-info}
-      - type: custom:mushroom-template-card
-        entity: binary_sensor.magguu_wohnzimmer_oeffnung
-        primary: Fenster / Tür
-        secondary: "{{ 'Geöffnet · antippen für Details' if is_state(entity, 'on') else 'Geschlossen' }}"
-        icon: "{{ 'mdi:window-open-variant' if is_state(entity, 'on') else 'mdi:window-closed-variant' }}"
-        color: "{{ 'orange' if is_state(entity, 'on') else 'green' }}"
-        tap_action: {action: more-info}
-        card_mod: &detail_card
-          style: |
-            ha-card {
-              min-height: 86px;
-              border-radius: var(--mag-radius-card, 24px);
-              background: var(--mag-surface, rgba(24,25,39,.94));
-              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-              box-shadow: var(--mag-shadow-card, none);
-            }
 
   - type: custom:layout-card
     layout_type: custom:grid-layout
@@ -176,7 +134,15 @@ cards:
         name: Wohnzimmer
         show_temperature_control: true
         collapsible_controls: false
-        card_mod: *detail_card
+        card_mod: &detail_card
+          style: |
+            ha-card {
+              min-height: 86px;
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+            }
       - type: custom:mini-graph-card
         name: Temperatur · 48 Stunden
         hours_to_show: 48

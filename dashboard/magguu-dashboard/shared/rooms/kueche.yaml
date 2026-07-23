@@ -12,7 +12,6 @@ layout:
   grid-template-columns: repeat(2, minmax(0, 1fr))
   grid-template-areas: |
     "hero hero"
-    "status status"
     "light cover"
   mediaquery:
     "(max-width: 760px)":
@@ -20,36 +19,19 @@ layout:
       grid-template-columns: minmax(0, 1fr)
       grid-template-areas: |
         "hero"
-        "status"
         "light"
         "cover"
 cards:
   - type: custom:button-card
-    template: page_header_v6
+    template: room_detail_header_v7
     name: Küche
     icon: mdi:countertop-outline
     variables:
       subtitle: Licht, Rollladen und Öffnungsstatus
       accent: '#79d98c'
+      opening_entity: binary_sensor.magguu_kueche_oeffnung
+      light_count_entity: sensor.magguu_kueche_lichter_an
     view_layout: {grid-area: hero}
-
-  - type: custom:mushroom-template-card
-    entity: binary_sensor.magguu_kueche_oeffnung
-    primary: Fenster / Tür
-    secondary: "{{ 'Geöffnet · antippen für Details' if is_state(entity, 'on') else 'Geschlossen' }}"
-    icon: "{{ 'mdi:window-open-variant' if is_state(entity, 'on') else 'mdi:window-closed-variant' }}"
-    color: "{{ 'orange' if is_state(entity, 'on') else 'green' }}"
-    tap_action: {action: more-info}
-    view_layout: {grid-area: status}
-    card_mod: &detail_card
-      style: |
-        ha-card {
-          min-height: 86px;
-          border-radius: var(--mag-radius-card, 24px);
-          background: var(--mag-surface, rgba(24,25,39,.94));
-          border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-          box-shadow: var(--mag-shadow-card, none);
-        }
 
   - type: vertical-stack
     view_layout: {grid-area: light}
@@ -63,7 +45,15 @@ cards:
         icon: mdi:ceiling-light
         tap_action: {action: toggle}
         hold_action: {action: more-info}
-        card_mod: *detail_card
+        card_mod: &detail_card
+          style: |
+            ha-card {
+              min-height: 86px;
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+            }
 
   - type: vertical-stack
     view_layout: {grid-area: cover}

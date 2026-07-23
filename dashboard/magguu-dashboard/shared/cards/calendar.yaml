@@ -27,7 +27,7 @@
       variables: {accent: '#b48cff'}
       tap_action: {action: more-info}
     - type: custom:button-card
-      template: next_event_v5
+      template: waste_event_v6
       entity: calendar.abfuhr
       name: Abfuhr
       icon: mdi:trash-can-outline

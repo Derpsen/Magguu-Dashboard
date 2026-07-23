@@ -34,7 +34,9 @@
 - [x] Wetter-, Akku- und Abwesenheitswarnungen
 - [x] sichere Modi für Gute Nacht, Haus verlassen und Filmabend
 - [x] dezente Warnanimationen mit Reduced-Motion-Unterstützung
-- [ ] bedingte Medienkarte
+- [x] bedingte Medienkarte
+- [x] Abfuhrkarte nach Müllart dynamisch gestalten
+- [x] Raumdetailseiten mit gemeinsamem Statuskopf verdichten
 
 ## Phase 4 – Kalender und Klima
 

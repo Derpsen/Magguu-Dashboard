@@ -156,6 +156,7 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `binary_sensor.magguu_wetterwarnung`
 - `binary_sensor.magguu_iphone_akkuwarnung`
 - `binary_sensor.magguu_abwesenheitswarnung`
+- `binary_sensor.magguu_medien_aktiv`
 
 ## Noch zu ergänzen
 

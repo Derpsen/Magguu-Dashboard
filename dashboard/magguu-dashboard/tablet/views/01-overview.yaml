@@ -322,7 +322,6 @@
                 action: toggle
                 confirmation:
                   text: Fernseher-Steckdose wirklich umschalten?
-        - !include ../../shared/cards/modes.yaml
         - type: custom:mushroom-title-card
           title: Hinweise
           subtitle: Nur relevante Meldungen
@@ -350,5 +349,7 @@
             secondary: "{{ states(entity) }} Aktualisierung(en)"
             icon: mdi:update
             icon_color: blue
+        - !include ../../shared/cards/active-media.yaml
+        - !include ../../shared/cards/modes.yaml
 
     - !include ../../shared/navbar.yaml

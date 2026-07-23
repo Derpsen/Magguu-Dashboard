@@ -26,11 +26,13 @@ Das Dashboard orientiert sich konzeptionell an modernen Smart-Home-Oberflächen 
 - Kennzahlen oben
 - vier bis fünf Hauptaktionen direkt erreichbar
 - weitere Funktionen über Raumdetailseite oder Popup
+- Raumdetailseiten mit einem gemeinsamen Statuskopf statt doppelter Kennzahlen strukturieren
 
 ## Kalender
 
 - gemeinsame Agenda aus Arbeit, Privat, Termine und Abfuhr
 - Müllabfuhr zusätzlich als hervorgehobene nächste Abholung
+- Abfallart aus dem Kalendertext erkennen und mit passender Farbe sowie passendem Icon darstellen
 - mobile Ansicht kompakt, Tablet mit 7-Tage-Agenda
 
 ## Sicherheit

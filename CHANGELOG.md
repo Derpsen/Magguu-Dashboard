@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.3.0-dev – 2026-07-23
+
+- bedingten Medienbereich mit Wiedergabe- und Lautstärkesteuerung ergänzt
+- Abfuhrkarte erkennt Bio-, Wertstoff-, Papier-, Rest- und Glasmüll und passt Icon sowie Farbe an
+- alle sechs Raumdetailseiten auf einen gemeinsamen Statuskopf mit Klima, Licht und Öffnungen umgestellt
+- doppelte Statuskarten aus den Raumdetailseiten entfernt und die vorhandenen Bedienbereiche beibehalten
+- Heizverlust und nicht verfügbare Öffnungssensoren direkt im Raumheader hervorgehoben
+
 ## 6.2.0-dev – 2026-07-23
 
 - sichere Modi für Gute Nacht, Haus verlassen und Filmabend ergänzt

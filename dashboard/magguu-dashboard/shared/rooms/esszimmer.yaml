@@ -12,7 +12,6 @@ layout:
   grid-template-columns: repeat(2, minmax(0, 1fr))
   grid-template-areas: |
     "hero hero"
-    "status status"
     "light climate"
   mediaquery:
     "(max-width: 760px)":
@@ -20,42 +19,21 @@ layout:
       grid-template-columns: minmax(0, 1fr)
       grid-template-areas: |
         "hero"
-        "status"
         "light"
         "climate"
 cards:
   - type: custom:button-card
-    template: page_header_v6
+    template: room_detail_header_v7
     name: Esszimmer
     icon: mdi:table-furniture
     variables:
       subtitle: Licht und Raumklima entspannt steuern
       accent: '#f3a84b'
+      temperature_entity: sensor.magguu_esszimmer_temperatur_c
+      humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+      light_count_entity: sensor.magguu_esszimmer_lichter_an
+      climate_entity: climate.esszimmer_thermostat
     view_layout: {grid-area: hero}
-
-  - type: grid
-    columns: 2
-    square: false
-    view_layout: {grid-area: status}
-    cards:
-      - type: custom:button-card
-        template: quick_v5
-        entity: sensor.magguu_esszimmer_temperatur_c
-        name: Temperatur
-        icon: mdi:thermometer
-        variables:
-          accent: '#ff9868'
-          sub: "[[[ return `${entity?.state ?? '—'} °C`; ]]]"
-        tap_action: {action: more-info}
-      - type: custom:button-card
-        template: quick_v5
-        entity: sensor.esszimmer_thermostat_rel_luftfeuchte
-        name: Luftfeuchte
-        icon: mdi:water-percent
-        variables:
-          accent: '#57cbd3'
-          sub: "[[[ return `${entity?.state ?? '—'} %`; ]]]"
-        tap_action: {action: more-info}
 
   - type: vertical-stack
     view_layout: {grid-area: light}

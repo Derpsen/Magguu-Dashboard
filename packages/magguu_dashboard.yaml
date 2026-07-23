@@ -290,7 +290,7 @@ template:
       - name: Magguu Dashboard Version
         unique_id: magguu_dashboard_version
         icon: mdi:view-dashboard-variant-outline
-        state: "6.2.0-dev"
+        state: "6.3.0-dev"
 
       - name: Magguu Lichter an
         unique_id: magguu_lichter_an
@@ -659,3 +659,10 @@ template:
               {% set ns.items = ns.items + [lights ~ ' Licht(er) an'] %}
             {% endif %}
             {{ ns.items | join(' · ') }}
+
+      - name: Magguu Medien aktiv
+        unique_id: magguu_medien_aktiv
+        icon: mdi:cast-audio-variant
+        availability: "{{ states('media_player.av_samsung_soundbar_q90r') not in ['unknown', 'unavailable'] }}"
+        state: >-
+          {{ states('media_player.av_samsung_soundbar_q90r') in ['playing', 'paused', 'buffering'] }}
