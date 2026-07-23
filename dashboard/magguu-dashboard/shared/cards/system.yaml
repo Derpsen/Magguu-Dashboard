@@ -10,7 +10,8 @@
   title: Systemstatus
   subtitle: Die wichtigsten Werte auf einen Blick
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(3, minmax(0, 1fr))
     grid-gap: 12px
@@ -87,7 +88,8 @@
   title: Hinweise
   subtitle: Updates, Batterien und nicht erreichbare Geräte
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(3, minmax(0, 1fr))
     grid-gap: 12px
@@ -153,7 +155,8 @@
   title: Verwaltung
   subtitle: Dashboard aktualisieren und Backups kontrollieren
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(2, minmax(0, 1fr))
     grid-gap: 12px

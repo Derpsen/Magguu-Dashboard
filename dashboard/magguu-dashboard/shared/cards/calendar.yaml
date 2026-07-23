@@ -10,7 +10,8 @@
   title: Als Nächstes
   subtitle: Die nächsten Einträge aus allen wichtigen Kalendern
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(4, minmax(0, 1fr))
     grid-gap: 12px

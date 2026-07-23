@@ -35,7 +35,8 @@ cards:
       accent: '#a891ff'
     view_layout: {grid-area: hero}
 
-  - type: custom:grid-layout
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
     view_layout: {grid-area: status}
     layout:
       grid-template-columns: repeat(3, minmax(0, 1fr))

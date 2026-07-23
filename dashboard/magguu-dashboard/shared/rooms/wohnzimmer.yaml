@@ -37,7 +37,8 @@ cards:
       accent: '#6faeff'
     view_layout: {grid-area: hero}
 
-  - type: custom:grid-layout
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
     view_layout: {grid-area: status}
     layout:
       grid-template-columns: repeat(3, minmax(0, 1fr))
@@ -81,7 +82,8 @@ cards:
               box-shadow: var(--mag-shadow-card, none);
             }
 
-  - type: custom:grid-layout
+  - type: custom:layout-card
+    layout_type: custom:grid-layout
     view_layout: {grid-area: light}
     layout:
       grid-template-columns: repeat(2, minmax(0, 1fr))

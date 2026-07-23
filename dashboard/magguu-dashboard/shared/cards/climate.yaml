@@ -6,7 +6,8 @@
     subtitle: Temperaturen, Luftfeuchtigkeit und Heizungen im ganzen Zuhause
     accent: '#57cbd3'
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(2, minmax(0, 1fr))
     grid-gap: 12px
@@ -46,7 +47,8 @@
   title: Heizungen
   subtitle: Zieltemperatur direkt einstellen
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(3, minmax(0, 1fr))
     grid-gap: 12px
@@ -100,7 +102,8 @@
   title: Verlauf
   subtitle: Temperatur und Luftfeuchtigkeit der letzten 48 Stunden
 
-- type: custom:grid-layout
+- type: custom:layout-card
+  layout_type: custom:grid-layout
   layout:
     grid-template-columns: repeat(2, minmax(0, 1fr))
     grid-gap: 14px
