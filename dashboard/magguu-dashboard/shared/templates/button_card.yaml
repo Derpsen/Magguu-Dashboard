@@ -140,15 +140,28 @@ room_visual_v5:
   size: 82px
   label: |
     [[[
-      const S=id=>id?states[id]:null;
-      const t=S(variables.temperature_entity), h=S(variables.humidity_entity);
-      const values=[];
-      const tv=Number(t?.state), hv=Number(h?.state);
-      if(t&&!['unknown','unavailable'].includes(t.state)&&Number.isFinite(tv)) values.push(`${tv.toFixed(1).replace('.',',')} °C`);
-      if(h&&!['unknown','unavailable'].includes(h.state)&&Number.isFinite(hv)) values.push(`${Math.round(hv)} %`);
-      return values.length?values.join('  ·  '):(variables.device_text||'Raumsteuerung');
+      if (variables.device_text) return variables.device_text;
+      return variables.temperature_entity ? 'Raumklima' : 'Raumsteuerung';
     ]]]
   custom_fields:
+    climate: |
+      [[[
+        const t=variables.temperature_entity ? states[variables.temperature_entity] : null;
+        const h=variables.humidity_entity ? states[variables.humidity_entity] : null;
+        const tv=Number(t?.state), hv=Number(h?.state);
+        const validTemperature=t&&!['unknown','unavailable'].includes(t.state)&&Number.isFinite(tv);
+        const validHumidity=h&&!['unknown','unavailable'].includes(h.state)&&Number.isFinite(hv);
+        if(!validTemperature) return '';
+        const temperature=`${tv.toFixed(1).replace('.',',')}°`;
+        const humidity=validHumidity
+          ? `<span class="room-humidity"><ha-icon icon="mdi:water-percent"></ha-icon>${Math.round(hv)} %</span>`
+          : '';
+        return `<div class="room-climate-pill">
+          <ha-icon class="room-temperature-icon" icon="mdi:thermometer"></ha-icon>
+          <span class="room-temperature">${temperature}</span>
+          ${humidity}
+        </div>`;
+      ]]]
     meta: |
       [[[
         const c=Number(states[variables.light_count_entity]?.state||0);
@@ -186,8 +199,8 @@ room_visual_v5:
             return c>0?`inset 0 0 0 1px ${variables.accent||'#9b8cff'}, 0 0 18px color-mix(in srgb, ${variables.accent||'#9b8cff'} 24%, transparent)`:'none';
           ]]]
     grid:
-      - grid-template-areas: '"n n" "l l" "meta meta" "i ." "orb orb"'
-      - grid-template-columns: min-content 1fr
+      - grid-template-areas: '"n climate" "l climate" "meta meta" "i ." "orb orb"'
+      - grid-template-columns: minmax(0, 1fr) min-content
       - grid-template-rows: min-content min-content 1fr min-content 0px
     name:
       - justify-self: start
@@ -211,6 +224,11 @@ room_visual_v5:
       - width: 68px
       - color: rgba(210,211,232,.35)
     custom_fields:
+      climate:
+        - justify-self: end
+        - align-self: start
+        - grid-row: 1 / 3
+        - z-index: 3
       meta:
         - justify-self: start
         - padding-top: 9px
@@ -228,6 +246,52 @@ room_visual_v5:
               return `color-mix(in srgb, ${variables.accent||'#9b8cff'} 7%, transparent)`;
             ]]]
         - pointer-events: none
+  extra_styles: |
+    .room-climate-pill {
+      display: grid;
+      grid-template-areas: "icon temp" "humidity humidity";
+      grid-template-columns: 22px min-content;
+      align-items: center;
+      column-gap: 5px;
+      row-gap: 3px;
+      min-width: 88px;
+      padding: 9px 11px 8px;
+      border-radius: 17px;
+      background: color-mix(in srgb, var(--mag-accent-climate, #57cbd3) 13%, rgba(255,255,255,.035));
+      border: 1px solid color-mix(in srgb, var(--mag-accent-climate, #57cbd3) 24%, transparent);
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+    }
+    .room-temperature-icon {
+      grid-area: icon;
+      width: 21px;
+      height: 21px;
+      color: var(--mag-accent-climate, #57cbd3);
+    }
+    .room-temperature {
+      grid-area: temp;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 750;
+      letter-spacing: -.7px;
+      color: var(--primary-text-color);
+      white-space: nowrap;
+    }
+    .room-humidity {
+      grid-area: humidity;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 650;
+      color: var(--secondary-text-color);
+      white-space: nowrap;
+    }
+    .room-humidity ha-icon {
+      width: 13px;
+      height: 13px;
+      color: var(--mag-accent-climate, #57cbd3);
+    }
 
 room_action_v5:
   template: mag_card

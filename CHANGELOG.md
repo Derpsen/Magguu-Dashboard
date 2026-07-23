@@ -2,6 +2,7 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- Temperatur und Luftfeuchtigkeit als gut sichtbare Klima-Anzeige direkt in die Raumkarten integriert
 - Klima, Kalender und System auf gemeinsame responsive Inhaltsmodule umgestellt
 - alle sechs Raumdetailseiten vom alten Sections-Layout auf das moderne Midnight-Raster migriert
 - einheitliche Seitenheader, Inhaltsbreiten, Abstände und Breakpoints für Mobile, Tablet und Desktop ergänzt
