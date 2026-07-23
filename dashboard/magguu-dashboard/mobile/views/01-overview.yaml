@@ -22,7 +22,7 @@
           icon: mdi:briefcase-outline
           variables: { accent: '#b48cff' }
         - type: custom:button-card
-          template: next_event_v5
+          template: waste_event_v6
           entity: calendar.abfuhr
           name: Abfuhr
           icon: mdi:trash-can-outline
@@ -204,5 +204,6 @@
               entity_id: script.magguu_alle_rollladen_zu
             confirmation:
               text: Wirklich alle Rollläden im Haus schließen?
+    - !include ../../shared/cards/smart-hints.yaml
     - !include ../../shared/cards/openings.yaml
     - !include ../../shared/navbar.yaml

@@ -118,6 +118,8 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 ## Durch dieses Repository erzeugt
 
 - `shell_command.magguu_dashboard_update`
+- `input_text.magguu_dashboard_update_status`
+- `input_datetime.magguu_dashboard_letzte_aktualisierung`
 - `group.magguu_alle_lichter`
 - `script.magguu_dashboard_aktualisieren`
 - `script.magguu_alle_lichter_aus`
@@ -127,6 +129,7 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.magguu_offene_fenster`
 - `sensor.magguu_updates_verfuegbar`
 - `sensor.magguu_nicht_verfuegbar`
+- `sensor.magguu_dashboard_version`
 - `sensor.magguu_wohnzimmer_temperatur_c`
 - `sensor.magguu_esszimmer_temperatur_c`
 - `sensor.magguu_badezimmer_temperatur_c`
@@ -144,6 +147,9 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `binary_sensor.magguu_kueche_oeffnung`
 - `binary_sensor.magguu_schlafzimmer_oeffnung`
 - `binary_sensor.magguu_kinderzimmer_oeffnung`
+- `binary_sensor.magguu_wohnzimmer_heizwarnung`
+- `binary_sensor.magguu_schlafzimmer_heizwarnung`
+- `binary_sensor.magguu_kinderzimmer_heizwarnung`
 
 ## Noch zu ergänzen
 

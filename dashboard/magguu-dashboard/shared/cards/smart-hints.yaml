@@ -1,0 +1,55 @@
+type: vertical-stack
+cards:
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.magguu_wohnzimmer_heizwarnung
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.magguu_wohnzimmer_heizwarnung
+      primary: Wohnzimmer · Fenster & Heizung
+      secondary: Fenster offen, während die Heizung aktiv heizt
+      multiline_secondary: true
+      icon: mdi:radiator-off
+      icon_color: orange
+      tap_action:
+        action: navigate
+        navigation_path: wohnzimmer
+      hold_action:
+        action: more-info
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.magguu_schlafzimmer_heizwarnung
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.magguu_schlafzimmer_heizwarnung
+      primary: Schlafzimmer · Fenster & Heizung
+      secondary: Fenster offen, während die Heizung aktiv heizt
+      multiline_secondary: true
+      icon: mdi:radiator-off
+      icon_color: orange
+      tap_action:
+        action: navigate
+        navigation_path: schlafzimmer
+      hold_action:
+        action: more-info
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.magguu_kinderzimmer_heizwarnung
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.magguu_kinderzimmer_heizwarnung
+      primary: Kinderzimmer · Fenster & Heizung
+      secondary: Fenster offen, während die Heizung aktiv heizt
+      multiline_secondary: true
+      icon: mdi:radiator-off
+      icon_color: orange
+      tap_action:
+        action: navigate
+        navigation_path: kinderzimmer
+      hold_action:
+        action: more-info

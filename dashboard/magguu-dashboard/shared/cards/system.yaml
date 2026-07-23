@@ -176,10 +176,19 @@
         - type: custom:mushroom-template-card
           entity: script.magguu_dashboard_aktualisieren
           primary: Dashboard aktualisieren
-          secondary: Aktuellen Stand mit Backup installieren
+          secondary: >-
+            {% set status = states('input_text.magguu_dashboard_update_status') %}
+            {% set last_update = as_timestamp(states('input_datetime.magguu_dashboard_letzte_aktualisierung'), 0) %}
+            Version {{ states('sensor.magguu_dashboard_version') }}
+            · {{ 'Noch nicht ausgeführt' if status in ['', 'unknown', 'unavailable'] else status }}
+            {% if last_update > 0 %}
+              · zuletzt {{ last_update | timestamp_custom('%d.%m. · %H:%M', true) }}
+            {% endif %}
           multiline_secondary: true
           icon: mdi:cloud-download-outline
-          color: purple
+          color: >-
+            {% set status = states('input_text.magguu_dashboard_update_status') %}
+            {{ 'green' if status.startswith('Erfolgreich') else 'red' if status.startswith('Fehlgeschlagen') else 'purple' }}
           tap_action:
             action: call-service
             service: script.turn_on

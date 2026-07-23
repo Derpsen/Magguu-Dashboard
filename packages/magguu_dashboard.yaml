@@ -1,6 +1,19 @@
 shell_command:
   magguu_dashboard_update: "sh /config/magguu-dashboard-update.sh"
 
+input_text:
+  magguu_dashboard_update_status:
+    name: Magguu Dashboard Update-Status
+    icon: mdi:update
+    max: 80
+
+input_datetime:
+  magguu_dashboard_letzte_aktualisierung:
+    name: Magguu Dashboard letzte Aktualisierung
+    icon: mdi:clock-check-outline
+    has_date: true
+    has_time: true
+
 group:
   magguu_alle_lichter:
     name: Alle Lichter
@@ -38,10 +51,25 @@ script:
     icon: mdi:cloud-download-outline
     mode: single
     sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.magguu_dashboard_update_status
+        data:
+          value: Aktualisierung läuft
       - action: shell_command.magguu_dashboard_update
         response_variable: update_result
       - if: "{{ update_result.get('returncode', 1) == 0 }}"
         then:
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.magguu_dashboard_update_status
+            data:
+              value: Erfolgreich
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.magguu_dashboard_letzte_aktualisierung
+            data:
+              timestamp: "{{ now().timestamp() }}"
           - action: persistent_notification.create
             data:
               title: Magguu Dashboard aktualisiert
@@ -49,6 +77,11 @@ script:
                 {{ update_result.get('stdout', 'Update abgeschlossen.') }}
                 Starte Home Assistant neu und lade die App anschließend vollständig neu.
         else:
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.magguu_dashboard_update_status
+            data:
+              value: Fehlgeschlagen · Details in Benachrichtigungen
           - action: persistent_notification.create
             data:
               title: Dashboard-Update fehlgeschlagen
@@ -98,6 +131,11 @@ script:
 
 template:
   - sensor:
+      - name: Magguu Dashboard Version
+        unique_id: magguu_dashboard_version
+        icon: mdi:view-dashboard-variant-outline
+        state: "6.1.0-dev"
+
       - name: Magguu Lichter an
         unique_id: magguu_lichter_an
         icon: mdi:lightbulb-group
@@ -326,3 +364,36 @@ template:
         unique_id: magguu_kinderzimmer_oeffnung
         device_class: window
         state: "{{ is_state('binary_sensor.kinderzimmer_kinderzimmer_fenster', 'on') }}"
+
+      - name: Magguu Wohnzimmer Heizwarnung
+        unique_id: magguu_wohnzimmer_heizwarnung
+        icon: mdi:radiator-off
+        device_class: problem
+        availability: >-
+          {{ states('binary_sensor.magguu_wohnzimmer_oeffnung') not in ['unknown', 'unavailable']
+             and states('climate.wohnzimmer_wohnzimmer_thermostat') not in ['unknown', 'unavailable'] }}
+        state: >-
+          {{ is_state('binary_sensor.magguu_wohnzimmer_oeffnung', 'on')
+             and state_attr('climate.wohnzimmer_wohnzimmer_thermostat', 'hvac_action') == 'heating' }}
+
+      - name: Magguu Schlafzimmer Heizwarnung
+        unique_id: magguu_schlafzimmer_heizwarnung
+        icon: mdi:radiator-off
+        device_class: problem
+        availability: >-
+          {{ states('binary_sensor.magguu_schlafzimmer_oeffnung') not in ['unknown', 'unavailable']
+             and states('climate.schlafzimmer_schlafzimmer_thermostat') not in ['unknown', 'unavailable'] }}
+        state: >-
+          {{ is_state('binary_sensor.magguu_schlafzimmer_oeffnung', 'on')
+             and state_attr('climate.schlafzimmer_schlafzimmer_thermostat', 'hvac_action') == 'heating' }}
+
+      - name: Magguu Kinderzimmer Heizwarnung
+        unique_id: magguu_kinderzimmer_heizwarnung
+        icon: mdi:radiator-off
+        device_class: problem
+        availability: >-
+          {{ states('binary_sensor.magguu_kinderzimmer_oeffnung') not in ['unknown', 'unavailable']
+             and states('climate.kinderzimmer_kinderzimmer_thermostat') not in ['unknown', 'unavailable'] }}
+        state: >-
+          {{ is_state('binary_sensor.magguu_kinderzimmer_oeffnung', 'on')
+             and state_attr('climate.kinderzimmer_kinderzimmer_thermostat', 'hvac_action') == 'heating' }}

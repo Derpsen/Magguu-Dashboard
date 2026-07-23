@@ -539,3 +539,40 @@ next_event_v5:
         - text-overflow: ellipsis
         - white-space: nowrap
         - max-width: 210px
+
+waste_event_v6:
+  template: next_event_v5
+  label: |
+    [[[
+      if(!entity||['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
+      const start=entity.attributes?.start_time;
+      if(!start) return 'Kein Eintrag';
+      const raw=String(start);
+      const date=new Date(raw.length===10?`${raw}T00:00:00`:raw);
+      if(Number.isNaN(date.getTime())) return raw;
+      const now=new Date();
+      const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+      const target=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+      const days=Math.round((target-today)/86400000);
+      if(days===0) return 'Heute rausstellen';
+      if(days===1) return 'Morgen rausstellen';
+      if(days>1) return `In ${days} Tagen`;
+      return 'Termin prüfen';
+    ]]]
+  styles:
+    card:
+      - background: |
+          [[[
+            const start=entity?.attributes?.start_time;
+            if(!start) return 'var(--mag-surface, rgba(24,25,39,.94))';
+            const raw=String(start);
+            const date=new Date(raw.length===10?`${raw}T00:00:00`:raw);
+            if(Number.isNaN(date.getTime())) return 'var(--mag-surface, rgba(24,25,39,.94))';
+            const now=new Date();
+            const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            const target=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+            const days=Math.round((target-today)/86400000);
+            if(days===0) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 25%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 72%)';
+            if(days===1) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-success, #79d98c) 18%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 72%)';
+            return 'var(--mag-surface, rgba(24,25,39,.94))';
+          ]]]

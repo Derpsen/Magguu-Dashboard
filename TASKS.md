@@ -29,6 +29,8 @@
 - [x] nächste Müllabfuhr
 - [x] kombinierte Termine
 - [x] Schnellaktionen
+- [x] Abfuhr-Countdown mit Hervorhebung für heute und morgen
+- [x] situative Warnungen bei offenem Fenster und aktivem Heizvorgang
 - [ ] bedingte Medienkarte
 
 ## Phase 4 – Kalender und Klima
@@ -52,6 +54,7 @@
 - [ ] Unraid/Docker
 - [ ] AdGuard
 - [x] Backups und Updates
+- [x] Dashboard-Version, Update-Status und letzte erfolgreiche Aktualisierung anzeigen
 
 ## Phase 7 – Veröffentlichung
 

@@ -54,7 +54,7 @@
               variables:
                 accent: '#b48cff'
             - type: custom:button-card
-              template: next_event_v5
+              template: waste_event_v6
               entity: calendar.abfuhr
               name: Abfuhr
               icon: mdi:trash-can-outline
@@ -325,6 +325,7 @@
         - type: custom:mushroom-title-card
           title: Hinweise
           subtitle: Nur relevante Meldungen
+        - !include ../../shared/cards/smart-hints.yaml
         - !include ../../shared/cards/openings.yaml
         - type: conditional
           conditions:

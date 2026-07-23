@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.1.0-dev – 2026-07-23
+
+- Abfuhrkarte um Countdown und Hervorhebung für „heute“ und „morgen“ erweitert
+- situative Warnungen für gleichzeitig geöffnete Fenster und aktiv heizende Thermostate ergänzt
+- Dashboard-Updater zeigt nun Version, aktuellen Status und Zeitpunkt der letzten erfolgreichen Aktualisierung
+
 ## 6.0.0-dev – 2026-07-16
 
 - Systemseite nach dem Overview-Prinzip in Status, kompakte Hinweise und gleich große Verwaltungskarten gegliedert
