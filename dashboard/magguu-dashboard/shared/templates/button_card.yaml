@@ -23,6 +23,8 @@ mag_card:
 
 hero_v5:
   template: mag_card
+  variables:
+    show_weather: false
   show_icon: false
   name: |
     [[[
@@ -35,6 +37,70 @@ hero_v5:
       return new Intl.DateTimeFormat('de-DE', {weekday:'long', day:'2-digit', month:'long'}).format(new Date());
     ]]]
   custom_fields:
+    weather: |
+      [[[
+        if (!variables.show_weather) return '';
+        const weather=states['weather.forecast_home'];
+        if(!weather||['unknown','unavailable'].includes(weather.state)) {
+          return `<div class="hero-weather hero-weather-unavailable">
+            <ha-icon icon="mdi:weather-cloudy-alert"></ha-icon>
+            <span>Wetter nicht verfügbar</span>
+          </div>`;
+        }
+        const icons={
+          'clear-night':'mdi:weather-night',
+          cloudy:'mdi:weather-cloudy',
+          fog:'mdi:weather-fog',
+          hail:'mdi:weather-hail',
+          lightning:'mdi:weather-lightning',
+          'lightning-rainy':'mdi:weather-lightning-rainy',
+          partlycloudy:'mdi:weather-partly-cloudy',
+          pouring:'mdi:weather-pouring',
+          rainy:'mdi:weather-rainy',
+          snowy:'mdi:weather-snowy',
+          'snowy-rainy':'mdi:weather-snowy-rainy',
+          sunny:'mdi:weather-sunny',
+          windy:'mdi:weather-windy',
+          'windy-variant':'mdi:weather-windy-variant',
+          exceptional:'mdi:weather-cloudy-alert'
+        };
+        const labels={
+          'clear-night':'Klare Nacht',
+          cloudy:'Bewölkt',
+          fog:'Nebel',
+          hail:'Hagel',
+          lightning:'Gewitter',
+          'lightning-rainy':'Gewitterregen',
+          partlycloudy:'Teilweise bewölkt',
+          pouring:'Starker Regen',
+          rainy:'Regen',
+          snowy:'Schnee',
+          'snowy-rainy':'Schneeregen',
+          sunny:'Sonnig',
+          windy:'Windig',
+          'windy-variant':'Windig',
+          exceptional:'Unwetter'
+        };
+        const temperature=Number(weather.attributes?.temperature);
+        const humidity=Number(weather.attributes?.humidity);
+        const wind=Number(weather.attributes?.wind_speed);
+        const tempText=Number.isFinite(temperature)
+          ? `${temperature.toFixed(1).replace('.',',')} °C`
+          : '—';
+        const humidityText=Number.isFinite(humidity) ? `${Math.round(humidity)} %` : '—';
+        const windText=Number.isFinite(wind) ? `${Math.round(wind)} km/h` : '—';
+        return `<div class="hero-weather">
+          <ha-icon class="hero-weather-icon" icon="${icons[weather.state]||'mdi:weather-partly-cloudy'}"></ha-icon>
+          <div class="hero-weather-copy">
+            <span class="hero-weather-condition">${labels[weather.state]||weather.state}</span>
+            <strong class="hero-weather-temperature">${tempText}</strong>
+            <span class="hero-weather-meta">
+              <span><ha-icon icon="mdi:water-percent"></ha-icon>${humidityText}</span>
+              <span><ha-icon icon="mdi:weather-windy"></ha-icon>${windText}</span>
+            </span>
+          </div>
+        </div>`;
+      ]]]
     chips: |
       [[[
         const S = id => states[id];
@@ -58,7 +124,18 @@ hero_v5:
       - padding: 25px
       - background: linear-gradient(140deg, rgba(90,76,170,.34), rgba(24,25,39,.96) 52%, rgba(24,25,39,.96))
     grid:
-      - grid-template-areas: '"n" "l" "chips"'
+      - grid-template-areas: |
+          [[[
+            return variables.show_weather
+              ? '"n weather" "l weather" "chips weather"'
+              : '"n" "l" "chips"';
+          ]]]
+      - grid-template-columns: |
+          [[[
+            return variables.show_weather
+              ? 'minmax(0, 1fr) minmax(210px, .34fr)'
+              : 'minmax(0, 1fr)';
+          ]]]
       - grid-template-rows: min-content min-content 1fr
     name:
       - justify-self: start
@@ -69,12 +146,26 @@ hero_v5:
       - font-size: 13px
       - padding-top: 4px
     custom_fields:
+      weather:
+        - display: '[[[ return variables.show_weather ? "block" : "none"; ]]]'
+        - align-self: stretch
+        - justify-self: stretch
+        - padding-left: '[[[ return variables.show_weather ? "24px" : "0"; ]]]'
       chips:
         - align-self: end
         - justify-self: start
         - padding-top: 28px
   extra_styles: |
     .v5-pills{display:flex;flex-wrap:wrap;gap:8px}.v5-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.055);font-size:12px;font-weight:650;white-space:nowrap}.v5-pill ha-icon{width:16px;height:16px}
+    .hero-weather{height:100%;min-height:138px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:15px;padding:18px;border-radius:21px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.055)}
+    .hero-weather-icon{width:48px;height:48px;color:var(--mag-accent-climate,#57cbd3)}
+    .hero-weather-copy{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:3px}
+    .hero-weather-condition{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--secondary-text-color)}
+    .hero-weather-temperature{font-size:27px;line-height:1.08;letter-spacing:-.7px;color:var(--primary-text-color);white-space:nowrap}
+    .hero-weather-meta{display:flex;flex-wrap:wrap;gap:5px 11px;padding-top:6px;font-size:11px;font-weight:650;color:var(--secondary-text-color)}
+    .hero-weather-meta span{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+    .hero-weather-meta ha-icon{width:14px;height:14px;color:var(--mag-accent-climate,#57cbd3)}
+    .hero-weather-unavailable{font-size:13px;font-weight:650;color:var(--secondary-text-color)}
 
 page_header_v6:
   template: mag_card
@@ -253,8 +344,8 @@ room_visual_v5:
       grid-template-columns: 38px min-content;
       align-items: center;
       column-gap: 8px;
-      row-gap: 2px;
-      min-width: 116px;
+      row-gap: 4px;
+      min-width: 124px;
       padding: 4px 2px;
     }
     .room-temperature-icon {
@@ -283,15 +374,16 @@ room_visual_v5:
       display: inline-flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 3px;
-      font-size: 11px;
-      font-weight: 650;
-      color: var(--secondary-text-color);
+      gap: 5px;
+      font-size: 14px;
+      line-height: 1.1;
+      font-weight: 700;
+      color: var(--primary-text-color);
       white-space: nowrap;
     }
     .room-humidity ha-icon {
-      width: 13px;
-      height: 13px;
+      width: 16px;
+      height: 16px;
       color: var(--mag-accent-climate, #57cbd3);
     }
 

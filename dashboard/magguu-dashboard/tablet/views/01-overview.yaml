@@ -10,64 +10,33 @@
     grid-gap: 14px
     grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr) minmax(310px, .82fr)
     grid-template-areas: |
-      "hero hero weather"
-      "agenda agenda weather"
+      "hero hero hero"
+      "agenda agenda side"
       "rooms rooms side"
       "media media side"
     mediaquery:
       "(max-width: 1080px)":
         grid-template-columns: 1fr 1fr
         grid-template-areas: |
-          "hero weather"
-          "agenda agenda"
-          "rooms rooms"
-          "media side"
+          "hero hero"
+          "agenda side"
+          "rooms side"
+          "media media"
       "(max-width: 760px)":
         grid-template-columns: 1fr
         grid-template-areas: |
           "hero"
-          "weather"
           "agenda"
-          "rooms"
           "side"
+          "rooms"
           "media"
   cards:
     - type: custom:button-card
       template: hero_v5
+      variables:
+        show_weather: true
       view_layout:
         grid-area: hero
-
-    - type: vertical-stack
-      view_layout:
-        grid-area: weather
-      cards:
-        - type: weather-forecast
-          entity: weather.forecast_home
-          name: Wetter
-          forecast_type: daily
-          card_mod:
-            style: |
-              ha-card { border-radius:28px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }
-        - type: grid
-          columns: 2
-          square: false
-          cards:
-            - type: custom:button-card
-              template: quick_v5
-              entity: weather.forecast_home
-              name: Luftfeuchte
-              icon: mdi:water-percent
-              variables:
-                accent: '#57cbd3'
-                sub: "[[[ return `${entity?.attributes?.humidity ?? '—'} %`; ]]]"
-            - type: custom:button-card
-              template: quick_v5
-              entity: weather.forecast_home
-              name: Wind
-              icon: mdi:weather-windy
-              variables:
-                accent: '#70d6c8'
-                sub: "[[[ return `${Math.round(entity?.attributes?.wind_speed ?? 0)} km/h`; ]]]"
 
     - type: vertical-stack
       view_layout:
