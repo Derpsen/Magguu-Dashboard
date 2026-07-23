@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.2.0-dev – 2026-07-23
+
+- sichere Modi für Gute Nacht, Haus verlassen und Filmabend ergänzt
+- Rollläden in Szenen werden bei geöffneten Fenstern raumweise übersprungen
+- nicht verfügbare Öffnungssensoren werden sicher als ungeklärt statt als geschlossen behandelt
+- situative Wetter-, iPhone-Akku- und Abwesenheitswarnungen ergänzt
+- Warnkarten dezent animiert und `prefers-reduced-motion` berücksichtigt
+- gemeinsame Modus- und Heizwarnkarten für Mobile, Tablet und Klima eingeführt
+
 ## 6.1.0-dev – 2026-07-23
 
 - Abfuhrkarte um Countdown und Hervorhebung für „heute“ und „morgen“ erweitert

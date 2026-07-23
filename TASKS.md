@@ -31,6 +31,9 @@
 - [x] Schnellaktionen
 - [x] Abfuhr-Countdown mit Hervorhebung für heute und morgen
 - [x] situative Warnungen bei offenem Fenster und aktivem Heizvorgang
+- [x] Wetter-, Akku- und Abwesenheitswarnungen
+- [x] sichere Modi für Gute Nacht, Haus verlassen und Filmabend
+- [x] dezente Warnanimationen mit Reduced-Motion-Unterstützung
 - [ ] bedingte Medienkarte
 
 ## Phase 4 – Kalender und Klima

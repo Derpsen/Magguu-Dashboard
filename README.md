@@ -4,7 +4,7 @@ Modulares Home-Assistant-Dashboard für Smartphone, Tablet und Desktop.
 
 ## Aktueller Stand
 
-Diese Repository-Version enthält die moderne V6-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Ring-, Nuki-, Unraid-, Plex- und AdGuard-Erweiterungen folgen erst mit verifizierten Entitäts-IDs.
+Diese Repository-Version enthält die moderne V6.2-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Situative Wetter-, Akku-, Abwesenheits- und Heizwarnungen sowie sichere Modi für Gute Nacht, Haus verlassen und Filmabend sind integriert. Ring-, Nuki-, Unraid-, Plex- und AdGuard-Erweiterungen folgen erst mit verifizierten Entitäts-IDs.
 
 ## Voraussetzungen
 

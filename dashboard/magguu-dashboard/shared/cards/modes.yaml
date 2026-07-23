@@ -1,0 +1,63 @@
+type: vertical-stack
+cards:
+  - type: custom:mushroom-title-card
+    title: Szenen & Modi
+    subtitle: Mehrere Geräte sicher mit einer Aktion steuern
+
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:button-card
+        template: quick_v5
+        entity: script.magguu_gute_nacht
+        name: Gute Nacht
+        icon: mdi:weather-night
+        variables:
+          accent: '#8d83ff'
+          sub: Licht, Geräte & Rollläden
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.magguu_gute_nacht
+          confirmation:
+            text: Gute-Nacht-Modus starten? Lichter und Geräte werden ausgeschaltet. Rollläden schließen nur bei geschlossenen Fenstern.
+        hold_action:
+          action: more-info
+
+      - type: custom:button-card
+        template: quick_v5
+        entity: script.magguu_haus_verlassen
+        name: Haus verlassen
+        icon: mdi:home-export-outline
+        variables:
+          accent: '#79d98c'
+          sub: Ausschalten & prüfen
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.magguu_haus_verlassen
+          confirmation:
+            text: Haus-verlassen-Modus starten? Lichter, Fernseher, Computer und Soundbar werden ausgeschaltet.
+        hold_action:
+          action: more-info
+
+      - type: custom:button-card
+        template: quick_v5
+        entity: script.magguu_filmabend
+        name: Filmabend
+        icon: mdi:movie-open-outline
+        variables:
+          accent: '#b48cff'
+          sub: Licht, TV & Sound
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.magguu_filmabend
+          confirmation:
+            text: Filmabend starten? Fernseher und Soundbar werden eingeschaltet, das Licht gedimmt und sichere Rollläden geschlossen.
+        hold_action:
+          action: more-info

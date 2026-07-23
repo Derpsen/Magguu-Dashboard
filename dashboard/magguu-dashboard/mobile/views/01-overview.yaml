@@ -204,6 +204,7 @@
               entity_id: script.magguu_alle_rollladen_zu
             confirmation:
               text: Wirklich alle Rollläden im Haus schließen?
+    - !include ../../shared/cards/modes.yaml
     - !include ../../shared/cards/smart-hints.yaml
     - !include ../../shared/cards/openings.yaml
     - !include ../../shared/navbar.yaml

@@ -13,6 +13,8 @@ Das Dashboard orientiert sich konzeptionell an modernen Smart-Home-Oberflächen 
 - nächste Müllabfuhr
 - nächste private Termine
 - wenige wichtige Schnellaktionen
+- bestätigte Modi für Gute Nacht, Haus verlassen und Filmabend
+- situative Hinweise nur bei Wettergefahr, niedrigem Akku, Abwesenheit oder Heizverlust
 - Medienkarte nur bei aktiver Wiedergabe
 - Sicherheitsstatus von Ring und Nuki, sobald Entitäten vorhanden sind
 

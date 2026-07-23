@@ -129,12 +129,168 @@ script:
             - cover.wohnzimmer_wohnzimmer_rollade_mitte
             - cover.wohnzimmer_wohnzimmer_rollade_rechts
 
+  magguu_gute_nacht:
+    alias: Gute Nacht
+    icon: mdi:weather-night
+    mode: single
+    sequence:
+      - action: script.magguu_alle_lichter_aus
+        continue_on_error: true
+      - action: switch.turn_off
+        continue_on_error: true
+        target:
+          entity_id:
+            - switch.wohnzimmer_wohnzimmer_fernseher
+            - switch.wohnzimmer_wohnzimmer_computer
+      - if: "{{ states('media_player.av_samsung_soundbar_q90r') not in ['unknown', 'unavailable'] }}"
+        then:
+          - action: media_player.turn_off
+            continue_on_error: true
+            target:
+              entity_id: media_player.av_samsung_soundbar_q90r
+      - if: "{{ is_state('binary_sensor.magguu_wohnzimmer_oeffnung', 'off') }}"
+        then:
+          - action: cover.close_cover
+            continue_on_error: true
+            target:
+              entity_id:
+                - cover.wohnzimmer_wohnzimmer_rollade_links
+                - cover.wohnzimmer_wohnzimmer_rollade_mitte
+                - cover.wohnzimmer_wohnzimmer_rollade_rechts
+      - if: "{{ is_state('binary_sensor.magguu_kueche_oeffnung', 'off') }}"
+        then:
+          - action: cover.close_cover
+            continue_on_error: true
+            target:
+              entity_id: cover.kuche_kuche_rollade
+      - if: "{{ is_state('binary_sensor.magguu_schlafzimmer_oeffnung', 'off') }}"
+        then:
+          - action: cover.close_cover
+            continue_on_error: true
+            target:
+              entity_id:
+                - cover.schlafzimmer_schlafzimmer_rollade_links
+                - cover.schlafzimmer_schlafzimmer_rollade_rechts
+      - if: "{{ is_state('binary_sensor.magguu_kinderzimmer_oeffnung', 'off') }}"
+        then:
+          - action: cover.close_cover
+            continue_on_error: true
+            target:
+              entity_id: cover.kinderzimmer_kinderzimmer_rollade
+      - if: >-
+          {{ not is_state('binary_sensor.magguu_wohnzimmer_oeffnung', 'off')
+             or not is_state('binary_sensor.magguu_kueche_oeffnung', 'off')
+             or not is_state('binary_sensor.magguu_schlafzimmer_oeffnung', 'off')
+             or not is_state('binary_sensor.magguu_kinderzimmer_oeffnung', 'off') }}
+        then:
+          - action: persistent_notification.create
+            data:
+              title: Gute Nacht · Rollläden geprüft
+              message: >-
+                {% set ns = namespace(rooms=[]) %}
+                {% if not is_state('binary_sensor.magguu_wohnzimmer_oeffnung', 'off') %}
+                  {% set ns.rooms = ns.rooms + ['Wohnzimmer'] %}
+                {% endif %}
+                {% if not is_state('binary_sensor.magguu_kueche_oeffnung', 'off') %}
+                  {% set ns.rooms = ns.rooms + ['Küche'] %}
+                {% endif %}
+                {% if not is_state('binary_sensor.magguu_schlafzimmer_oeffnung', 'off') %}
+                  {% set ns.rooms = ns.rooms + ['Schlafzimmer'] %}
+                {% endif %}
+                {% if not is_state('binary_sensor.magguu_kinderzimmer_oeffnung', 'off') %}
+                  {% set ns.rooms = ns.rooms + ['Kinderzimmer'] %}
+                {% endif %}
+                Die Rollläden in {{ ns.rooms | join(', ') }} wurden nicht geschlossen,
+                weil eine Öffnung offen oder ihr Status nicht verfügbar ist.
+
+  magguu_haus_verlassen:
+    alias: Haus verlassen
+    icon: mdi:home-export-outline
+    mode: single
+    sequence:
+      - action: script.magguu_alle_lichter_aus
+        continue_on_error: true
+      - action: switch.turn_off
+        continue_on_error: true
+        target:
+          entity_id:
+            - switch.wohnzimmer_wohnzimmer_fernseher
+            - switch.wohnzimmer_wohnzimmer_computer
+      - if: "{{ states('media_player.av_samsung_soundbar_q90r') not in ['unknown', 'unavailable'] }}"
+        then:
+          - action: media_player.turn_off
+            continue_on_error: true
+            target:
+              entity_id: media_player.av_samsung_soundbar_q90r
+      - if: >-
+          {{ not is_state('binary_sensor.magguu_wohnzimmer_oeffnung', 'off')
+             or not is_state('binary_sensor.magguu_kueche_oeffnung', 'off')
+             or not is_state('binary_sensor.magguu_schlafzimmer_oeffnung', 'off')
+             or not is_state('binary_sensor.magguu_kinderzimmer_oeffnung', 'off') }}
+        then:
+          - action: persistent_notification.create
+            data:
+              title: Haus verlassen · Fenster prüfen
+              message: >-
+                Mindestens eine Öffnung ist offen oder ihr Status ist nicht verfügbar.
+                Tippe auf die Hinweise im Dashboard, um die betroffenen Räume zu prüfen.
+
+  magguu_filmabend:
+    alias: Filmabend
+    icon: mdi:movie-open-outline
+    mode: restart
+    sequence:
+      - action: switch.turn_on
+        continue_on_error: true
+        target:
+          entity_id: switch.wohnzimmer_wohnzimmer_fernseher
+      - if: "{{ states('media_player.av_samsung_soundbar_q90r') not in ['unknown', 'unavailable'] }}"
+        then:
+          - action: media_player.turn_on
+            continue_on_error: true
+            target:
+              entity_id: media_player.av_samsung_soundbar_q90r
+      - action: light.turn_off
+        continue_on_error: true
+        target:
+          entity_id:
+            - light.wohnzimmer_wohnzimmer
+            - light.wohnzimmer_licht_fenster
+            - light.wohnzimmer_licht_sideboard
+        data:
+          transition: 2
+      - action: light.turn_on
+        continue_on_error: true
+        target:
+          entity_id:
+            - light.wohnzimmer_hue_play_links
+            - light.wohnzimmer_hue_play_rechts
+        data:
+          brightness_pct: 30
+          transition: 2
+      - if: "{{ is_state('binary_sensor.magguu_wohnzimmer_oeffnung', 'off') }}"
+        then:
+          - action: cover.close_cover
+            continue_on_error: true
+            target:
+              entity_id:
+                - cover.wohnzimmer_wohnzimmer_rollade_links
+                - cover.wohnzimmer_wohnzimmer_rollade_mitte
+                - cover.wohnzimmer_wohnzimmer_rollade_rechts
+        else:
+          - action: persistent_notification.create
+            data:
+              title: Filmabend · Öffnung prüfen
+              message: >-
+                Die Wohnzimmer-Rollläden wurden nicht geschlossen,
+                weil eine Öffnung offen oder ihr Status nicht verfügbar ist.
+
 template:
   - sensor:
       - name: Magguu Dashboard Version
         unique_id: magguu_dashboard_version
         icon: mdi:view-dashboard-variant-outline
-        state: "6.1.0-dev"
+        state: "6.2.0-dev"
 
       - name: Magguu Lichter an
         unique_id: magguu_lichter_an
@@ -345,6 +501,9 @@ template:
       - name: Magguu Wohnzimmer Oeffnung
         unique_id: magguu_wohnzimmer_oeffnung
         device_class: window
+        availability: >-
+          {{ states('binary_sensor.wohnzimmer_wohnzimmer_fenster') not in ['unknown', 'unavailable']
+             and states('sensor.wohnzimmer_wohnzimmer_fenstertur') not in ['unknown', 'unavailable'] }}
         state: >-
           {{ is_state('binary_sensor.wohnzimmer_wohnzimmer_fenster', 'on')
              or states('sensor.wohnzimmer_wohnzimmer_fenstertur') in ['on', 'open', 'tilted'] }}
@@ -352,17 +511,20 @@ template:
       - name: Magguu Kueche Oeffnung
         unique_id: magguu_kueche_oeffnung
         device_class: window
+        availability: "{{ states('sensor.kuche_kuche_fenstertur') not in ['unknown', 'unavailable'] }}"
         state: >-
           {{ states('sensor.kuche_kuche_fenstertur') in ['on', 'open', 'tilted'] }}
 
       - name: Magguu Schlafzimmer Oeffnung
         unique_id: magguu_schlafzimmer_oeffnung
         device_class: window
+        availability: "{{ states('binary_sensor.schlafzimmer_schlafzimmer_fenstertur') not in ['unknown', 'unavailable'] }}"
         state: "{{ is_state('binary_sensor.schlafzimmer_schlafzimmer_fenstertur', 'on') }}"
 
       - name: Magguu Kinderzimmer Oeffnung
         unique_id: magguu_kinderzimmer_oeffnung
         device_class: window
+        availability: "{{ states('binary_sensor.kinderzimmer_kinderzimmer_fenster') not in ['unknown', 'unavailable'] }}"
         state: "{{ is_state('binary_sensor.kinderzimmer_kinderzimmer_fenster', 'on') }}"
 
       - name: Magguu Wohnzimmer Heizwarnung
@@ -397,3 +559,103 @@ template:
         state: >-
           {{ is_state('binary_sensor.magguu_kinderzimmer_oeffnung', 'on')
              and state_attr('climate.kinderzimmer_kinderzimmer_thermostat', 'hvac_action') == 'heating' }}
+
+      - name: Magguu Wetterwarnung
+        unique_id: magguu_wetterwarnung
+        device_class: problem
+        availability: "{{ states('weather.forecast_home') not in ['unknown', 'unavailable'] }}"
+        icon: >-
+          {% set condition = states('weather.forecast_home') %}
+          {% set temperature = state_attr('weather.forecast_home', 'temperature') | float(none) %}
+          {% set unit = state_attr('weather.forecast_home', 'temperature_unit') %}
+          {% set temperature_c = ((temperature - 32) * 5 / 9) if temperature is not none and unit in ['°F', 'F'] else temperature %}
+          {% if condition in ['lightning', 'lightning-rainy', 'exceptional'] %}
+            mdi:weather-lightning
+          {% elif condition in ['hail', 'snowy', 'snowy-rainy'] or (temperature_c is not none and temperature_c <= 1) %}
+            mdi:snowflake-alert
+          {% elif condition in ['pouring', 'rainy'] %}
+            mdi:weather-pouring
+          {% else %}
+            mdi:weather-windy
+          {% endif %}
+        state: >-
+          {% set condition = states('weather.forecast_home') %}
+          {% set wind = state_attr('weather.forecast_home', 'wind_speed') | float(none) %}
+          {% set gust = state_attr('weather.forecast_home', 'wind_gust_speed') | float(none) %}
+          {% set wind_unit = state_attr('weather.forecast_home', 'wind_speed_unit') %}
+          {% set factor = 3.6 if wind_unit == 'm/s' else 1.609344 if wind_unit in ['mph', 'mi/h'] else 1.852 if wind_unit in ['kn', 'kt'] else 1.09728 if wind_unit == 'ft/s' else 1 %}
+          {% set wind_kmh = wind * factor if wind is not none else none %}
+          {% set gust_kmh = gust * factor if gust is not none else none %}
+          {% set temperature = state_attr('weather.forecast_home', 'temperature') | float(none) %}
+          {% set temperature_unit = state_attr('weather.forecast_home', 'temperature_unit') %}
+          {% set temperature_c = ((temperature - 32) * 5 / 9) if temperature is not none and temperature_unit in ['°F', 'F'] else temperature %}
+          {{ condition in ['exceptional', 'hail', 'lightning', 'lightning-rainy', 'pouring', 'rainy', 'snowy', 'snowy-rainy', 'windy', 'windy-variant']
+             or (wind_kmh is not none and wind_kmh >= 50)
+             or (gust_kmh is not none and gust_kmh >= 65)
+             or (temperature_c is not none and temperature_c <= 1) }}
+        attributes:
+          summary: >-
+            {% set ns = namespace(items=[]) %}
+            {% set condition = states('weather.forecast_home') %}
+            {% set wind = state_attr('weather.forecast_home', 'wind_speed') | float(none) %}
+            {% set gust = state_attr('weather.forecast_home', 'wind_gust_speed') | float(none) %}
+            {% set wind_unit = state_attr('weather.forecast_home', 'wind_speed_unit') %}
+            {% set factor = 3.6 if wind_unit == 'm/s' else 1.609344 if wind_unit in ['mph', 'mi/h'] else 1.852 if wind_unit in ['kn', 'kt'] else 1.09728 if wind_unit == 'ft/s' else 1 %}
+            {% set wind_kmh = wind * factor if wind is not none else none %}
+            {% set gust_kmh = gust * factor if gust is not none else none %}
+            {% set temperature = state_attr('weather.forecast_home', 'temperature') | float(none) %}
+            {% set temperature_unit = state_attr('weather.forecast_home', 'temperature_unit') %}
+            {% set temperature_c = ((temperature - 32) * 5 / 9) if temperature is not none and temperature_unit in ['°F', 'F'] else temperature %}
+            {% if condition in ['exceptional', 'hail', 'lightning', 'lightning-rainy'] %}
+              {% set ns.items = ns.items + ['Unwetter oder Gewitter'] %}
+            {% elif condition in ['pouring', 'rainy'] %}
+              {% set ns.items = ns.items + ['Regen – offene Fenster prüfen'] %}
+            {% elif condition in ['snowy', 'snowy-rainy'] %}
+              {% set ns.items = ns.items + ['Schnee oder Glätte möglich'] %}
+            {% endif %}
+            {% if (wind_kmh is not none and wind_kmh >= 50) or (gust_kmh is not none and gust_kmh >= 65) or condition in ['windy', 'windy-variant'] %}
+              {% set ns.items = ns.items + ['Starker Wind – Rollläden beachten'] %}
+            {% endif %}
+            {% if temperature_c is not none and temperature_c <= 1 %}
+              {% set ns.items = ns.items + ['Frostgefahr bei ' ~ (temperature_c | round(1)) ~ ' °C'] %}
+            {% endif %}
+            {{ ns.items | join(' · ') }}
+
+      - name: Magguu iPhone Akkuwarnung
+        unique_id: magguu_iphone_akkuwarnung
+        device_class: problem
+        icon: mdi:battery-alert-variant-outline
+        availability: "{{ is_number(states('sensor.iphone_von_marco_battery_level')) }}"
+        state: >-
+          {% set level = states('sensor.iphone_von_marco_battery_level') | int(100) %}
+          {% set charging = states('sensor.iphone_von_marco_battery_state') | lower %}
+          {{ level < 20 and charging not in ['charging', 'full', 'lädt', 'voll'] }}
+        attributes:
+          summary: >-
+            iPhone bei {{ states('sensor.iphone_von_marco_battery_level') }} %
+            · {{ states('sensor.iphone_von_marco_battery_state') }}
+
+      - name: Magguu Abwesenheitswarnung
+        unique_id: magguu_abwesenheitswarnung
+        device_class: problem
+        icon: mdi:home-alert-outline
+        availability: >-
+          {{ states('person.magguu') not in ['unknown', 'unavailable']
+             and is_number(states('sensor.magguu_offene_fenster'))
+             and is_number(states('sensor.magguu_lichter_an')) }}
+        state: >-
+          {{ not is_state('person.magguu', 'home')
+             and (states('sensor.magguu_offene_fenster') | int(0) > 0
+                  or states('sensor.magguu_lichter_an') | int(0) > 0) }}
+        attributes:
+          summary: >-
+            {% set ns = namespace(items=[]) %}
+            {% set openings = states('sensor.magguu_offene_fenster') | int(0) %}
+            {% set lights = states('sensor.magguu_lichter_an') | int(0) %}
+            {% if openings > 0 %}
+              {% set ns.items = ns.items + [openings ~ ' Öffnung(en) offen'] %}
+            {% endif %}
+            {% if lights > 0 %}
+              {% set ns.items = ns.items + [lights ~ ' Licht(er) an'] %}
+            {% endif %}
+            {{ ns.items | join(' · ') }}

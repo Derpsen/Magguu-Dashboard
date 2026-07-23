@@ -1,55 +1,67 @@
 type: vertical-stack
 cards:
-  - type: conditional
-    conditions:
-      - entity: binary_sensor.magguu_wohnzimmer_heizwarnung
-        state: 'on'
-    card:
-      type: custom:mushroom-template-card
-      entity: binary_sensor.magguu_wohnzimmer_heizwarnung
-      primary: Wohnzimmer · Fenster & Heizung
-      secondary: Fenster offen, während die Heizung aktiv heizt
-      multiline_secondary: true
-      icon: mdi:radiator-off
-      icon_color: orange
-      tap_action:
-        action: navigate
-        navigation_path: wohnzimmer
-      hold_action:
-        action: more-info
+  - !include heating-hints.yaml
 
   - type: conditional
     conditions:
-      - entity: binary_sensor.magguu_schlafzimmer_heizwarnung
+      - entity: binary_sensor.magguu_wetterwarnung
         state: 'on'
     card:
       type: custom:mushroom-template-card
-      entity: binary_sensor.magguu_schlafzimmer_heizwarnung
-      primary: Schlafzimmer · Fenster & Heizung
-      secondary: Fenster offen, während die Heizung aktiv heizt
+      entity: binary_sensor.magguu_wetterwarnung
+      primary: Wetterhinweis
+      secondary: "{{ state_attr(entity, 'summary') }}"
       multiline_secondary: true
-      icon: mdi:radiator-off
+      icon: "{{ state_attr(entity, 'icon') or 'mdi:weather-alert' }}"
       icon_color: orange
       tap_action:
-        action: navigate
-        navigation_path: schlafzimmer
-      hold_action:
         action: more-info
+        entity: weather.forecast_home
+      card_mod: &situational_warning
+        style: |
+          ha-card {
+            border: 1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 48%, transparent);
+            animation: magguu-situation-pulse 3.2s ease-in-out infinite;
+          }
+          @keyframes magguu-situation-pulse {
+            0%, 100% { box-shadow: 0 0 0 rgba(255,159,67,0); }
+            50% { box-shadow: 0 0 18px rgba(255,159,67,.14); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            ha-card { animation: none; }
+          }
 
   - type: conditional
     conditions:
-      - entity: binary_sensor.magguu_kinderzimmer_heizwarnung
+      - entity: binary_sensor.magguu_iphone_akkuwarnung
         state: 'on'
     card:
       type: custom:mushroom-template-card
-      entity: binary_sensor.magguu_kinderzimmer_heizwarnung
-      primary: Kinderzimmer · Fenster & Heizung
-      secondary: Fenster offen, während die Heizung aktiv heizt
+      entity: binary_sensor.magguu_iphone_akkuwarnung
+      primary: iPhone-Akku niedrig
+      secondary: "{{ state_attr(entity, 'summary') }}"
+      icon: mdi:battery-alert-variant-outline
+      icon_color: red
+      tap_action:
+        action: more-info
+        entity: sensor.iphone_von_marco_battery_level
+      card_mod: *situational_warning
+
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.magguu_abwesenheitswarnung
+        state: 'on'
+    card:
+      type: custom:mushroom-template-card
+      entity: binary_sensor.magguu_abwesenheitswarnung
+      primary: Zuhause noch etwas aktiv
+      secondary: "{{ state_attr(entity, 'summary') }}"
       multiline_secondary: true
-      icon: mdi:radiator-off
+      icon: mdi:home-alert-outline
       icon_color: orange
       tap_action:
         action: navigate
-        navigation_path: kinderzimmer
+        navigation_path: raeume
       hold_action:
         action: more-info
+      card_mod: *situational_warning

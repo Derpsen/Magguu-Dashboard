@@ -125,6 +125,9 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `script.magguu_alle_lichter_aus`
 - `script.magguu_alle_rollladen_auf`
 - `script.magguu_alle_rollladen_zu`
+- `script.magguu_gute_nacht`
+- `script.magguu_haus_verlassen`
+- `script.magguu_filmabend`
 - `sensor.magguu_lichter_an`
 - `sensor.magguu_offene_fenster`
 - `sensor.magguu_updates_verfuegbar`
@@ -150,6 +153,9 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `binary_sensor.magguu_wohnzimmer_heizwarnung`
 - `binary_sensor.magguu_schlafzimmer_heizwarnung`
 - `binary_sensor.magguu_kinderzimmer_heizwarnung`
+- `binary_sensor.magguu_wetterwarnung`
+- `binary_sensor.magguu_iphone_akkuwarnung`
+- `binary_sensor.magguu_abwesenheitswarnung`
 
 ## Noch zu ergänzen
 

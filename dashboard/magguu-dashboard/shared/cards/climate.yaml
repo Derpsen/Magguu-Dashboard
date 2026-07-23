@@ -41,7 +41,7 @@
       tap_action:
         action: more-info
 
-- !include smart-hints.yaml
+- !include heating-hints.yaml
 
 - !include openings.yaml
 
