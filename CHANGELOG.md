@@ -2,6 +2,8 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- Bereich „Medien & Raumklima“ von der Tablet-Home-Seite entfernt
+- irreführenden roten Lichtzähler-Badge an der Räume-Navigation entfernt
 - Tablet-Wetter kompakt rechts in die Begrüßungskarte integriert und Schnellzugriff sowie Hinweise nach oben verschoben
 - Luftfeuchtigkeit in den Raumkarten größer und kontrastreicher dargestellt
 - Raumkarten visuell verdichtet und Klimawerte ruhiger in den Kartenkopf integriert

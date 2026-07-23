@@ -21,11 +21,6 @@ routes:
   - url: raeume
     icon: mdi:floor-plan
     label: Räume
-    badge:
-      show: >-
-        [[[ return Number(states['sensor.magguu_lichter_an']?.state || 0) > 0; ]]]
-      count: >-
-        [[[ return Number(states['sensor.magguu_lichter_an']?.state || 0); ]]]
   - url: klima
     icon: mdi:home-thermometer-outline
     label: Klima

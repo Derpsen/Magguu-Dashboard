@@ -13,7 +13,6 @@
       "hero hero hero"
       "agenda agenda side"
       "rooms rooms side"
-      "media media side"
     mediaquery:
       "(max-width: 1080px)":
         grid-template-columns: 1fr 1fr
@@ -21,7 +20,6 @@
           "hero hero"
           "agenda side"
           "rooms side"
-          "media media"
       "(max-width: 760px)":
         grid-template-columns: 1fr
         grid-template-areas: |
@@ -29,7 +27,6 @@
           "agenda"
           "side"
           "rooms"
-          "media"
   cards:
     - type: custom:button-card
       template: hero_v5
@@ -352,37 +349,4 @@
             icon: mdi:update
             icon_color: blue
 
-    - type: vertical-stack
-      view_layout:
-        grid-area: media
-      cards:
-        - type: custom:mushroom-title-card
-          title: Medien & Raumklima
-          subtitle: Nur das Wesentliche
-        - type: grid
-          columns: 2
-          square: false
-          cards:
-            - type: media-control
-              entity: media_player.av_samsung_soundbar_q90r
-            - type: custom:mini-graph-card
-              name: Raumtemperaturen
-              icon: mdi:chart-line
-              hours_to_show: 24
-              points_per_hour: 2
-              line_width: 2
-              show:
-                labels: false
-                legend: true
-                fill: fade
-              entities:
-                - entity: sensor.magguu_wohnzimmer_temperatur_c
-                  name: Wohnzimmer
-                - entity: sensor.magguu_schlafzimmer_temperatur_c
-                  name: Schlafzimmer
-                - entity: sensor.magguu_badezimmer_temperatur_c
-                  name: Bad
-              card_mod:
-                style: |
-                  ha-card { border-radius:24px; background:rgba(24,25,39,.94); border:1px solid rgba(255,255,255,.055); box-shadow:none; }
     - !include ../../shared/navbar.yaml
