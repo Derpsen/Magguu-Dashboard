@@ -1,0 +1,24 @@
+- title: Sicherheit
+  path: sicherheit
+  icon: mdi:shield-home-outline
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    max-width: var(--mag-content-max-width, 1460px)
+    margin: 0 auto
+    padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
+    grid-gap: 14px
+    grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr)
+    grid-template-areas: |
+      "hero hero"
+      "status details"
+      "connect details"
+    mediaquery:
+      "(max-width: 860px)":
+        grid-template-columns: minmax(0, 1fr)
+        grid-template-areas: |
+          "hero"
+          "status"
+          "details"
+          "connect"
+  cards: !include ../../shared/cards/security.yaml

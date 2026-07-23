@@ -285,12 +285,82 @@ script:
                 Die Wohnzimmer-Rollläden wurden nicht geschlossen,
                 weil eine Öffnung offen oder ihr Status nicht verfügbar ist.
 
+  magguu_guten_morgen:
+    alias: Guten Morgen
+    icon: mdi:weather-sunset-up
+    mode: single
+    sequence:
+      - action: script.magguu_alle_rollladen_auf
+        continue_on_error: true
+
+  magguu_kochen:
+    alias: Kochen
+    icon: mdi:chef-hat
+    mode: restart
+    sequence:
+      - action: switch.turn_on
+        continue_on_error: true
+        target:
+          entity_id: switch.kuche_kuche_licht
+      - action: light.turn_on
+        continue_on_error: true
+        target:
+          entity_id: light.esszimmer_signe_gradient
+        data:
+          brightness_pct: 55
+          transition: 2
+
+  magguu_besuch:
+    alias: Besuch
+    icon: mdi:account-group-outline
+    mode: restart
+    sequence:
+      - action: light.turn_on
+        continue_on_error: true
+        target:
+          entity_id:
+            - light.wohnzimmer_wohnzimmer
+            - light.esszimmer_esszimmer
+            - light.sonstiges_festavia_string_lights
+        data:
+          brightness_pct: 60
+          transition: 2
+
+  magguu_gaming:
+    alias: Gaming
+    icon: mdi:controller
+    mode: restart
+    sequence:
+      - action: switch.turn_on
+        continue_on_error: true
+        target:
+          entity_id: switch.wohnzimmer_wohnzimmer_computer
+      - action: light.turn_off
+        continue_on_error: true
+        target:
+          entity_id:
+            - light.wohnzimmer_wohnzimmer
+            - light.wohnzimmer_licht_fenster
+            - light.wohnzimmer_licht_sideboard
+        data:
+          transition: 2
+      - action: light.turn_on
+        continue_on_error: true
+        target:
+          entity_id:
+            - light.wohnzimmer_hue_play_links
+            - light.wohnzimmer_hue_play_rechts
+            - light.computerbereich
+        data:
+          brightness_pct: 35
+          transition: 2
+
 template:
   - sensor:
       - name: Magguu Dashboard Version
         unique_id: magguu_dashboard_version
         icon: mdi:view-dashboard-variant-outline
-        state: "6.3.0-dev"
+        state: "6.4.0-dev"
 
       - name: Magguu Lichter an
         unique_id: magguu_lichter_an
@@ -496,6 +566,161 @@ template:
       - name: Magguu Kueche Lichter an
         unique_id: magguu_kueche_lichter_an
         state: "{{ 1 if is_state('switch.kuche_kuche_licht', 'on') else 0 }}"
+
+      - name: Magguu Wartung offen
+        unique_id: magguu_wartung_offen
+        icon: mdi:tools
+        state: >-
+          {% set updates = states('sensor.magguu_updates_verfuegbar') | int(0) %}
+          {% set unavailable = states('sensor.magguu_nicht_verfuegbar') | int(0) %}
+          {% set service = states('sensor.openccu_servicemeldungen') | int(0) %}
+          {% set battery = 1 if is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') else 0 %}
+          {{ updates + unavailable + service + battery }}
+        attributes:
+          summary: >-
+            {% set ns = namespace(items=[]) %}
+            {% set updates = states('sensor.magguu_updates_verfuegbar') | int(0) %}
+            {% set unavailable = states('sensor.magguu_nicht_verfuegbar') | int(0) %}
+            {% set service = states('sensor.openccu_servicemeldungen') | int(0) %}
+            {% if service > 0 %}
+              {% set ns.items = ns.items + [service ~ ' OpenCCU-Meldung(en)'] %}
+            {% endif %}
+            {% if unavailable > 0 %}
+              {% set ns.items = ns.items + [unavailable ~ ' Gerät(e) nicht erreichbar'] %}
+            {% endif %}
+            {% if updates > 0 %}
+              {% set ns.items = ns.items + [updates ~ ' Update(s) verfügbar'] %}
+            {% endif %}
+            {% if is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') %}
+              {% set ns.items = ns.items + ['iPhone-Akku niedrig'] %}
+            {% endif %}
+            {{ ns.items | join(' · ') if ns.items else 'Keine Wartung nötig' }}
+
+      - name: Magguu Wichtigster Hinweis
+        unique_id: magguu_wichtigster_hinweis
+        icon: >-
+          {% set heating = is_state('binary_sensor.magguu_wohnzimmer_heizwarnung', 'on')
+             or is_state('binary_sensor.magguu_schlafzimmer_heizwarnung', 'on')
+             or is_state('binary_sensor.magguu_kinderzimmer_heizwarnung', 'on') %}
+          {% set start = state_attr('calendar.abfuhr', 'start_time') %}
+          {% set waste_days = ((((as_timestamp(start, 0) - as_timestamp(today_at(), 0)) / 86400) | round(0)) | int(99)) if start else 99 %}
+          {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0 %}
+            mdi:alarm-light-outline
+          {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+            mdi:home-alert-outline
+          {% elif heating %}
+            mdi:radiator-off
+          {% elif is_state('binary_sensor.magguu_wetterwarnung', 'on') %}
+            mdi:weather-alert
+          {% elif waste_days in [0, 1] %}
+            mdi:trash-can-clock-outline
+          {% elif states('sensor.magguu_nicht_verfuegbar') | int(0) > 0 %}
+            mdi:lan-disconnect
+          {% elif is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') %}
+            mdi:battery-alert-variant-outline
+          {% elif states('sensor.magguu_updates_verfuegbar') | int(0) > 0 %}
+            mdi:update
+          {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
+            mdi:window-open-variant
+          {% else %}
+            mdi:check-circle-outline
+          {% endif %}
+        state: >-
+          {% set heating = is_state('binary_sensor.magguu_wohnzimmer_heizwarnung', 'on')
+             or is_state('binary_sensor.magguu_schlafzimmer_heizwarnung', 'on')
+             or is_state('binary_sensor.magguu_kinderzimmer_heizwarnung', 'on') %}
+          {% set start = state_attr('calendar.abfuhr', 'start_time') %}
+          {% set waste_days = ((((as_timestamp(start, 0) - as_timestamp(today_at(), 0)) / 86400) | round(0)) | int(99)) if start else 99 %}
+          {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0 %}
+            alarm
+          {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+            abwesend
+          {% elif heating %}
+            heizverlust
+          {% elif is_state('binary_sensor.magguu_wetterwarnung', 'on') %}
+            wetter
+          {% elif waste_days in [0, 1] %}
+            abfuhr
+          {% elif states('sensor.magguu_nicht_verfuegbar') | int(0) > 0 %}
+            offline
+          {% elif is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') %}
+            akku
+          {% elif states('sensor.magguu_updates_verfuegbar') | int(0) > 0 %}
+            updates
+          {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
+            oeffnungen
+          {% else %}
+            alles_ok
+          {% endif %}
+        attributes:
+          summary: >-
+            {% set heating = is_state('binary_sensor.magguu_wohnzimmer_heizwarnung', 'on')
+               or is_state('binary_sensor.magguu_schlafzimmer_heizwarnung', 'on')
+               or is_state('binary_sensor.magguu_kinderzimmer_heizwarnung', 'on') %}
+            {% set start = state_attr('calendar.abfuhr', 'start_time') %}
+            {% set waste_days = ((((as_timestamp(start, 0) - as_timestamp(today_at(), 0)) / 86400) | round(0)) | int(99)) if start else 99 %}
+            {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0 %}
+              {{ states('sensor.openccu_alarmmeldungen') }} Alarmmeldung(en) in OpenCCU
+            {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+              {{ state_attr('binary_sensor.magguu_abwesenheitswarnung', 'summary') }}
+            {% elif heating %}
+              Fenster offen, während mindestens eine Heizung aktiv heizt
+            {% elif is_state('binary_sensor.magguu_wetterwarnung', 'on') %}
+              {{ state_attr('binary_sensor.magguu_wetterwarnung', 'summary') }}
+            {% elif waste_days in [0, 1] %}
+              {{ state_attr('calendar.abfuhr', 'message') or 'Abfuhr' }} · {{ 'heute' if waste_days == 0 else 'morgen' }}
+            {% elif states('sensor.magguu_nicht_verfuegbar') | int(0) > 0 %}
+              {{ states('sensor.magguu_nicht_verfuegbar') }} wichtiges Gerät bzw. Geräte nicht erreichbar
+            {% elif is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') %}
+              {{ state_attr('binary_sensor.magguu_iphone_akkuwarnung', 'summary') }}
+            {% elif states('sensor.magguu_updates_verfuegbar') | int(0) > 0 %}
+              {{ states('sensor.magguu_updates_verfuegbar') }} Aktualisierung(en) verfügbar
+            {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
+              {{ states('sensor.magguu_offene_fenster') }} Fenster oder Türen geöffnet
+            {% else %}
+              Haus, Geräte und Wartung ohne dringenden Hinweis
+            {% endif %}
+
+      - name: Magguu Sicherheitsstatus
+        unique_id: magguu_sicherheitsstatus
+        icon: >-
+          {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0
+                or is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+            mdi:shield-alert-outline
+          {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
+            mdi:shield-half-full
+          {% else %}
+            mdi:shield-check-outline
+          {% endif %}
+        state: >-
+          {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0
+                or is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+            kritisch
+          {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
+            pruefen
+          {% else %}
+            sicher
+          {% endif %}
+        attributes:
+          summary: >-
+            {% set alarms = states('sensor.openccu_alarmmeldungen') | int(0) %}
+            {% set openings = states('sensor.magguu_offene_fenster') | int(0) %}
+            {% if alarms > 0 %}
+              {{ alarms }} Alarmmeldung(en) – sofort prüfen
+            {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+              Niemand zuhause · {{ state_attr('binary_sensor.magguu_abwesenheitswarnung', 'summary') }}
+            {% elif openings > 0 %}
+              {{ openings }} Fenster oder Türen geöffnet
+            {% else %}
+              Keine Alarmmeldung und alle überwachten Öffnungen geschlossen
+            {% endif %}
+
+      - name: Magguu Tageszeit
+        unique_id: magguu_tageszeit
+        icon: mdi:theme-light-dark
+        state: >-
+          {% set hour = now().hour %}
+          {{ 'morgen' if 5 <= hour < 11 else 'tag' if 11 <= hour < 17 else 'abend' if 17 <= hour < 22 else 'nacht' }}
 
   - binary_sensor:
       - name: Magguu Wohnzimmer Oeffnung

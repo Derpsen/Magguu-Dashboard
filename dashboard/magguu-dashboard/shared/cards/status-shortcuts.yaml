@@ -1,0 +1,38 @@
+type: grid
+columns: 2
+square: false
+cards:
+  - type: custom:mushroom-template-card
+    entity: sensor.magguu_sicherheitsstatus
+    primary: Sicherheit
+    secondary: "{{ state_attr(entity, 'summary') }}"
+    multiline_secondary: true
+    icon: "{{ state_attr(entity, 'icon') or 'mdi:shield-home-outline' }}"
+    icon_color: >-
+      {{ 'red' if states(entity) == 'kritisch'
+         else 'orange' if states(entity) == 'pruefen'
+         else 'green' }}
+    tap_action:
+      action: navigate
+      navigation_path: sicherheit
+    card_mod: &shortcut_card
+      style: |
+        ha-card {
+          min-height: 92px;
+          border-radius: var(--mag-radius-card, 24px);
+          background: var(--mag-surface, rgba(24,25,39,.94));
+          border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+          box-shadow: none;
+        }
+
+  - type: custom:mushroom-template-card
+    entity: sensor.magguu_wartung_offen
+    primary: Wartung
+    secondary: "{{ state_attr(entity, 'summary') }}"
+    multiline_secondary: true
+    icon: "{{ 'mdi:tools' if states(entity) | int(0) > 0 else 'mdi:check-decagram-outline' }}"
+    icon_color: "{{ 'orange' if states(entity) | int(0) > 0 else 'green' }}"
+    tap_action:
+      action: navigate
+      navigation_path: system
+    card_mod: *shortcut_card

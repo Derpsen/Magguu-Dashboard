@@ -4,7 +4,7 @@ Modulares Home-Assistant-Dashboard für Smartphone, Tablet und Desktop.
 
 ## Aktueller Stand
 
-Diese Repository-Version enthält die moderne V6.3-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Situative Warnungen, sichere Modi, ein bedingter Medienbereich, eine dynamische Abfuhrkarte und gemeinsame informative Raumheader sind integriert. Ring-, Nuki-, Unraid-, Plex- und AdGuard-Erweiterungen folgen erst mit verifizierten Entitäts-IDs.
+Diese Repository-Version enthält die moderne V6.4-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Eine priorisierte „Jetzt wichtig“-Logik, Sicherheits- und Wartungsstatus, kontextabhängige Modi, ein bedingter Medienbereich, eine dynamische Abfuhrkarte und gemeinsame informative Raumheader sind integriert. Ring-, Nuki-, Unraid-, Plex-, Energie- und AdGuard-Erweiterungen sind sichtbar vorbereitet, werden aber erst mit verifizierten Entitäts-IDs aktiv angebunden.
 
 ## Voraussetzungen
 
@@ -24,7 +24,7 @@ Installierte Frontend-Erweiterungen:
 
 - `dashboard/magguu-dashboard/` – aktives YAML-Dashboard
 - `dashboard/magguu-dashboard/shared/cards/rooms.yaml` – gemeinsame Raumkarten für Mobile und Tablet
-- `dashboard/magguu-dashboard/shared/cards/` – gemeinsame Inhalte für Räume, Klima, Kalender und System
+- `dashboard/magguu-dashboard/shared/cards/` – gemeinsame Inhalte für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie und System
 - `dashboard/magguu-dashboard/shared/rooms/` – gemeinsame responsive Raumdetailseiten
 - `dashboard/magguu-dashboard/shared/templates/button_card.yaml` – zentrale UI-Templates
 - `packages/` – Template-Sensoren und Hilfslogik

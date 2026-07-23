@@ -1,0 +1,61 @@
+- type: custom:button-card
+  template: page_header_v6
+  name: Energie & Verbrauch
+  icon: mdi:home-lightning-bolt-outline
+  variables:
+    subtitle: Verbrauch öffnen und Messquellen kontrolliert ergänzen
+    accent: '#ffd166'
+  view_layout: {grid-area: hero}
+
+- type: vertical-stack
+  view_layout: {grid-area: main}
+  cards:
+    - type: custom:mushroom-title-card
+      title: Energiezentrale
+      subtitle: Home Assistants integrierte Auswertung nutzen
+    - type: custom:mushroom-template-card
+      primary: Energie-Dashboard öffnen
+      secondary: Tages-, Monats- und Langzeitverbrauch anzeigen
+      icon: mdi:chart-sankey-variant
+      icon_color: amber
+      tap_action:
+        action: navigate
+        navigation_path: /energy
+      card_mod: &energy_card
+        style: |
+          ha-card {
+            min-height: 108px;
+            border-radius: var(--mag-radius-card, 24px);
+            background:
+              radial-gradient(circle at 90% 18%, rgba(255,209,102,.17), transparent 34%),
+              var(--mag-surface, rgba(24,25,39,.94));
+            border: 1px solid rgba(255,209,102,.24);
+            box-shadow: var(--mag-shadow-card, none);
+          }
+
+- type: vertical-stack
+  view_layout: {grid-area: setup}
+  cards:
+    - type: custom:mushroom-title-card
+      title: Messquellen
+      subtitle: Keine Werte erfinden – nur reale Leistungs- und Energieentitäten
+    - type: custom:mushroom-template-card
+      primary: Verbrauchsdaten noch nicht verifiziert
+      secondary: Stromzähler, Zwischenstecker oder Wechselrichter zuerst in Home Assistant einrichten und anschließend exportieren
+      multiline_secondary: true
+      icon: mdi:counter
+      icon_color: grey
+      tap_action:
+        action: navigate
+        navigation_path: /config/integrations/dashboard
+      card_mod: *energy_card
+    - type: custom:mushroom-template-card
+      primary: Geplanter Ausbau
+      secondary: Hausverbrauch, Tageskosten, größte Verbraucher und Langzeitvergleich
+      multiline_secondary: true
+      icon: mdi:chart-timeline-variant-shimmer
+      icon_color: blue
+      tap_action: {action: none}
+      card_mod: *energy_card
+
+- !include ../navbar.yaml

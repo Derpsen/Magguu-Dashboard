@@ -1,0 +1,110 @@
+- type: custom:button-card
+  template: page_header_v6
+  name: Medien
+  icon: mdi:play-box-multiple-outline
+  variables:
+    subtitle: Wiedergabe, Wohnzimmer-Geräte und passende Szenen
+    accent: '#b48cff'
+  view_layout: {grid-area: hero}
+
+- type: vertical-stack
+  view_layout: {grid-area: player}
+  cards:
+    - type: custom:mushroom-title-card
+      title: Wohnzimmer
+      subtitle: Soundbar und Geräte zentral steuern
+    - type: custom:mushroom-media-player-card
+      entity: media_player.av_samsung_soundbar_q90r
+      name: Samsung Soundbar
+      icon: mdi:soundbar
+      use_media_info: true
+      show_volume_level: true
+      fill_container: true
+      media_controls: [previous, play_pause_stop, next]
+      volume_controls: [volume_mute, volume_set]
+      collapsible_controls: false
+      tap_action: {action: more-info}
+      card_mod: &media_card
+        style: |
+          ha-card {
+            min-height: 168px;
+            border-radius: var(--mag-radius-card, 24px);
+            background:
+              radial-gradient(circle at 88% 18%, rgba(180,140,255,.22), transparent 36%),
+              linear-gradient(145deg, rgba(92,72,156,.26), var(--mag-surface, rgba(24,25,39,.96)) 68%);
+            border: 1px solid rgba(180,140,255,.28);
+            box-shadow: 0 14px 38px rgba(0,0,0,.18);
+          }
+
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: quick_v5
+          entity: switch.wohnzimmer_wohnzimmer_fernseher
+          name: Fernseher
+          icon: mdi:television
+          variables: {accent: '#b48cff', sub: Steckdose}
+          tap_action:
+            action: toggle
+            confirmation:
+              text: Fernseher-Steckdose wirklich umschalten?
+        - type: custom:button-card
+          template: quick_v5
+          entity: switch.wohnzimmer_wohnzimmer_computer
+          name: Computer
+          icon: mdi:desktop-tower-monitor
+          variables: {accent: '#70d6c8', sub: Steckdose}
+          tap_action:
+            action: toggle
+            confirmation:
+              text: Computer-Steckdose wirklich umschalten?
+
+- type: vertical-stack
+  view_layout: {grid-area: scenes}
+  cards:
+    - type: custom:mushroom-title-card
+      title: Schnell starten
+      subtitle: Szenen mit bestätigten Geräteaktionen
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:button-card
+          template: quick_v5
+          entity: script.magguu_filmabend
+          name: Filmabend
+          icon: mdi:movie-open-outline
+          variables: {accent: '#b48cff', sub: TV, Sound & Licht}
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.magguu_filmabend
+            confirmation:
+              text: Filmabend starten? Fernseher und Soundbar werden eingeschaltet, Licht gedimmt und sichere Rollläden geschlossen.
+        - type: custom:button-card
+          template: quick_v5
+          entity: script.magguu_gaming
+          name: Gaming
+          icon: mdi:controller
+          variables: {accent: '#70d6c8', sub: Computer & Licht}
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.magguu_gaming
+            confirmation:
+              text: Gaming-Modus starten? Die Computer-Steckdose wird eingeschaltet und das Wohnzimmerlicht angepasst.
+
+    - type: custom:mushroom-template-card
+      primary: Plex & Musik vorbereitet
+      secondary: Weitere Quellen erscheinen erst nach Export ihrer echten Entitäts-IDs
+      multiline_secondary: true
+      icon: mdi:plex
+      icon_color: grey
+      tap_action: {action: none}
+      card_mod: *media_card
+
+- !include ../navbar.yaml

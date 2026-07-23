@@ -1,0 +1,22 @@
+- title: Medien
+  path: medien
+  icon: mdi:play-box-multiple-outline
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    max-width: var(--mag-content-max-width, 1460px)
+    margin: 0 auto
+    padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
+    grid-gap: 14px
+    grid-template-columns: minmax(0, 1.2fr) minmax(330px, .8fr)
+    grid-template-areas: |
+      "hero hero"
+      "player scenes"
+    mediaquery:
+      "(max-width: 860px)":
+        grid-template-columns: minmax(0, 1fr)
+        grid-template-areas: |
+          "hero"
+          "player"
+          "scenes"
+  cards: !include ../../shared/cards/media.yaml

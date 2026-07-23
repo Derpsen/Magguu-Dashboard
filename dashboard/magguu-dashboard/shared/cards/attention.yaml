@@ -1,0 +1,175 @@
+type: conditional
+conditions:
+  - entity: sensor.magguu_wichtigster_hinweis
+    state_not: alles_ok
+card:
+  type: vertical-stack
+  cards:
+    - type: custom:mushroom-title-card
+      title: Jetzt wichtig
+      subtitle: Der aktuell wichtigste Hinweis
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: alarm
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.openccu_alarmmeldungen
+        primary: Alarmmeldung
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:alarm-light-outline
+        icon_color: red
+        tap_action: {action: more-info}
+        card_mod: &priority_critical
+          style: |
+            ha-card {
+              min-height: 92px;
+              border: 1px solid color-mix(in srgb, var(--mag-accent-error, #ff6b6b) 64%, transparent);
+              background: linear-gradient(135deg, rgba(255,107,107,.16), var(--mag-surface, rgba(24,25,39,.96)) 72%);
+              box-shadow: 0 12px 34px rgba(0,0,0,.16);
+            }
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: abwesend
+      card:
+        type: custom:mushroom-template-card
+        entity: binary_sensor.magguu_abwesenheitswarnung
+        primary: Zuhause noch etwas aktiv
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:home-alert-outline
+        icon_color: orange
+        tap_action:
+          action: navigate
+          navigation_path: sicherheit
+        card_mod: &priority_warning
+          style: |
+            ha-card {
+              min-height: 92px;
+              border: 1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 52%, transparent);
+              background: linear-gradient(135deg, rgba(255,159,67,.14), var(--mag-surface, rgba(24,25,39,.96)) 72%);
+              box-shadow: 0 12px 34px rgba(0,0,0,.14);
+            }
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: heizverlust
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.magguu_wichtigster_hinweis
+        primary: Heizverlust vermeiden
+        secondary: "{{ state_attr(entity, 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:radiator-off
+        icon_color: orange
+        tap_action:
+          action: navigate
+          navigation_path: klima
+        card_mod: *priority_warning
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: wetter
+      card:
+        type: custom:mushroom-template-card
+        entity: weather.forecast_home
+        primary: Wetterhinweis
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:weather-alert
+        icon_color: orange
+        tap_action: {action: more-info}
+        card_mod: *priority_warning
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: abfuhr
+      card:
+        type: custom:mushroom-template-card
+        entity: calendar.abfuhr
+        primary: Abfuhr nicht vergessen
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:trash-can-clock-outline
+        icon_color: green
+        tap_action:
+          action: navigate
+          navigation_path: kalender
+        card_mod: &priority_info
+          style: |
+            ha-card {
+              min-height: 92px;
+              border: 1px solid color-mix(in srgb, var(--mag-accent-climate, #57cbd3) 35%, transparent);
+              background: linear-gradient(135deg, rgba(87,203,211,.11), var(--mag-surface, rgba(24,25,39,.96)) 72%);
+              box-shadow: 0 12px 34px rgba(0,0,0,.12);
+            }
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: offline
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.magguu_nicht_verfuegbar
+        primary: Gerät nicht erreichbar
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:lan-disconnect
+        icon_color: orange
+        tap_action:
+          action: navigate
+          navigation_path: system
+        card_mod: *priority_warning
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: akku
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.iphone_von_marco_battery_level
+        primary: iPhone-Akku niedrig
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        icon: mdi:battery-alert-variant-outline
+        icon_color: red
+        tap_action: {action: more-info}
+        card_mod: *priority_critical
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: updates
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.magguu_updates_verfuegbar
+        primary: Updates verfügbar
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        icon: mdi:update
+        icon_color: blue
+        tap_action:
+          action: navigate
+          navigation_path: system
+        card_mod: *priority_info
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
+          state: oeffnungen
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.magguu_offene_fenster
+        primary: Fenster oder Türen geöffnet
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        icon: mdi:window-open-variant
+        icon_color: orange
+        tap_action:
+          action: navigate
+          navigation_path: sicherheit
+        card_mod: *priority_warning

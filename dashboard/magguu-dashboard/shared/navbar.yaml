@@ -28,6 +28,10 @@ routes:
     icon: mdi:calendar-month-outline
     icon_selected: mdi:calendar-month
     label: Kalender
+  - url: sicherheit
+    icon: mdi:shield-home-outline
+    icon_selected: mdi:shield-home
+    label: Sicherheit
   - url: system
     icon: mdi:cog-outline
     icon_selected: mdi:cog
@@ -35,13 +39,11 @@ routes:
     badge:
       show: >-
         [[[
-          return Number(states['sensor.magguu_updates_verfuegbar']?.state || 0) > 0 ||
-                 Number(states['sensor.openccu_servicemeldungen']?.state || 0) > 0;
+          return Number(states['sensor.magguu_wartung_offen']?.state || 0) > 0;
         ]]]
       count: >-
         [[[
-          return Number(states['sensor.magguu_updates_verfuegbar']?.state || 0) +
-                 Number(states['sensor.openccu_servicemeldungen']?.state || 0);
+          return Number(states['sensor.magguu_wartung_offen']?.state || 0);
         ]]]
 styles: |
   .navbar {

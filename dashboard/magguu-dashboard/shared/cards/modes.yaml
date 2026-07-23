@@ -8,6 +8,29 @@ cards:
     columns: 2
     square: false
     cards:
+      - type: conditional
+        conditions:
+          - entity: sensor.magguu_tageszeit
+            state: morgen
+        card:
+          type: custom:button-card
+          template: quick_v5
+          entity: script.magguu_guten_morgen
+          name: Guten Morgen
+          icon: mdi:weather-sunset-up
+          variables:
+            accent: '#ffd166'
+            sub: Rollläden öffnen
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            service_data:
+              entity_id: script.magguu_guten_morgen
+            confirmation:
+              text: Morgenroutine starten und alle Rollläden im Haus öffnen?
+          hold_action:
+            action: more-info
+
       - type: custom:button-card
         template: quick_v5
         entity: script.magguu_gute_nacht
@@ -23,6 +46,38 @@ cards:
             entity_id: script.magguu_gute_nacht
           confirmation:
             text: Gute-Nacht-Modus starten? Lichter und Geräte werden ausgeschaltet. Rollläden schließen nur bei geschlossenen Fenstern.
+        hold_action:
+          action: more-info
+
+      - type: custom:button-card
+        template: quick_v5
+        entity: script.magguu_kochen
+        name: Kochen
+        icon: mdi:chef-hat
+        variables:
+          accent: '#ffd166'
+          sub: Küche & Esszimmer
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.magguu_kochen
+        hold_action:
+          action: more-info
+
+      - type: custom:button-card
+        template: quick_v5
+        entity: script.magguu_besuch
+        name: Besuch
+        icon: mdi:account-group-outline
+        variables:
+          accent: '#e886ad'
+          sub: Wohnbereiche einladen
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.magguu_besuch
         hold_action:
           action: more-info
 
@@ -59,5 +114,23 @@ cards:
             entity_id: script.magguu_filmabend
           confirmation:
             text: Filmabend starten? Fernseher und Soundbar werden eingeschaltet, das Licht gedimmt und sichere Rollläden geschlossen.
+        hold_action:
+          action: more-info
+
+      - type: custom:button-card
+        template: quick_v5
+        entity: script.magguu_gaming
+        name: Gaming
+        icon: mdi:controller
+        variables:
+          accent: '#70d6c8'
+          sub: Computer & Licht
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          service_data:
+            entity_id: script.magguu_gaming
+          confirmation:
+            text: Gaming-Modus starten? Die Computer-Steckdose wird eingeschaltet und das Wohnzimmerlicht angepasst.
         hold_action:
           action: more-info

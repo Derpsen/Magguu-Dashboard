@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.4.0-dev – 2026-07-23
+
+- priorisierte „Jetzt wichtig“-Karte für Alarm, Abwesenheit, Heizverlust, Wetter, Abfuhr, Geräte, Akku, Updates und Öffnungen ergänzt
+- gemeinsamen Sicherheitsstatus und eine eigene responsive Sicherheitsseite für Mobile und Tablet eingeführt
+- Wartungszähler aus Updates, OpenCCU-Meldungen, nicht erreichbaren Geräten und Akkustatus ergänzt
+- Systemseite um zentrale Einstiege für Sicherheit, Medien, Energie sowie vorbereitete Server- und Netzwerkdienste erweitert
+- eigene Medienseite mit Soundbar, sicheren Steckdosenaktionen, Filmabend und Gaming ergänzt
+- Energie-Einstiegsseite mit direkter Navigation zum integrierten Home-Assistant-Energie-Dashboard ergänzt
+- Ring, Nuki, Plex, Unraid, Docker, AdGuard und Energiemessung ohne erfundene Entitäten als noch nicht verbundene Erweiterungen gekennzeichnet
+- kontextabhängige Morgenroutine sowie Modi für Kochen, Besuch und Gaming ergänzt
+- alte, doppelte Einzelwarnkarten durch die zentrale Prioritätslogik ersetzt
+
 ## 6.3.0-dev – 2026-07-23
 
 - bedingten Medienbereich mit Wiedergabe- und Lautstärkesteuerung ergänzt

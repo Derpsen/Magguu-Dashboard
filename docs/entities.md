@@ -128,6 +128,10 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `script.magguu_gute_nacht`
 - `script.magguu_haus_verlassen`
 - `script.magguu_filmabend`
+- `script.magguu_guten_morgen`
+- `script.magguu_kochen`
+- `script.magguu_besuch`
+- `script.magguu_gaming`
 - `sensor.magguu_lichter_an`
 - `sensor.magguu_offene_fenster`
 - `sensor.magguu_updates_verfuegbar`
@@ -146,6 +150,10 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.magguu_schlafzimmer_lichter_an`
 - `sensor.magguu_kinderzimmer_lichter_an`
 - `sensor.magguu_kueche_lichter_an`
+- `sensor.magguu_wartung_offen`
+- `sensor.magguu_wichtigster_hinweis`
+- `sensor.magguu_sicherheitsstatus`
+- `sensor.magguu_tageszeit`
 - `binary_sensor.magguu_wohnzimmer_oeffnung`
 - `binary_sensor.magguu_kueche_oeffnung`
 - `binary_sensor.magguu_schlafzimmer_oeffnung`
@@ -165,3 +173,4 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - Unraid- und Docker-Sensoren
 - Plex-/Musik-Entitäten
 - AdGuard-Sensoren
+- Strom-, Leistungs- und Kostenentitäten für die Verbrauchsansicht

@@ -1,0 +1,16 @@
+- title: Energie
+  path: energie
+  icon: mdi:home-lightning-bolt-outline
+  theme: Magguu Midnight
+  type: custom:grid-layout
+  layout:
+    max-width: 760px
+    margin: 0 auto
+    padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 96px
+    grid-gap: 14px
+    grid-template-columns: minmax(0, 1fr)
+    grid-template-areas: |
+      "hero"
+      "main"
+      "setup"
+  cards: !include ../../shared/cards/energy.yaml

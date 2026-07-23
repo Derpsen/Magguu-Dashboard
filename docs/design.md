@@ -15,6 +15,7 @@ Das Dashboard orientiert sich konzeptionell an modernen Smart-Home-Oberflächen 
 - wenige wichtige Schnellaktionen
 - bestätigte Modi für Gute Nacht, Haus verlassen und Filmabend
 - situative Hinweise nur bei Wettergefahr, niedrigem Akku, Abwesenheit oder Heizverlust
+- genau einen wichtigsten Hinweis priorisieren und weitere Zustände über Sicherheit und System erreichbar halten
 - Medienkarte nur bei aktiver Wiedergabe
 - Sicherheitsstatus von Ring und Nuki, sobald Entitäten vorhanden sind
 
@@ -37,10 +38,23 @@ Das Dashboard orientiert sich konzeptionell an modernen Smart-Home-Oberflächen 
 
 ## Sicherheit
 
+- vorhandene Anwesenheits-, Öffnungs- und OpenCCU-Daten bereits ohne Zusatzintegration zusammenführen
 - Nuki-Status und sichere Bedienung
 - Ring-Vorschau bzw. Snapshot nur, wenn technisch verfügbar
 - offene Fenster und Türen
 - kritische Aktionen wie Entriegeln nicht versehentlich per einfachem Tap ausführen
+
+## Medien
+
+- Soundbar, Fernseher und Computer auf einer gemeinsamen responsiven Seite bündeln
+- Steckdosen und geräteübergreifende Szenen nur mit klarer Bestätigung schalten
+- Plex und weitere Musikquellen erst mit verifizierten Entitäts-IDs einbinden
+
+## Energie und System
+
+- zum integrierten Energie-Dashboard führen, solange keine verifizierten Messentitäten vorliegen
+- Wartung aus Updates, OpenCCU-Meldungen, Erreichbarkeit und Akkustatus priorisieren
+- Unraid, Docker und AdGuard als vorbereitete Erweiterungen zeigen, aber keine Zustände simulieren
 
 ## Responsive Ziele
 

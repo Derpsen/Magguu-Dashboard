@@ -98,6 +98,16 @@
       title: Hinweise
       subtitle: Nur relevante Systemmeldungen
 
+    - type: custom:mushroom-template-card
+      entity: sensor.magguu_wartung_offen
+      primary: "{{ 'Wartung erforderlich' if states(entity) | int(0) > 0 else 'System gepflegt' }}"
+      secondary: "{{ state_attr(entity, 'summary') }}"
+      multiline_secondary: true
+      icon: "{{ 'mdi:tools' if states(entity) | int(0) > 0 else 'mdi:check-decagram-outline' }}"
+      icon_color: "{{ 'orange' if states(entity) | int(0) > 0 else 'green' }}"
+      tap_action: {action: more-info}
+      card_mod: *status_card
+
     - type: custom:auto-entities
       show_empty: false
       card:
@@ -219,6 +229,58 @@
           icon: mdi:cloud-check-outline
           color: "{{ 'green' if states(entity) not in ['unknown', 'unavailable'] else 'orange' }}"
           tap_action: {action: more-info}
+          card_mod: *status_card
+
+    - type: custom:mushroom-title-card
+      title: Bereiche & Erweiterungen
+      subtitle: Sicherheit, Medien, Energie und Infrastruktur
+
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:mushroom-template-card
+          entity: sensor.magguu_sicherheitsstatus
+          primary: Sicherheit
+          secondary: "{{ state_attr(entity, 'summary') }}"
+          multiline_secondary: true
+          icon: mdi:shield-home-outline
+          icon_color: >-
+            {{ 'red' if states(entity) == 'kritisch'
+               else 'orange' if states(entity) == 'pruefen'
+               else 'green' }}
+          tap_action:
+            action: navigate
+            navigation_path: sicherheit
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: media_player.av_samsung_soundbar_q90r
+          primary: Medien
+          secondary: Soundbar, TV, Computer und Szenen
+          icon: mdi:play-box-multiple-outline
+          icon_color: purple
+          tap_action:
+            action: navigate
+            navigation_path: medien
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          primary: Energie
+          secondary: Energie-Dashboard und vorbereitete Messquellen
+          icon: mdi:home-lightning-bolt-outline
+          icon_color: amber
+          tap_action:
+            action: navigate
+            navigation_path: energie
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          primary: Server & Netzwerk
+          secondary: Unraid, Docker und AdGuard nach Entitäten-Export
+          multiline_secondary: true
+          icon: mdi:server-network
+          icon_color: grey
+          tap_action:
+            action: navigate
+            navigation_path: /config/integrations/dashboard
           card_mod: *status_card
 
 - !include ../navbar.yaml

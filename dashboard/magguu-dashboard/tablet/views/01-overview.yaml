@@ -266,6 +266,8 @@
       view_layout:
         grid-area: side
       cards:
+        - !include ../../shared/cards/attention.yaml
+        - !include ../../shared/cards/status-shortcuts.yaml
         - type: custom:mushroom-title-card
           title: Schnellzugriff
           subtitle: Die häufigsten Aktionen
@@ -322,33 +324,6 @@
                 action: toggle
                 confirmation:
                   text: Fernseher-Steckdose wirklich umschalten?
-        - type: custom:mushroom-title-card
-          title: Hinweise
-          subtitle: Nur relevante Meldungen
-        - !include ../../shared/cards/smart-hints.yaml
-        - !include ../../shared/cards/openings.yaml
-        - type: conditional
-          conditions:
-            - entity: sensor.openccu_servicemeldungen
-              state_not: '0'
-          card:
-            type: custom:mushroom-template-card
-            entity: sensor.openccu_servicemeldungen
-            primary: OpenCCU-Meldung
-            secondary: "{{ states(entity) }} Servicemeldung(en)"
-            icon: mdi:alert-circle-outline
-            icon_color: red
-        - type: conditional
-          conditions:
-            - entity: sensor.magguu_updates_verfuegbar
-              state_not: '0'
-          card:
-            type: custom:mushroom-template-card
-            entity: sensor.magguu_updates_verfuegbar
-            primary: Updates verfügbar
-            secondary: "{{ states(entity) }} Aktualisierung(en)"
-            icon: mdi:update
-            icon_color: blue
         - !include ../../shared/cards/active-media.yaml
         - !include ../../shared/cards/modes.yaml
 
