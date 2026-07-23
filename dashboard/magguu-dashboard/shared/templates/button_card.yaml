@@ -152,7 +152,7 @@ room_visual_v5:
         const validTemperature=t&&!['unknown','unavailable'].includes(t.state)&&Number.isFinite(tv);
         const validHumidity=h&&!['unknown','unavailable'].includes(h.state)&&Number.isFinite(hv);
         if(!validTemperature) return '';
-        const temperature=`${tv.toFixed(1).replace('.',',')}°`;
+        const temperature=`${tv.toFixed(1).replace('.',',')} °C`;
         const humidity=validHumidity
           ? `<span class="room-humidity"><ha-icon icon="mdi:water-percent"></ha-icon>${Math.round(hv)} %</span>`
           : '';
@@ -180,8 +180,8 @@ room_visual_v5:
       ]]]
   styles:
     card:
-      - min-height: 196px
-      - padding: 20px
+      - min-height: 158px
+      - padding: 18px
       - border-radius: var(--mag-radius-card, 24px) var(--mag-radius-card, 24px) 0 0
       - border-bottom: none
       - background: |
@@ -213,15 +213,15 @@ room_visual_v5:
     img_cell:
       - justify-self: start
       - align-self: end
-      - width: 136px
-      - height: 88px
-      - margin-left: -18px
-      - margin-bottom: -20px
+      - width: 108px
+      - height: 66px
+      - margin-left: -16px
+      - margin-bottom: -18px
       - border-radius: 0 100% 0 0
       - background: rgba(255,255,255,.032)
       - z-index: 2
     icon:
-      - width: 68px
+      - width: 52px
       - color: rgba(210,211,232,.35)
     custom_fields:
       climate:
@@ -236,10 +236,10 @@ room_visual_v5:
         - color: var(--secondary-text-color)
       orb:
         - position: absolute
-        - right: -40px
-        - bottom: -70px
-        - width: 170px
-        - height: 170px
+        - right: -30px
+        - bottom: -58px
+        - width: 138px
+        - height: 138px
         - border-radius: 50%
         - background: |
             [[[
@@ -249,40 +249,42 @@ room_visual_v5:
   extra_styles: |
     .room-climate-pill {
       display: grid;
-      grid-template-areas: "icon temp" "humidity humidity";
-      grid-template-columns: 22px min-content;
+      grid-template-areas: "icon temp" "icon humidity";
+      grid-template-columns: 38px min-content;
       align-items: center;
-      column-gap: 5px;
-      row-gap: 3px;
-      min-width: 88px;
-      padding: 9px 11px 8px;
-      border-radius: 17px;
-      background: color-mix(in srgb, var(--mag-accent-climate, #57cbd3) 13%, rgba(255,255,255,.035));
-      border: 1px solid color-mix(in srgb, var(--mag-accent-climate, #57cbd3) 24%, transparent);
-      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      column-gap: 8px;
+      row-gap: 2px;
+      min-width: 116px;
+      padding: 4px 2px;
     }
     .room-temperature-icon {
       grid-area: icon;
-      width: 21px;
-      height: 21px;
+      box-sizing: border-box;
+      width: 38px;
+      height: 38px;
+      padding: 8px;
+      border-radius: 13px;
+      background: color-mix(in srgb, var(--mag-accent-climate, #57cbd3) 16%, transparent);
       color: var(--mag-accent-climate, #57cbd3);
     }
     .room-temperature {
       grid-area: temp;
-      font-size: 22px;
+      align-self: end;
+      font-size: 21px;
       line-height: 1;
       font-weight: 750;
-      letter-spacing: -.7px;
+      letter-spacing: -.6px;
       color: var(--primary-text-color);
       white-space: nowrap;
     }
     .room-humidity {
       grid-area: humidity;
+      align-self: start;
       display: inline-flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: flex-start;
       gap: 3px;
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 650;
       color: var(--secondary-text-color);
       white-space: nowrap;

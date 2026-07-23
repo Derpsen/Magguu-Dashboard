@@ -2,6 +2,7 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- Raumkarten visuell verdichtet und Klimawerte ruhiger in den Kartenkopf integriert
 - verschachtelte responsive Raster auf die korrekte Layout-Card-Syntax migriert, damit Systemstatus, Dashboard-Updater, Klima-, Kalender- und Raumkarten zuverlässig dargestellt werden
 - Temperatur und Luftfeuchtigkeit als gut sichtbare Klima-Anzeige direkt in die Raumkarten integriert
 - Klima, Kalender und System auf gemeinsame responsive Inhaltsmodule umgestellt
