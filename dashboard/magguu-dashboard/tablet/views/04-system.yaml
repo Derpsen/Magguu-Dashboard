@@ -8,5 +8,23 @@
     margin: 0 auto
     padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
     grid-gap: 14px
-    grid-template-columns: minmax(0, 1fr)
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr) minmax(310px, .82fr)
+    grid-template-areas: |
+      "hero hero hero"
+      "status status side"
+      "manage manage side"
+    mediaquery:
+      "(max-width: 1080px)":
+        grid-template-columns: 1fr 1fr
+        grid-template-areas: |
+          "hero hero"
+          "status side"
+          "manage side"
+      "(max-width: 760px)":
+        grid-template-columns: minmax(0, 1fr)
+        grid-template-areas: |
+          "hero"
+          "status"
+          "side"
+          "manage"
   cards: !include ../../shared/cards/system.yaml

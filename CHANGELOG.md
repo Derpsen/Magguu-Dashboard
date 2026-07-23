@@ -2,6 +2,7 @@
 
 ## 6.0.0-dev – 2026-07-16
 
+- Systemseite nach dem Overview-Prinzip in Status, kompakte Hinweise und gleich große Verwaltungskarten gegliedert
 - Bereich „Medien & Raumklima“ von der Tablet-Home-Seite entfernt
 - irreführenden roten Lichtzähler-Badge an der Räume-Navigation entfernt
 - Tablet-Wetter kompakt rechts in die Begrüßungskarte integriert und Schnellzugriff sowie Hinweise nach oben verschoben

@@ -5,98 +5,99 @@
   variables:
     subtitle: Home Assistant, OpenCCU, Geräte und Dashboard-Verwaltung
     accent: '#a891ff'
+  view_layout:
+    grid-area: hero
 
-- type: custom:mushroom-title-card
-  title: Systemstatus
-  subtitle: Die wichtigsten Werte auf einen Blick
-
-- type: custom:layout-card
-  layout_type: custom:grid-layout
-  layout:
-    grid-template-columns: repeat(3, minmax(0, 1fr))
-    grid-gap: 12px
-    mediaquery:
-      "(max-width: 1000px)":
-        grid-template-columns: repeat(2, minmax(0, 1fr))
-      "(max-width: 620px)":
-        grid-template-columns: minmax(0, 1fr)
+- type: vertical-stack
+  view_layout:
+    grid-area: status
   cards:
-    - type: custom:mushroom-template-card
-      entity: sensor.openccu_systemzustand
-      primary: OpenCCU
-      secondary: "Systemzustand {{ states(entity) }} %"
-      icon: mdi:home-automation
-      color: "{{ 'green' if states(entity) | float(0) >= 95 else 'orange' }}"
-      tap_action: {action: more-info}
-      card_mod: &status_card
-        style: |
-          ha-card {
-            min-height: 92px;
-            border-radius: var(--mag-radius-card, 24px);
-            background: var(--mag-surface, rgba(24,25,39,.94));
-            border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-            box-shadow: var(--mag-shadow-card, none);
-          }
-    - type: custom:mushroom-template-card
-      entity: sensor.openccu_servicemeldungen
-      primary: Servicemeldungen
-      secondary: "{{ states(entity) }} Meldung(en)"
-      icon: mdi:alert-circle-outline
-      color: "{{ 'green' if states(entity) | int(0) == 0 else 'red' }}"
-      tap_action: {action: more-info}
-      card_mod: *status_card
-    - type: custom:mushroom-template-card
-      entity: sensor.homematic_ip_zentrale_duty_cycle_level
-      primary: Duty Cycle
-      secondary: "{{ states(entity) }} %"
-      icon: mdi:radio-tower
-      color: >-
-        {% set value = states(entity) | float(0) %}
-        {{ 'green' if value < 50 else 'orange' if value < 80 else 'red' }}
-      tap_action: {action: more-info}
-      card_mod: *status_card
-    - type: custom:mushroom-template-card
-      entity: sensor.homematic_ip_zentrale_carrier_sense_level
-      primary: Carrier Sense
-      secondary: "{{ states(entity) }} %"
-      icon: mdi:access-point-network
-      color: >-
-        {% set value = states(entity) | float(0) %}
-        {{ 'green' if value < 20 else 'orange' if value < 50 else 'red' }}
-      tap_action: {action: more-info}
-      card_mod: *status_card
-    - type: custom:mushroom-template-card
-      entity: sensor.openccu_verbindungslatenz
-      primary: Verbindung
-      secondary: "{{ states(entity) }} ms"
-      icon: mdi:timer-outline
-      color: blue
-      tap_action: {action: more-info}
-      card_mod: *status_card
-    - type: custom:mushroom-template-card
-      entity: sensor.iphone_von_marco_battery_level
-      primary: iPhone von Marco
-      secondary: "{{ states(entity) }} % · {{ states('sensor.iphone_von_marco_battery_state') }}"
-      icon: mdi:battery
-      color: >-
-        {% set value = states(entity) | int(0) %}
-        {{ 'green' if value >= 50 else 'orange' if value >= 20 else 'red' }}
-      tap_action: {action: more-info}
-      card_mod: *status_card
+    - type: custom:mushroom-title-card
+      title: Systemstatus
+      subtitle: Die wichtigsten Werte auf einen Blick
 
-- type: custom:mushroom-title-card
-  title: Hinweise
-  subtitle: Updates, Batterien und nicht erreichbare Geräte
+    - type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+        grid-gap: 12px
+        mediaquery:
+          "(max-width: 1200px)":
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+          "(max-width: 760px)":
+            grid-template-columns: minmax(0, 1fr)
+      cards:
+        - type: custom:mushroom-template-card
+          entity: sensor.openccu_systemzustand
+          primary: OpenCCU
+          secondary: "Systemzustand {{ states(entity) }} %"
+          icon: mdi:home-automation
+          color: "{{ 'green' if states(entity) | float(0) >= 95 else 'orange' }}"
+          tap_action: {action: more-info}
+          card_mod: &status_card
+            style: |
+              ha-card {
+                min-height: 92px;
+                border-radius: var(--mag-radius-card, 24px);
+                background: var(--mag-surface, rgba(24,25,39,.94));
+                border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+                box-shadow: var(--mag-shadow-card, none);
+              }
+        - type: custom:mushroom-template-card
+          entity: sensor.openccu_servicemeldungen
+          primary: Servicemeldungen
+          secondary: "{{ states(entity) }} Meldung(en)"
+          icon: mdi:alert-circle-outline
+          color: "{{ 'green' if states(entity) | int(0) == 0 else 'red' }}"
+          tap_action: {action: more-info}
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: sensor.homematic_ip_zentrale_duty_cycle_level
+          primary: Duty Cycle
+          secondary: "{{ states(entity) }} %"
+          icon: mdi:radio-tower
+          color: >-
+            {% set value = states(entity) | float(0) %}
+            {{ 'green' if value < 50 else 'orange' if value < 80 else 'red' }}
+          tap_action: {action: more-info}
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: sensor.homematic_ip_zentrale_carrier_sense_level
+          primary: Carrier Sense
+          secondary: "{{ states(entity) }} %"
+          icon: mdi:access-point-network
+          color: >-
+            {% set value = states(entity) | float(0) %}
+            {{ 'green' if value < 20 else 'orange' if value < 50 else 'red' }}
+          tap_action: {action: more-info}
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: sensor.openccu_verbindungslatenz
+          primary: Verbindung
+          secondary: "{{ states(entity) }} ms"
+          icon: mdi:timer-outline
+          color: blue
+          tap_action: {action: more-info}
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: sensor.iphone_von_marco_battery_level
+          primary: iPhone von Marco
+          secondary: "{{ states(entity) }} % · {{ states('sensor.iphone_von_marco_battery_state') }}"
+          icon: mdi:battery
+          color: >-
+            {% set value = states(entity) | int(0) %}
+            {{ 'green' if value >= 50 else 'orange' if value >= 20 else 'red' }}
+          tap_action: {action: more-info}
+          card_mod: *status_card
 
-- type: custom:layout-card
-  layout_type: custom:grid-layout
-  layout:
-    grid-template-columns: repeat(3, minmax(0, 1fr))
-    grid-gap: 12px
-    mediaquery:
-      "(max-width: 900px)":
-        grid-template-columns: minmax(0, 1fr)
+- type: vertical-stack
+  view_layout:
+    grid-area: side
   cards:
+    - type: custom:mushroom-title-card
+      title: Hinweise
+      subtitle: Nur relevante Systemmeldungen
+
     - type: custom:auto-entities
       show_empty: false
       card:
@@ -116,6 +117,7 @@
           - domain: update
             state: 'on'
       sort: {method: friendly_name}
+
     - type: custom:auto-entities
       show_empty: false
       card:
@@ -130,6 +132,7 @@
               device_class: battery
             state: 'on'
       sort: {method: friendly_name}
+
     - type: custom:auto-entities
       show_empty: false
       card:
@@ -151,37 +154,41 @@
             domain: media_player
       sort: {method: friendly_name}
 
-- type: custom:mushroom-title-card
-  title: Verwaltung
-  subtitle: Dashboard aktualisieren und Backups kontrollieren
-
-- type: custom:layout-card
-  layout_type: custom:grid-layout
-  layout:
-    grid-template-columns: repeat(2, minmax(0, 1fr))
-    grid-gap: 12px
-    mediaquery:
-      "(max-width: 760px)":
-        grid-template-columns: minmax(0, 1fr)
+- type: vertical-stack
+  view_layout:
+    grid-area: manage
   cards:
-    - type: custom:mushroom-template-card
-      entity: script.magguu_dashboard_aktualisieren
-      primary: Dashboard aktualisieren
-      secondary: Lädt den aktuellen Stand mit automatischem Backup
-      multiline_secondary: true
-      icon: mdi:cloud-download-outline
-      color: purple
-      tap_action:
-        action: call-service
-        service: script.turn_on
-        target:
-          entity_id: script.magguu_dashboard_aktualisieren
-        confirmation:
-          text: Dashboard jetzt aktualisieren und ein Backup anlegen?
-      hold_action: {action: more-info}
-      card_mod: *status_card
-    - type: vertical-stack
+    - type: custom:mushroom-title-card
+      title: Verwaltung
+      subtitle: Dashboard aktualisieren und Backups kontrollieren
+
+    - type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        grid-template-columns: repeat(3, minmax(0, 1fr))
+        grid-gap: 12px
+        mediaquery:
+          "(max-width: 1200px)":
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+          "(max-width: 760px)":
+            grid-template-columns: minmax(0, 1fr)
       cards:
+        - type: custom:mushroom-template-card
+          entity: script.magguu_dashboard_aktualisieren
+          primary: Dashboard aktualisieren
+          secondary: Aktuellen Stand mit Backup installieren
+          multiline_secondary: true
+          icon: mdi:cloud-download-outline
+          color: purple
+          tap_action:
+            action: call-service
+            service: script.turn_on
+            target:
+              entity_id: script.magguu_dashboard_aktualisieren
+            confirmation:
+              text: Dashboard jetzt aktualisieren und ein Backup anlegen?
+          hold_action: {action: more-info}
+          card_mod: *status_card
         - type: custom:mushroom-template-card
           entity: sensor.backup_backup_manager_state
           primary: Backup-Manager
@@ -192,7 +199,7 @@
           card_mod: *status_card
         - type: custom:mushroom-template-card
           entity: sensor.backup_last_successful_automatic_backup
-          primary: Letztes erfolgreiches Backup
+          primary: Letztes Backup
           secondary: >-
             {% if states(entity) not in ['unknown', 'unavailable'] %}
               {{ as_timestamp(states(entity)) | timestamp_custom('%d.%m.%Y · %H:%M', true) }}

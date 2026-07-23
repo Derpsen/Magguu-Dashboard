@@ -9,4 +9,9 @@
     padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 92px
     grid-gap: 14px
     grid-template-columns: minmax(0, 1fr)
+    grid-template-areas: |
+      "hero"
+      "status"
+      "side"
+      "manage"
   cards: !include ../../shared/cards/system.yaml
