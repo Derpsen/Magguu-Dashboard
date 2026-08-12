@@ -2,65 +2,41 @@
 set -eu
 
 CONFIG_DIR="${HA_CONFIG_DIR:-/config}"
-ARCHIVE_URL="https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz"
-WORK_DIR="$(mktemp -d "$CONFIG_DIR/.magguu-dashboard-update.XXXXXX")"
-ARCHIVE="$WORK_DIR/dashboard.tar.gz"
-BACKUP_DIR="$CONFIG_DIR/backups/magguu-dashboard-$(date +%Y%m%d-%H%M%S)"
-DASHBOARD_TARGET="$CONFIG_DIR/dashboard/magguu-dashboard"
-PACKAGE_TARGET="$CONFIG_DIR/packages/magguu_dashboard.yaml"
-THEME_TARGET="$CONFIG_DIR/themes/magguu_midnight.yaml"
-UPDATER_TARGET="$CONFIG_DIR/magguu-dashboard-update.sh"
-LEGACY_DASHBOARD_TARGET="$CONFIG_DIR/dashboard/magguu-flux"
-LEGACY_PACKAGE_TARGET="$CONFIG_DIR/packages/magguu_flux.yaml"
-CONFIG_FILE="$CONFIG_DIR/configuration.yaml"
+ARCHIVE_URL="${MAGGUU_DASHBOARD_ARCHIVE_URL:-https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz}"
+WORK_DIR=""
 
 cleanup() {
-  rm -rf "$WORK_DIR"
+  if [ -n "$WORK_DIR" ] && [ -d "$WORK_DIR" ]; then
+    rm -rf "$WORK_DIR"
+  fi
 }
 trap cleanup EXIT INT TERM
 
-curl -fL --retry 3 --connect-timeout 15 "$ARCHIVE_URL" -o "$ARCHIVE"
-tar -xzf "$ARCHIVE" -C "$WORK_DIR"
-SOURCE_DIR="$(find "$WORK_DIR" -mindepth 1 -maxdepth 1 -type d -name 'Magguu-Dashboard-*' | head -n 1)"
+mkdir -p "$CONFIG_DIR"
 
-for required in dashboard/magguu-dashboard packages/magguu_dashboard.yaml themes/magguu_midnight.yaml update-ha.sh; do
-  if [ ! -e "$SOURCE_DIR/$required" ]; then
-    echo "Fehlende Quelldatei im Download: $required" >&2
-    exit 1
-  fi
-done
-
-mkdir -p "$BACKUP_DIR" "$CONFIG_DIR/dashboard" "$CONFIG_DIR/packages" "$CONFIG_DIR/themes"
-
-if [ -d "$DASHBOARD_TARGET" ]; then
-  cp -a "$DASHBOARD_TARGET" "$BACKUP_DIR/"
-fi
-if [ -f "$PACKAGE_TARGET" ]; then
-  cp -a "$PACKAGE_TARGET" "$BACKUP_DIR/"
-fi
-if [ -f "$THEME_TARGET" ]; then
-  cp -a "$THEME_TARGET" "$BACKUP_DIR/"
-fi
-if [ -d "$LEGACY_DASHBOARD_TARGET" ]; then
-  cp -a "$LEGACY_DASHBOARD_TARGET" "$BACKUP_DIR/"
-fi
-if [ -f "$LEGACY_PACKAGE_TARGET" ]; then
-  cp -a "$LEGACY_PACKAGE_TARGET" "$BACKUP_DIR/"
+if [ -n "${MAGGUU_DASHBOARD_SOURCE_DIR:-}" ]; then
+  SOURCE_DIR=$MAGGUU_DASHBOARD_SOURCE_DIR
+else
+  WORK_DIR="$(mktemp -d "$CONFIG_DIR/.magguu-dashboard-update.XXXXXX")"
+  ARCHIVE="$WORK_DIR/dashboard.tar.gz"
+  curl -fL --retry 3 --connect-timeout 15 "$ARCHIVE_URL" -o "$ARCHIVE"
+  tar -xzf "$ARCHIVE" -C "$WORK_DIR"
+  SOURCE_DIR="$(find "$WORK_DIR" -mindepth 1 -maxdepth 1 -type d -name 'Magguu-Dashboard-*' | head -n 1)"
 fi
 
-if [ -f "$CONFIG_FILE" ] && grep -q '/config/dashboard/magguu-flux/' "$CONFIG_FILE"; then
-  cp -a "$CONFIG_FILE" "$BACKUP_DIR/configuration.yaml"
-  sed 's#/config/dashboard/magguu-flux/#/config/dashboard/magguu-dashboard/#g' "$CONFIG_FILE" > "$CONFIG_FILE.magguu-new"
-  mv "$CONFIG_FILE.magguu-new" "$CONFIG_FILE"
+if [ -z "$SOURCE_DIR" ] || [ ! -d "$SOURCE_DIR" ]; then
+  echo "Dashboard-Quellverzeichnis wurde nicht gefunden." >&2
+  exit 1
 fi
 
-rm -rf "$DASHBOARD_TARGET"
-rm -rf "$LEGACY_DASHBOARD_TARGET"
-rm -f "$LEGACY_PACKAGE_TARGET"
-cp -a "$SOURCE_DIR/dashboard/magguu-dashboard" "$DASHBOARD_TARGET"
-cp -a "$SOURCE_DIR/packages/magguu_dashboard.yaml" "$PACKAGE_TARGET"
-cp -a "$SOURCE_DIR/themes/magguu_midnight.yaml" "$THEME_TARGET"
-cp -a "$SOURCE_DIR/update-ha.sh" "$UPDATER_TARGET"
-chmod 755 "$UPDATER_TARGET"
+INSTALLER="$SOURCE_DIR/scripts/install-dashboard.sh"
+if [ ! -f "$INSTALLER" ]; then
+  echo "Fehlende Quelldatei: $INSTALLER" >&2
+  exit 1
+fi
 
-echo "Magguu Dashboard aktualisiert. Backup: $BACKUP_DIR"
+# shellcheck source=scripts/install-dashboard.sh
+. "$INSTALLER"
+magguu_install_dashboard "$SOURCE_DIR" "$CONFIG_DIR"
+
+echo "Magguu Dashboard aktualisiert. Backup: $MAGGUU_BACKUP_DIR"
