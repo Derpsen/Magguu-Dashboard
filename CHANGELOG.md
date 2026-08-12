@@ -1,5 +1,12 @@
 # Changelog
 
+## Unveröffentlicht
+
+- gemeinsame, POSIX-kompatible Installationslogik für Erstinstallation und Self-Update eingeführt
+- lokale Regressionstests für Installation, Legacy-Migration, Backup und Update ergänzt
+- Dashboard-Prüfung um Include-Ziele und nicht dokumentierte Entitätsreferenzen erweitert
+- reproduzierbare Python-Testabhängigkeit und Unit-Tests für den Validator ergänzt
+
 ## 6.4.0-dev – 2026-07-23
 
 - priorisierte „Jetzt wichtig“-Karte für Alarm, Abwesenheit, Heizverlust, Wetter, Abfuhr, Geräte, Akku, Updates und Öffnungen ergänzt
