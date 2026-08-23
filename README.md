@@ -31,7 +31,7 @@ Installierte Frontend-Erweiterungen:
 - `themes/` – Magguu Midnight Theme
 - `docs/entities.md` – verifizierte Entitäts-IDs
 - `docs/design.md` – Designanforderungen
-- `AGENTS.md` – verbindliche Regeln für Codex
+- `AGENTS.md` – verbindliche Regeln für Assistenten (Buddy-Hub)
 - `TASKS.md` – Roadmap
 - `CODEX_MASTER_PROMPT.md` – erster vollständiger Auftrag
 

@@ -1,8 +1,15 @@
-# Magguu Dashboard – Arbeitsregeln für Codex
+# Magguu Dashboard – Arbeitsregeln für Assistenten
 
 ## Ziel
 
 Dieses Repository enthält ein vollständig YAML-basiertes Home-Assistant-Dashboard für Smartphone, Tablet und Desktop. Es soll sich wie eine hochwertige Smart-Home-App anfühlen und nicht wie eine lose Sammlung von Lovelace-Karten.
+
+## Grok Bot / Buddy
+
+Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Helfer melden Ergebnisse an Buddy zurück.
+
+- Interaktive/Ad-hoc-Sessions: kein Commit, Push oder Git-Tag ohne ausdrückliche Freigabe für genau diesen Schritt.
+- Helfer unter Buddy-Hub-Standing-Order: klare In-Scope-Fixes dürfen ohne Nachfrage pro Änderung committen, pushen und nach `main` mergen; niemals force-push; niemals unzusammenhängendes dirty WIP mitveröffentlichen; Tags/Releases brauchen eine ausdrückliche Release-Freigabe.
 
 ## Unverhandelbare Regeln
 
@@ -16,6 +23,7 @@ Dieses Repository enthält ein vollständig YAML-basiertes Home-Assistant-Dashbo
 - Keine funktionierende Seite entfernen, ohne Ersatz und Changelog-Eintrag.
 - Keine Zugangsdaten, Tokens, Hostnamen oder privaten URLs committen.
 - Änderungen klein, nachvollziehbar und rückrollbar halten.
+- Kein ElvUI-/WoW-Addon-Ballast in dieses Home-Assistant-Repo einbringen.
 
 ## Designsystem
 
@@ -63,7 +71,7 @@ Nach jeder Änderung:
 3. Entitäts-IDs gegen `docs/entities.md` prüfen.
 4. Mobile und Tablet auf doppelte oder abweichende Logik prüfen.
 5. `CHANGELOG.md` aktualisieren.
-6. Einen kurzen Commit-Vorschlag nennen.
+6. Einen kurzen Commit-Vorschlag nennen (Buddy/Helfer: bei klaren In-Scope-Fixes laut Standing Order selbst committen/pushen/mergen).
 
 ## Arbeitsweise
 

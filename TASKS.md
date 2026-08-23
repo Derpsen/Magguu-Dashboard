@@ -1,5 +1,7 @@
 # Roadmap
 
+Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
+
 ## Phase 1 – Audit und Basis
 
 - [x] gesamte Include-Struktur prüfen
