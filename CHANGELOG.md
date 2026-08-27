@@ -2,6 +2,12 @@
 
 ## Unveröffentlicht
 
+- Home-Overview: Wohnzimmer/Esszimmer/Küche über gemeinsame Raumkarten-Includes statt Inline-Duplikate
+- Navbar um Medien und Energie ergänzt (Views waren schon vorhanden)
+- `VERSION` als Versionsquelle; Package-Sensor und Validator bleiben synchron
+- `docs/audit.md` als historischer Snapshot gekennzeichnet
+- `install.sh` ergänzt fehlende packages/themes/lovelace-Blöcke in `configuration.yaml` per Merge mit Backup, ohne vorhandene Keys zu überschreiben
+
 - POSIX-`install.sh` und `update.sh` ohne Bashisms; HA-OS-ash-tauglich
 - Ring verdrahtet: Klingel Vordereingang (`event.*`, Türöffnen mit Bestätigung) und Kinderzimmer-Kamera
 - README: primärer Updateweg ist die System-Aktion (Tarball); Git-`update.sh` nur optional mit Klon

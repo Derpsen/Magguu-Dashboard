@@ -28,6 +28,7 @@ Installierte Frontend-Erweiterungen:
 - `dashboard/magguu-dashboard/shared/rooms/` – gemeinsame responsive Raumdetailseiten
 - `dashboard/magguu-dashboard/shared/templates/button_card.yaml` – zentrale UI-Templates
 - `packages/` – Template-Sensoren und Hilfslogik
+- `VERSION` – einzige Versionsquelle; `packages/magguu_dashboard.yaml` muss denselben Stand haben
 - `themes/` – Magguu Midnight Theme
 - `docs/entities.md` – verifizierte Entitäts-IDs
 - `docs/design.md` – Designanforderungen
@@ -46,7 +47,7 @@ cd repos/Magguu-Dashboard
 sh install.sh
 ```
 
-Die bestehende `configuration.yaml` muss weiterhin auf diese Dateien zeigen:
+`install.sh` ergänzt fehlende `packages`-, `themes`- und Magguu-Dashboard-Einträge in `configuration.yaml` (legt vorher ein Backup an und überschreibt vorhandene Keys nicht). Wenn `homeassistant`, `frontend` oder `lovelace` selbst ein `!include` sind, denselben Block manuell setzen:
 
 ```yaml
 homeassistant:

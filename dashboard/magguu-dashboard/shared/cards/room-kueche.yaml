@@ -1,0 +1,46 @@
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: custom:button-card
+    template: room_visual_v5
+    name: Küche
+    icon: mdi:fridge-outline
+    variables:
+      room_path: kueche
+      accent: '#79d98c'
+      light_count_entity: sensor.magguu_kueche_lichter_an
+      opening_entity: binary_sensor.magguu_kueche_oeffnung
+      device_text: Licht, Rollladen und Fenster
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:button-card
+        template: room_action_v5
+        entity: switch.kuche_kuche_licht
+        name: Licht
+        icon: mdi:ceiling-light
+        variables: {accent: '#ffd166'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: cover.kuche_kuche_rollade
+        name: Rollladen
+        icon: mdi:window-shutter
+        tap_action: {action: more-info}
+        variables: {accent: '#71b7ff'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: binary_sensor.magguu_kueche_oeffnung
+        name: Fenster / Tür
+        icon: mdi:window-open-variant
+        tap_action: {action: more-info}
+        variables: {accent: '#ff9f43', active_label: Offen, inactive_label: Geschlossen}
+card_mod:
+  style: |
+    ha-card {
+      border-radius: var(--mag-radius-card, 24px);
+      background: var(--mag-surface, rgba(24,25,39,.94));
+      border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+      box-shadow: var(--mag-shadow-card, none);
+      overflow: hidden;
+    }

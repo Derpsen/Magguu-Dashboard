@@ -62,5 +62,35 @@ class ValidateRepositoryTest(unittest.TestCase):
         )
 
 
+
+    def test_reports_version_drift(self) -> None:
+        (self.root / "VERSION").write_text("1.0.0-dev\n", encoding="utf-8")
+        self.write_yaml(
+            "packages/magguu_dashboard.yaml",
+            "template:\n"
+            "  - sensor:\n"
+            "      - unique_id: magguu_dashboard_version\n"
+            '        state: "9.9.9-dev"\n',
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertTrue(any("Version drift" in error for error in errors))
+
+    def test_accepts_matching_version(self) -> None:
+        (self.root / "VERSION").write_text("1.0.0-dev\n", encoding="utf-8")
+        self.write_yaml(
+            "packages/magguu_dashboard.yaml",
+            "template:\n"
+            "  - sensor:\n"
+            "      - unique_id: magguu_dashboard_version\n"
+            '        state: "1.0.0-dev"\n',
+        )
+        self.write_yaml("cards/item.yaml", "entity: sensor.documented\n")
+
+        _, errors = validate_repository(self.root)
+
+        self.assertEqual(errors, [])
+
 if __name__ == "__main__":
     unittest.main()

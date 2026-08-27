@@ -156,6 +156,35 @@ def validate_entities(
     return errors
 
 
+VERSION_SENSOR_PATTERN = re.compile(
+    r"unique_id:\s*magguu_dashboard_version\b.*?^\s*state:\s*[\"']([^\"']+)[\"']",
+    re.MULTILINE | re.DOTALL,
+)
+
+
+def validate_version(root: Path) -> list[str]:
+    package_path = root / "packages" / "magguu_dashboard.yaml"
+    if not package_path.is_file():
+        return []
+    version_path = root / "VERSION"
+    if not version_path.is_file():
+        return ["VERSION fehlt"]
+    version = version_path.read_text(encoding="utf-8").replace("\ufeff", "").strip()
+    if not version:
+        return ["VERSION ist leer"]
+    match = VERSION_SENSOR_PATTERN.search(package_path.read_text(encoding="utf-8"))
+    if match is None:
+        return [
+            "packages/magguu_dashboard.yaml: Sensor magguu_dashboard_version ohne state"
+        ]
+    if match.group(1) != version:
+        return [
+            "Version drift: VERSION="
+            f"{version} vs packages/magguu_dashboard.yaml={match.group(1)}"
+        ]
+    return []
+
+
 def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     paths = yaml_files(root)
     documents, errors = validate_yaml(paths, root)
@@ -167,6 +196,7 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     else:
         errors.append("docs/entities.md fehlt")
 
+    errors.extend(validate_version(root))
     return len(paths), errors
 
 

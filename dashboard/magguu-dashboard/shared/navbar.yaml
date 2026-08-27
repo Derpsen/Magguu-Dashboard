@@ -24,6 +24,10 @@ routes:
   - url: klima
     icon: mdi:home-thermometer-outline
     label: Klima
+  - url: medien
+    icon: mdi:play-box-multiple-outline
+    icon_selected: mdi:play-box-multiple
+    label: Medien
   - url: kalender
     icon: mdi:calendar-month-outline
     icon_selected: mdi:calendar-month
@@ -32,6 +36,10 @@ routes:
     icon: mdi:shield-home-outline
     icon_selected: mdi:shield-home
     label: Sicherheit
+  - url: energie
+    icon: mdi:home-lightning-bolt-outline
+    icon_selected: mdi:home-lightning-bolt
+    label: Energie
   - url: system
     icon: mdi:cog-outline
     icon_selected: mdi:cog

@@ -1,5 +1,13 @@
 # Phase-1-Audit
 
+> **Historischer Snapshot (16. Juli 2026), kein aktueller Stand der Wahrheit.**
+> Verbindlich sind `AGENTS.md`, `README.md` und `docs/entities.md`.
+> In diesem Dokument veraltet u. a.: Clock-Weather-Card und Simple Tabs Card als aktive
+> Abhängigkeiten, „kein Git-Repo“, fehlende gemeinsame Navbar und die damalige
+> Custom-Card-Liste. Die Sektion „Umsetzung nach dem Audit“ beschreibt Phase 2/3
+> vom selben Tag, nicht den heutigen Stand (Ring verdrahtet, POSIX-Install,
+> ausgeblendete Nuki/Unraid/Plex/AdGuard-Platzhalter).
+
 Stand: 2026-07-16
 
 ## Kurzfazit

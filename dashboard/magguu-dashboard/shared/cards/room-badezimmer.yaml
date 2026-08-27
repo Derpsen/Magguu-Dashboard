@@ -1,0 +1,51 @@
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: custom:button-card
+    template: room_visual_v5
+    name: Badezimmer
+    icon: mdi:bathtub-outline
+    variables:
+      room_path: badezimmer
+      accent: '#57cbd3'
+      light_count_entity: sensor.magguu_badezimmer_lichter_an
+      temperature_entity: sensor.magguu_badezimmer_temperatur_c
+      humidity_entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:button-card
+        template: room_action_v5
+        entity: switch.badezimmer_badezimmer_licht
+        name: Hauptlicht
+        icon: mdi:ceiling-light
+        variables: {accent: '#ffd166'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: light.badezimmer_badezimmer_licht_ch8
+        name: Farblicht oben
+        icon: mdi:led-strip-variant
+        variables: {accent: '#ff7eb6'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: light.badezimmer_badezimmer_licht_ch12
+        name: Farblicht unten
+        icon: mdi:led-strip-variant
+        variables: {accent: '#b48cff'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: climate.badezimmer_badezimmer_thermostat
+        name: Heizung
+        icon: mdi:radiator
+        tap_action: {action: more-info}
+        variables: {accent: '#ff9868'}
+card_mod:
+  style: |
+    ha-card {
+      border-radius: var(--mag-radius-card, 24px);
+      background: var(--mag-surface, rgba(24,25,39,.94));
+      border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+      box-shadow: var(--mag-shadow-card, none);
+      overflow: hidden;
+    }

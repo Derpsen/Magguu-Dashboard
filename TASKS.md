@@ -42,6 +42,7 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [x] wichtigsten aktuellen Hinweis zentral priorisieren
 - [x] Sicherheits- und Wartungsstatus auf Home verlinken
 - [x] kontextabhängige Modi für Morgen, Kochen, Besuch und Gaming ergänzen
+- [x] Home-Overview-Raumkarten auf gemeinsame Includes umgestellt (Wohnzimmer/Esszimmer/Küche)
 
 ## Phase 4 – Kalender und Klima
 
@@ -71,6 +72,7 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [x] priorisierte Wartungszentrale ergänzen
 - [x] Energie-Einstieg und Messquellen-Checkliste vorbereiten
 - [x] System-Hub für Sicherheit, Medien, Energie und Infrastruktur ergänzen
+- [x] Medien- und Energie-Views in der gemeinsamen Navbar verlinkt
 
 ## Phase 7 – Veröffentlichung
 
@@ -80,3 +82,6 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [ ] GitHub Release erstellen
 - [x] HACS-Strategie: YAML+Packages ist kein HACS-Dashboard (in README dokumentiert)
 - [x] POSIX-`install.sh` für HA-OS-ash (kein `BASH_SOURCE`)
+- [x] `VERSION` als einzige Versionsquelle, Package-Sensor bleibt synchron
+- [x] `docs/audit.md` als historischer Snapshot gekennzeichnet
+- [x] `configuration.yaml`: packages/themes/lovelace per Merge ergänzen (Backup, keine vorhandenen Keys überschreiben)

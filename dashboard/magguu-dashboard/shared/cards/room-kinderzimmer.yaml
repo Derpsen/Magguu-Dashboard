@@ -1,0 +1,53 @@
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: custom:button-card
+    template: room_visual_v5
+    name: Kinderzimmer
+    icon: mdi:teddy-bear
+    variables:
+      room_path: kinderzimmer
+      accent: '#e886ad'
+      light_count_entity: sensor.magguu_kinderzimmer_lichter_an
+      temperature_entity: sensor.magguu_kinderzimmer_temperatur_c
+      humidity_entity: sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte
+      opening_entity: binary_sensor.magguu_kinderzimmer_oeffnung
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:button-card
+        template: room_action_v5
+        entity: light.kinderzimmer_kinderzimmer
+        name: Hauptlicht
+        icon: mdi:ceiling-light
+        variables: {accent: '#ffd166'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: light.kinderzimmer_schrank_licht
+        name: Schranklicht
+        icon: mdi:wardrobe-outline
+        variables: {accent: '#e886ad'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: cover.kinderzimmer_kinderzimmer_rollade
+        name: Rollladen
+        icon: mdi:window-shutter
+        tap_action: {action: more-info}
+        variables: {accent: '#71b7ff'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: climate.kinderzimmer_kinderzimmer_thermostat
+        name: Heizung
+        icon: mdi:radiator
+        tap_action: {action: more-info}
+        variables: {accent: '#ff9868'}
+card_mod:
+  style: |
+    ha-card {
+      border-radius: var(--mag-radius-card, 24px);
+      background: var(--mag-surface, rgba(24,25,39,.94));
+      border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+      box-shadow: var(--mag-shadow-card, none);
+      overflow: hidden;
+    }
