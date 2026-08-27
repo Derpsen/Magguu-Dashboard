@@ -12,11 +12,13 @@
     grid-template-areas: |
       "hero hero"
       "status details"
+      "ring ring"
     mediaquery:
       "(max-width: 860px)":
         grid-template-columns: minmax(0, 1fr)
         grid-template-areas: |
           "hero"
           "status"
+          "ring"
           "details"
   cards: !include ../../shared/cards/security.yaml

@@ -4,7 +4,7 @@ Modulares Home-Assistant-Dashboard für Smartphone, Tablet und Desktop.
 
 ## Aktueller Stand
 
-Diese Repository-Version enthält die moderne V6.4-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Eine priorisierte „Jetzt wichtig“-Logik, Sicherheits- und Wartungsstatus, kontextabhängige Modi, ein bedingter Medienbereich, eine dynamische Abfuhrkarte und gemeinsame informative Raumheader sind integriert. Ring, Nuki, Unraid, Plex und AdGuard bleiben bewusst ausgeblendet, bis Homelab echte Entitäts-IDs liefert; Platzhalter stehen nur in `docs/entities.md`.
+Diese Repository-Version enthält die moderne V6.4-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Eine priorisierte „Jetzt wichtig“-Logik, Sicherheits- und Wartungsstatus, kontextabhängige Modi, ein bedingter Medienbereich, eine dynamische Abfuhrkarte und gemeinsame informative Raumheader sind integriert. Die Ring-Klingel am Vordereingang und die Kinderzimmer-Kamera sind verdrahtet. Nuki, Unraid, Plex und AdGuard bleiben bewusst ausgeblendet, bis Homelab echte Entitäts-IDs liefert; Platzhalter stehen nur in `docs/entities.md`.
 
 ## Voraussetzungen
 
@@ -43,7 +43,7 @@ cd /config
 mkdir -p repos
 git clone https://github.com/Derpsen/Magguu-Dashboard.git repos/Magguu-Dashboard
 cd repos/Magguu-Dashboard
-bash install.sh
+sh install.sh
 ```
 
 Die bestehende `configuration.yaml` muss weiterhin auf diese Dateien zeigen:
@@ -74,13 +74,10 @@ lovelace:
 
 ## Aktualisieren
 
-Zwei gleichwertige Wege:
-
-1. Im geklonten Repository: `bash update.sh` (nur Fast-Forward, danach Backup und Neuinstallation von Dashboard, Package und Theme).
-2. Auf der System-Seite im Dashboard: **Dashboard aktualisieren** (lädt `main` von GitHub per `sh`/`curl`/`tar`, legt ein Backup an; kein `git` und kein Terminal-Add-on nötig).
+**Primär:** Auf der System-Seite **Dashboard aktualisieren**. Das lädt `main` von GitHub als Tarball (`update-ha.sh` mit `sh`/`curl`/`tar`), legt ein Backup an und ist der HA-OS-Weg – kein Git-Klon und kein Terminal-Add-on nötig.
 
 Danach Home Assistant neu starten und die App vollständig neu laden.
 
-Dieses Repository ist **kein HACS-Dashboard**: YAML-Dashboards und Packages liegen unter mehreren `/config`-Zielen; HACS verwaltet Frontend-JavaScript unter `www/community`. Installation und Updates laufen über die Skripte bzw. die System-Aktion oben.
+**Optional (nur mit Git-Klon):** Im geklonten Repository `sh update.sh` (Fast-Forward, danach Backup und Neuinstallation). Auf Home Assistant OS ohne Klon ist dieser Weg nicht verfügbar.
 
-Installationen mit den früheren Pfaden `dashboard/magguu-flux` und `packages/magguu_flux.yaml` werden beim nächsten Lauf automatisch migriert.
+Dieses Repository ist **kein HACS-Dashboard**: YAML-Dashboards und Packages liegen unter mehreren `/config`-Zielen; HACS verwaltet Frontend-JavaScript unter `www/community`. Installation und Updates laufen über die Skripte bzw. die System-Aktion oben.

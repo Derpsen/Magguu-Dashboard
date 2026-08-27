@@ -52,12 +52,12 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 
 ## Phase 5 – Sicherheit
 
-- [ ] Ring-Entitäten exportieren und dokumentieren
+- [x] Ring-Entitäten exportieren und dokumentieren (Vordereingang-Klingel + Kinderzimmer-Kamera)
 - [ ] Nuki-Entitäten exportieren und dokumentieren
 - [x] Sicherheitsseite mit vorhandenen Öffnungs-, Anwesenheits- und OpenCCU-Daten erstellen
-- [x] Ring- und Nuki-Bereiche ohne erfundene Entitäten vorbereiten
+- [x] Ring-Klingel und Kinderzimmer-Kamera verdrahtet; Nuki ohne erfundene IDs vorbereitet und ausgeblendet
 - [x] sichere Bestätigung für Entriegeln vorbereitet (Confirm-Muster; UI ausgeblendet bis echte lock-ID)
-- [x] Unverdrahtete Ring-/Nuki-/Unraid-/Plex-/AdGuard-Platzhalterkarten ausgeblendet
+- [x] Unverdrahtete Nuki-/Unraid-/Plex-/AdGuard-Platzhalterkarten ausgeblendet
 
 ## Phase 6 – Medien und System
 
@@ -79,3 +79,4 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [ ] Screenshots ergänzen
 - [ ] GitHub Release erstellen
 - [x] HACS-Strategie: YAML+Packages ist kein HACS-Dashboard (in README dokumentiert)
+- [x] POSIX-`install.sh` für HA-OS-ash (kein `BASH_SOURCE`)

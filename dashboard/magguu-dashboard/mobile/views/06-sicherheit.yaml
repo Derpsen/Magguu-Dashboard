@@ -12,5 +12,6 @@
     grid-template-areas: |
       "hero"
       "status"
+      "ring"
       "details"
   cards: !include ../../shared/cards/security.yaml

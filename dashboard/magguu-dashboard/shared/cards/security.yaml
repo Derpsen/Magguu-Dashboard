@@ -70,13 +70,153 @@
           card_mod: *security_card
 
 - type: vertical-stack
+  view_layout: {grid-area: ring}
+  cards:
+    - type: custom:mushroom-title-card
+      title: Vordereingang
+      subtitle: Klingelereignisse und Türöffnung mit Bestätigung
+
+    - type: grid
+      columns: 3
+      square: false
+      cards:
+        - type: custom:mushroom-template-card
+          entity: event.vordereingang_klingeln
+          primary: Klingeln
+          secondary: >-
+            {% set ts = as_timestamp(states(entity), none) %}
+            {% if ts %}
+              {{ ts | timestamp_custom('%d.%m. · %H:%M', true) }}
+            {% else %}
+              {{ states(entity) if states(entity) not in ['unknown', 'unavailable', ''] else 'Kein Ereignis' }}
+            {% endif %}
+          icon: mdi:doorbell-video
+          icon_color: "{{ 'orange' if states(entity) not in ['unknown', 'unavailable', ''] else 'grey' }}"
+          tap_action: {action: more-info}
+          card_mod: *security_card
+        - type: custom:mushroom-template-card
+          entity: sensor.vordereingang_letzte_aktivitat
+          primary: Letzte Aktivität
+          secondary: >-
+            {% set ts = as_timestamp(states(entity), none) %}
+            {% if ts %}
+              {{ ts | timestamp_custom('%d.%m. · %H:%M', true) }}
+            {% else %}
+              {{ states(entity) }}
+            {% endif %}
+          icon: mdi:clock-outline
+          icon_color: blue
+          tap_action: {action: more-info}
+          card_mod: *security_card
+        - type: custom:mushroom-template-card
+          entity: sensor.vordereingang_batterie
+          primary: Batterie
+          secondary: "{{ states(entity) }} %"
+          icon: mdi:battery
+          icon_color: >-
+            {% set value = states(entity) | int(0) %}
+            {{ 'green' if value >= 50 else 'orange' if value >= 20 else 'red' }}
+          tap_action: {action: more-info}
+          card_mod: *security_card
+
+    - type: custom:mushroom-template-card
+      entity: button.vordereingang_tur_offnen
+      primary: Tür öffnen
+      secondary: Vordereingang · nur mit Bestätigung
+      icon: mdi:door-open
+      icon_color: orange
+      tap_action:
+        action: call-service
+        service: button.press
+        target:
+          entity_id: button.vordereingang_tur_offnen
+        confirmation:
+          text: Vordereingangstür wirklich öffnen?
+      hold_action: {action: more-info}
+      card_mod: *security_card
+
+    - type: custom:mushroom-template-card
+      entity: event.vordereingang_gegensprechanlage_entsperren
+      primary: Gegensprechanlage
+      secondary: >-
+        {% set ts = as_timestamp(states(entity), none) %}
+        {% if ts %}
+          Zuletzt entsperrt {{ ts | timestamp_custom('%d.%m. · %H:%M', true) }}
+        {% else %}
+          Kein Entsperr-Ereignis
+        {% endif %}
+      icon: mdi:deskphone
+      icon_color: grey
+      tap_action: {action: more-info}
+      card_mod: *security_card
+
+    - type: entities
+      title: Klingel-Lautstärke
+      show_header_toggle: false
+      entities:
+        - entity: number.vordereingang_turklingel_lautstarke
+          name: Türklingel
+        - entity: number.vordereingang_mikrofon_lautstarke
+          name: Mikrofon
+        - entity: number.vordereingang_sprach_lautstarke
+          name: Sprache
+      card_mod: *security_card
+
+    - type: custom:mushroom-title-card
+      title: Kinderzimmer
+      subtitle: Live-Ansicht der Ring-Kamera
+
+    - type: picture-entity
+      entity: camera.kinderzimmer_live_ansicht
+      name: Kinderzimmer
+      show_name: true
+      show_state: false
+      tap_action: {action: more-info}
+      card_mod: *security_card
+
+    - type: grid
+      columns: 3
+      square: false
+      cards:
+        - type: custom:mushroom-template-card
+          entity: sensor.kinderzimmer_batterie
+          primary: Batterie
+          secondary: "{{ states(entity) }} %"
+          icon: mdi:battery
+          icon_color: >-
+            {% set value = states(entity) | int(0) %}
+            {{ 'green' if value >= 50 else 'orange' if value >= 20 else 'red' }}
+          tap_action: {action: more-info}
+          card_mod: *security_card
+        - type: custom:mushroom-template-card
+          entity: sensor.kinderzimmer_letzte_aktivitat
+          primary: Letzte Aktivität
+          secondary: >-
+            {% set ts = as_timestamp(states(entity), none) %}
+            {% if ts %}
+              {{ ts | timestamp_custom('%d.%m. · %H:%M', true) }}
+            {% else %}
+              {{ states(entity) }}
+            {% endif %}
+          icon: mdi:clock-outline
+          icon_color: blue
+          tap_action: {action: more-info}
+          card_mod: *security_card
+        - type: custom:mushroom-entity-card
+          entity: number.kinderzimmer_lautstarke
+          name: Lautstärke
+          icon: mdi:volume-high
+          tap_action: {action: more-info}
+          card_mod: *security_card
+
+- type: vertical-stack
   view_layout: {grid-area: details}
   cards:
     - !include heating-hints.yaml
     - !include openings.yaml
 
-# Ring-/Nuki-Karten bleiben ausgeblendet, bis echte IDs in docs/entities.md stehen.
-# Nuki-Entriegeln später nur mit Bestätigung (kein Fake-Entity):
+# Nuki bleibt ausgeblendet, bis echte lock-IDs in docs/entities.md stehen.
+# Entriegeln später nur mit Bestätigung (kein Fake-Entity):
 # - type: custom:mushroom-template-card
 #   entity: lock.REPLACE_AFTER_EXPORT
 #   primary: Tür entriegeln

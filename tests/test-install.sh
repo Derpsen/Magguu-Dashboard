@@ -29,7 +29,7 @@ lovelace:
       filename: /config/dashboard/magguu-flux/tablet/dashboard.yaml
 EOF
 
-HA_CONFIG_DIR="$CONFIG_DIR" bash "$ROOT_DIR/install.sh"
+HA_CONFIG_DIR="$CONFIG_DIR" sh "$ROOT_DIR/install.sh"
 assert_file "$CONFIG_DIR/dashboard/magguu-dashboard/mobile/dashboard.yaml"
 assert_file "$CONFIG_DIR/dashboard/magguu-dashboard/tablet/dashboard.yaml"
 assert_file "$CONFIG_DIR/packages/magguu_dashboard.yaml"

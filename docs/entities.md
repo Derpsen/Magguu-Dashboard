@@ -166,13 +166,32 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `binary_sensor.magguu_abwesenheitswarnung`
 - `binary_sensor.magguu_medien_aktiv`
 
+## Ring
+
+Doorbell Vordereingang (keine `camera.*`, kein `binary_sensor` für Klingeln/Bewegung – Home Assistant liefert `event.*`; deaktivierte WiFi-Sensoren bewusst nicht übernommen):
+
+- `button.vordereingang_tur_offnen`
+- `event.vordereingang_klingeln`
+- `event.vordereingang_gegensprechanlage_entsperren`
+- `number.vordereingang_turklingel_lautstarke`
+- `number.vordereingang_mikrofon_lautstarke`
+- `number.vordereingang_sprach_lautstarke`
+- `sensor.vordereingang_batterie`
+- `sensor.vordereingang_letzte_aktivitat`
+
+Kinderzimmer-Kamera:
+
+- `camera.kinderzimmer_live_ansicht`
+- `number.kinderzimmer_lautstarke`
+- `sensor.kinderzimmer_batterie`
+- `sensor.kinderzimmer_letzte_aktivitat`
+
 ## Noch zu ergänzen (nicht verdrahtet, im UI ausgeblendet)
 
 Platzhalter ohne echte IDs – bewusst **nicht** als Live-Widgets im Dashboard gezeigt. Homelab liefert die IDs später; bis dahin keine erfundenen Entity-IDs.
 
-- Ring-Kamera und Klingelsensoren
-- Nuki-Schloss, Türsensor und Batterie (Entriegeln nur mit Bestätigungsdialog)
+- Nuki-Schloss, Türsensor und Batterie (Entriegeln nur mit Bestätigungsdialog; UI ausgeblendet)
 - Unraid- und Docker-Sensoren
-- Plex-/Musik-Entitäten
+- Plex-/Musik-Entitäten (nur `media_player.av_samsung_soundbar_q90r` ist verdrahtet)
 - AdGuard-Sensoren
 - Strom-, Leistungs- und Kostenentitäten für die Verbrauchsansicht

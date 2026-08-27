@@ -25,7 +25,7 @@ INCLUDE_PATTERN = re.compile(
 )
 ENTITY_ID_PATTERN = re.compile(
     r"\b(?:alarm_control_panel|automation|binary_sensor|button|calendar|camera|"
-    r"climate|cover|device_tracker|fan|group|input_boolean|input_button|"
+    r"climate|cover|device_tracker|event|fan|group|input_boolean|input_button|"
     r"input_datetime|input_number|input_select|light|lock|media_player|number|"
     r"person|remote|scene|script|select|sensor|sun|switch|timer|update|vacuum|"
     r"weather)\.[a-zA-Z0-9_]+\b"
