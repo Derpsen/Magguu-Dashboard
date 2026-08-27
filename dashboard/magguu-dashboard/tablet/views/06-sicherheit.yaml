@@ -12,7 +12,6 @@
     grid-template-areas: |
       "hero hero"
       "status details"
-      "connect details"
     mediaquery:
       "(max-width: 860px)":
         grid-template-columns: minmax(0, 1fr)
@@ -20,5 +19,4 @@
           "hero"
           "status"
           "details"
-          "connect"
   cards: !include ../../shared/cards/security.yaml

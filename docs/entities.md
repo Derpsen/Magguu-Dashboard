@@ -166,10 +166,12 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `binary_sensor.magguu_abwesenheitswarnung`
 - `binary_sensor.magguu_medien_aktiv`
 
-## Noch zu ergänzen
+## Noch zu ergänzen (nicht verdrahtet, im UI ausgeblendet)
+
+Platzhalter ohne echte IDs – bewusst **nicht** als Live-Widgets im Dashboard gezeigt. Homelab liefert die IDs später; bis dahin keine erfundenen Entity-IDs.
 
 - Ring-Kamera und Klingelsensoren
-- Nuki-Schloss, Türsensor und Batterie
+- Nuki-Schloss, Türsensor und Batterie (Entriegeln nur mit Bestätigungsdialog)
 - Unraid- und Docker-Sensoren
 - Plex-/Musik-Entitäten
 - AdGuard-Sensoren

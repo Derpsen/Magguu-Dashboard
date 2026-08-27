@@ -233,7 +233,7 @@
 
     - type: custom:mushroom-title-card
       title: Bereiche & Erweiterungen
-      subtitle: Sicherheit, Medien, Energie und Infrastruktur
+      subtitle: Sicherheit, Medien und Energie
 
     - type: grid
       columns: 2
@@ -272,15 +272,6 @@
             action: navigate
             navigation_path: energie
           card_mod: *status_card
-        - type: custom:mushroom-template-card
-          primary: Server & Netzwerk
-          secondary: Unraid, Docker und AdGuard nach Entitäten-Export
-          multiline_secondary: true
-          icon: mdi:server-network
-          icon_color: grey
-          tap_action:
-            action: navigate
-            navigation_path: /config/integrations/dashboard
-          card_mod: *status_card
+        # Unraid/Docker/AdGuard ausgeblendet bis echte Entitäts-IDs in docs/entities.md stehen.
 
 - !include ../navbar.yaml

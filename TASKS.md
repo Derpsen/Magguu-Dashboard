@@ -56,7 +56,8 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [ ] Nuki-Entitäten exportieren und dokumentieren
 - [x] Sicherheitsseite mit vorhandenen Öffnungs-, Anwesenheits- und OpenCCU-Daten erstellen
 - [x] Ring- und Nuki-Bereiche ohne erfundene Entitäten vorbereiten
-- [ ] sichere Bestätigung für Entriegeln
+- [x] sichere Bestätigung für Entriegeln vorbereitet (Confirm-Muster; UI ausgeblendet bis echte lock-ID)
+- [x] Unverdrahtete Ring-/Nuki-/Unraid-/Plex-/AdGuard-Platzhalterkarten ausgeblendet
 
 ## Phase 6 – Medien und System
 
@@ -77,4 +78,4 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [ ] Updateablauf testen
 - [ ] Screenshots ergänzen
 - [ ] GitHub Release erstellen
-- [ ] HACS-Strategie prüfen
+- [x] HACS-Strategie: YAML+Packages ist kein HACS-Dashboard (in README dokumentiert)

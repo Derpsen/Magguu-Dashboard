@@ -75,36 +75,18 @@
     - !include heating-hints.yaml
     - !include openings.yaml
 
-- type: vertical-stack
-  view_layout: {grid-area: connect}
-  cards:
-    - type: custom:mushroom-title-card
-      title: Zutritt & Kamera
-      subtitle: Sicher vorbereitet – aktiv erst mit verifizierten Entitäten
-
-    - type: grid
-      columns: 2
-      square: false
-      cards:
-        - type: custom:mushroom-template-card
-          primary: Nuki vorbereiten
-          secondary: Schloss, Türkontakt und Batterie nach Entitäten-Export
-          multiline_secondary: true
-          icon: mdi:lock-smart
-          icon_color: grey
-          tap_action:
-            action: navigate
-            navigation_path: /config/integrations/dashboard
-          card_mod: *security_card
-        - type: custom:mushroom-template-card
-          primary: Ring vorbereiten
-          secondary: Klingel, Bewegung und Kamerabild nach Entitäten-Export
-          multiline_secondary: true
-          icon: mdi:doorbell-video
-          icon_color: grey
-          tap_action:
-            action: navigate
-            navigation_path: /config/integrations/dashboard
-          card_mod: *security_card
+# Ring-/Nuki-Karten bleiben ausgeblendet, bis echte IDs in docs/entities.md stehen.
+# Nuki-Entriegeln später nur mit Bestätigung (kein Fake-Entity):
+# - type: custom:mushroom-template-card
+#   entity: lock.REPLACE_AFTER_EXPORT
+#   primary: Tür entriegeln
+#   icon: mdi:lock-open-variant-outline
+#   tap_action:
+#     action: call-service
+#     service: lock.unlock
+#     target:
+#       entity_id: lock.REPLACE_AFTER_EXPORT
+#     confirmation:
+#       text: Tür wirklich entriegeln?
 
 - !include ../navbar.yaml

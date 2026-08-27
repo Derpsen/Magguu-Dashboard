@@ -2,6 +2,11 @@
 
 ## Unveröffentlicht
 
+- `CODEX_MASTER_PROMPT.md` entfernt; AGENTS/Buddy bleibt die einzige Arbeitsquelle
+- README-Updatepfade zu einem Abschnitt „Aktualisieren“ zusammengeführt (`update.sh` oder System-Seite)
+- klargestellt: YAML+Packages-Layout ist kein HACS-Dashboard
+- unverdrahtete Ring-, Nuki-, Unraid-, Plex- und AdGuard-Platzhalterkarten ausgeblendet; `docs/entities.md` listet sie ehrlich als nicht verdrahtet
+- Nuki-Entriegeln-Bestätigung als Confirm-Muster vorbereitet (ohne Fake-Entity-IDs)
 - gemeinsame, POSIX-kompatible Installationslogik für Erstinstallation und Self-Update eingeführt
 - lokale Regressionstests für Installation, Legacy-Migration, Backup und Update ergänzt
 - Dashboard-Prüfung um Include-Ziele und nicht dokumentierte Entitätsreferenzen erweitert

@@ -13,5 +13,4 @@
       "hero"
       "status"
       "details"
-      "connect"
   cards: !include ../../shared/cards/security.yaml
