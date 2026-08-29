@@ -2,6 +2,16 @@
 
 ## Unveröffentlicht
 
+- Licht, Klima, Rollläden, Medien und Schalter nutzen HA-Tile-Cards statt Bubble/Mushroom-Spezialkarten (HA 2026.8 / Mushroom 5)
+- OpenCCU-Servicemeldungen zeigen den Gerätetext; Sabotage wird ignoriert (defekter Kontakt, Fehlalarme)
+- Homematic-Batterien aller Räume, iPhone, Watch, Klingel und Kamera sind in der Wartung und den Batteriewarnungen
+- Mobile-Home zeigt die Küche und denselben Schnellzugriff wie das Tablet (Licht, Rollläden auf/zu, Fernseher)
+- Räume-Seite steuert Flur, Lichterkette und sonstige Lichter
+- Lichtzähler nutzt `group.magguu_alle_lichter` statt einer unvollständigen Teilliste
+- Wohnzimmer- und Küchen-Öffnungen fallen auf die dokumentierten Binärsensoren zurück; ein fehlender Sensor macht den Raum nicht mehr komplett unsichtbar
+- Durchschnittstemperatur und -luftfeuchte sind `unavailable`, wenn keine Messwerte vorliegen, statt `0`
+- Klingel- und Kamera-Akkus unter 20 % zählen zur Wartung und erscheinen in den Batteriewarnungen
+- 7-Tage-Kalender enthält `calendar.erinnerungen`
 - Home-Overview: Wohnzimmer/Esszimmer/Küche über gemeinsame Raumkarten-Includes statt Inline-Duplikate
 - Navbar um Medien und Energie ergänzt (Views waren schon vorhanden)
 - `VERSION` als Versionsquelle; Package-Sensor und Validator bleiben synchron

@@ -46,20 +46,14 @@ cards:
 
   - type: conditional
     conditions:
-      - entity: sensor.kuche_kuche_fenstertur
-        state_not: closed
-      - entity: sensor.kuche_kuche_fenstertur
-        state_not: 'off'
-      - entity: sensor.kuche_kuche_fenstertur
-        state_not: unknown
-      - entity: sensor.kuche_kuche_fenstertur
-        state_not: unavailable
+      - entity: binary_sensor.magguu_kueche_oeffnung
+        state: 'on'
     card:
       type: custom:mushroom-template-card
-      entity: sensor.kuche_kuche_fenstertur
+      entity: binary_sensor.magguu_kueche_oeffnung
       primary: Küche · Fenster / Tür
       secondary: >-
-        {{ 'Gekippt' if states(entity) == 'tilted' else 'Geöffnet' }} · Antippen für Details
+        {{ 'Gekippt' if states('sensor.kuche_kuche_fenstertur') == 'tilted' else 'Geöffnet' }} · Antippen für Details
       icon: mdi:door-open
       icon_color: orange
       tap_action:

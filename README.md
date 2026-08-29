@@ -4,14 +4,13 @@ Modulares Home-Assistant-Dashboard für Smartphone, Tablet und Desktop.
 
 ## Aktueller Stand
 
-Diese Repository-Version enthält die moderne V6.4-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie, System und alle sechs Raumdetailseiten. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Eine priorisierte „Jetzt wichtig“-Logik, Sicherheits- und Wartungsstatus, kontextabhängige Modi, ein bedingter Medienbereich, eine dynamische Abfuhrkarte und gemeinsame informative Raumheader sind integriert. Die Ring-Klingel am Vordereingang und die Kinderzimmer-Kamera sind verdrahtet. Nuki, Unraid, Plex und AdGuard bleiben bewusst ausgeblendet, bis Homelab echte Entitäts-IDs liefert; Platzhalter stehen nur in `docs/entities.md`.
+Diese Repository-Version enthält die moderne V6.4-Basis mit gemeinsamem Midnight-Design für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie, System und alle sechs Raumdetailseiten plus Flur/Sonstiges. Mobile und Tablet teilen sich die zentralen Inhaltsmodule; gerätespezifisch bleiben nur die responsiven View-Hüllen. Eine priorisierte „Jetzt wichtig“-Logik, Sicherheits- und Wartungsstatus, kontextabhängige Modi, ein bedingter Medienbereich, eine dynamische Abfuhrkarte und gemeinsame informative Raumheader sind integriert. Die Ring-Klingel am Vordereingang und die Kinderzimmer-Kamera sind verdrahtet. Nuki, Unraid, Plex und AdGuard bleiben bewusst ausgeblendet, bis Homelab echte Entitäts-IDs liefert; Platzhalter stehen nur in `docs/entities.md`.
 
 ## Voraussetzungen
 
 Installierte Frontend-Erweiterungen:
 
 - Mushroom
-- Bubble Card
 - Button Card
 - Layout Card
 - Card Mod

@@ -54,86 +54,13 @@ cards:
         title: Beleuchtung
         subtitle: Gruppen und Akzentlichter dimmen
         view_layout: {grid-column: 1 / -1}
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
+      - type: tile
         entity: light.wohnzimmer_wohnzimmer
         name: Wohnzimmer gesamt
         icon: mdi:lightbulb-group-outline
-        show_state: true
-        card_layout: large
-        styles: &bubble_style |
-          ha-card {
-            --bubble-border-radius: var(--mag-radius-card, 24px);
-            --bubble-box-shadow: var(--mag-shadow-card, none);
-            --bubble-border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-          }
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.wohnzimmer_licht_sideboard
-        name: Sideboard
-        icon: mdi:lamps-outline
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.wohnzimmer_licht_fenster
-        name: Fensterlicht
-        icon: mdi:window-open-variant
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.wohnzimmer_hue_play_links
-        name: Hue Play links
-        icon: mdi:wall-sconce-flat
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.wohnzimmer_hue_play_rechts
-        name: Hue Play rechts
-        icon: mdi:wall-sconce-flat
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.computerbereich
-        name: Computerbereich
-        icon: mdi:monitor-dashboard
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.sonstiges_festavia_string_lights
-        name: Festavia
-        icon: mdi:string-lights
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-
-  - type: vertical-stack
-    view_layout: {grid-area: climate}
-    cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und 48-Stunden-Verlauf
-      - type: custom:mushroom-climate-card
-        entity: climate.wohnzimmer_wohnzimmer_thermostat
-        name: Wohnzimmer
-        show_temperature_control: true
-        collapsible_controls: false
+        color: amber
+        features:
+          - type: light-brightness
         card_mod: &detail_card
           style: |
             ha-card {
@@ -143,6 +70,67 @@ cards:
               border: 1px solid var(--mag-border, rgba(255,255,255,.06));
               box-shadow: var(--mag-shadow-card, none);
             }
+      - type: tile
+        entity: light.wohnzimmer_licht_sideboard
+        name: Sideboard
+        icon: mdi:lamps-outline
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.wohnzimmer_licht_fenster
+        name: Fensterlicht
+        icon: mdi:window-open-variant
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.wohnzimmer_hue_play_links
+        name: Hue Play links
+        icon: mdi:wall-sconce-flat
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.wohnzimmer_hue_play_rechts
+        name: Hue Play rechts
+        icon: mdi:wall-sconce-flat
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.computerbereich
+        name: Computerbereich
+        icon: mdi:monitor-dashboard
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.sonstiges_festavia_string_lights
+        name: Festavia
+        icon: mdi:string-lights
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+
+  - type: vertical-stack
+    view_layout: {grid-area: climate}
+    cards:
+      - type: custom:mushroom-title-card
+        title: Klima
+        subtitle: Heizung und 48-Stunden-Verlauf
+      - type: tile
+        entity: climate.wohnzimmer_wohnzimmer_thermostat
+        name: Wohnzimmer
+        features:
+          - type: target-temperature
+        card_mod: *detail_card
       - type: custom:mini-graph-card
         name: Temperatur · 48 Stunden
         hours_to_show: 48
@@ -159,23 +147,26 @@ cards:
       - type: custom:mushroom-title-card
         title: Rollläden
         subtitle: Drei Positionen gezielt einstellen
-      - type: custom:mushroom-cover-card
+      - type: tile
         entity: cover.wohnzimmer_wohnzimmer_rollade_links
         name: Rollladen links
-        show_buttons_control: true
-        show_position_control: true
+        features:
+          - type: cover-open-close
+          - type: cover-position
         card_mod: *detail_card
-      - type: custom:mushroom-cover-card
+      - type: tile
         entity: cover.wohnzimmer_wohnzimmer_rollade_mitte
         name: Rollladen Mitte
-        show_buttons_control: true
-        show_position_control: true
+        features:
+          - type: cover-open-close
+          - type: cover-position
         card_mod: *detail_card
-      - type: custom:mushroom-cover-card
+      - type: tile
         entity: cover.wohnzimmer_wohnzimmer_rollade_rechts
         name: Rollladen rechts
-        show_buttons_control: true
-        show_position_control: true
+        features:
+          - type: cover-open-close
+          - type: cover-position
         card_mod: *detail_card
 
   - type: vertical-stack
@@ -184,7 +175,7 @@ cards:
       - type: custom:mushroom-title-card
         title: Medien & Geräte
         subtitle: Steckdosen mit Sicherheitsabfrage
-      - type: custom:mushroom-entity-card
+      - type: tile
         entity: switch.wohnzimmer_wohnzimmer_fernseher
         name: Fernseher
         icon: mdi:television
@@ -192,9 +183,10 @@ cards:
           action: toggle
           confirmation:
             text: Fernseher-Steckdose wirklich umschalten?
-        hold_action: {action: more-info}
+        features:
+          - type: toggle
         card_mod: *detail_card
-      - type: custom:mushroom-entity-card
+      - type: tile
         entity: switch.wohnzimmer_wohnzimmer_computer
         name: Computer
         icon: mdi:desktop-tower-monitor
@@ -202,18 +194,14 @@ cards:
           action: toggle
           confirmation:
             text: Computer-Steckdose wirklich umschalten?
-        hold_action: {action: more-info}
+        features:
+          - type: toggle
         card_mod: *detail_card
-      - type: custom:mushroom-media-player-card
+      - type: tile
         entity: media_player.av_samsung_soundbar_q90r
         name: Samsung Soundbar
         icon: mdi:soundbar
-        use_media_info: true
-        show_volume_level: true
-        media_controls:
-          - play_pause_stop
-        volume_controls:
-          - volume_mute
-          - volume_set
-        collapsible_controls: true
+        features:
+          - type: media-player-playback
+          - type: media-player-volume-slider
         card_mod: *detail_card

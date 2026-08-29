@@ -41,41 +41,13 @@ cards:
       - type: custom:mushroom-title-card
         title: Beleuchtung
         subtitle: Helligkeit direkt anpassen
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
+      - type: tile
         entity: light.esszimmer_esszimmer
         name: Esszimmer gesamt
         icon: mdi:lightbulb-group-outline
-        show_state: true
-        card_layout: large
-        styles: &bubble_style |
-          ha-card {
-            --bubble-border-radius: var(--mag-radius-card, 24px);
-            --bubble-box-shadow: var(--mag-shadow-card, none);
-            --bubble-border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-          }
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.esszimmer_signe_gradient
-        name: Signe Gradient
-        icon: mdi:floor-lamp
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-
-  - type: vertical-stack
-    view_layout: {grid-area: climate}
-    cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und 48-Stunden-Verlauf
-      - type: custom:mushroom-climate-card
-        entity: climate.esszimmer_thermostat
-        name: Esszimmer
-        show_temperature_control: true
-        collapsible_controls: false
+        color: amber
+        features:
+          - type: light-brightness
         card_mod: &detail_card
           style: |
             ha-card {
@@ -84,6 +56,27 @@ cards:
               border: 1px solid var(--mag-border, rgba(255,255,255,.06));
               box-shadow: var(--mag-shadow-card, none);
             }
+      - type: tile
+        entity: light.esszimmer_signe_gradient
+        name: Signe Gradient
+        icon: mdi:floor-lamp
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+
+  - type: vertical-stack
+    view_layout: {grid-area: climate}
+    cards:
+      - type: custom:mushroom-title-card
+        title: Klima
+        subtitle: Heizung und 48-Stunden-Verlauf
+      - type: tile
+        entity: climate.esszimmer_thermostat
+        name: Esszimmer
+        features:
+          - type: target-temperature
+        card_mod: *detail_card
       - type: custom:mini-graph-card
         name: Temperatur · 48 Stunden
         hours_to_show: 48

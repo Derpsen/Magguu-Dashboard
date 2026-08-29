@@ -3,7 +3,7 @@
   name: Kalender
   icon: mdi:calendar-month-outline
   variables:
-    subtitle: Arbeit, Abfuhr und Termine in einer ruhigen gemeinsamen Übersicht
+    subtitle: Arbeit, Abfuhr, Termine und Erinnerungen in einer ruhigen Übersicht
     accent: '#b48cff'
 
 - type: custom:mushroom-title-card
@@ -56,6 +56,7 @@
     - calendar.abfuhr
     - calendar.privat
     - calendar.termine
+    - calendar.erinnerungen
   card_mod:
     style: |
       ha-card {

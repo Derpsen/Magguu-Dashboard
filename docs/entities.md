@@ -7,6 +7,8 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `person.magguu`
 - `sensor.iphone_von_marco_battery_level`
 - `sensor.iphone_von_marco_battery_state`
+- `sensor.iphone_von_marco_watch_battery_level`
+- `sensor.iphone_von_marco_watch_battery_state`
 
 ## Wetter
 
@@ -25,8 +27,11 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `climate.wohnzimmer_wohnzimmer_thermostat`
 - `sensor.wohnzimmer_wohnzimmer_thermostat_temperatur`
 - `sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte`
+- `binary_sensor.wohnzimmer_wohnzimmer_thermostat_batterie`
 - `binary_sensor.wohnzimmer_wohnzimmer_fenster`
+- `binary_sensor.wohnzimmer_wohnzimmer_fenster_batterie`
 - `binary_sensor.wohnzimmer_wohnzimmer_fenstertur_fensterzustand`
+- `binary_sensor.wohnzimmer_wohnzimmer_fenstertur_batterie`
 - `sensor.wohnzimmer_wohnzimmer_fenstertur`
 - `light.wohnzimmer_wohnzimmer`
 - `light.wohnzimmer_hue_play_links`
@@ -46,6 +51,8 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `climate.esszimmer_thermostat`
 - `sensor.esszimmer_thermostat_temperatur`
 - `sensor.esszimmer_thermostat_rel_luftfeuchte`
+- `binary_sensor.esszimmer_thermostat_batterie`
+- `binary_sensor.esszimmer_esszimmer_wandtaster_batterie`
 - `light.esszimmer_esszimmer`
 - `light.esszimmer_signe_gradient`
 - `switch.esszimmer_esszimmer_licht`
@@ -53,6 +60,7 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 ## Küche
 
 - `binary_sensor.kuche_kuche_fenstertur_fensterzustand`
+- `binary_sensor.kuche_kuche_fenstertur_batterie`
 - `sensor.kuche_kuche_fenstertur`
 - `switch.kuche_kuche_licht`
 - `cover.kuche_kuche_rollade`
@@ -62,6 +70,7 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `climate.badezimmer_badezimmer_thermostat`
 - `sensor.badezimmer_badezimmer_thermostat_temperatur`
 - `sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte`
+- `binary_sensor.badezimmer_badezimmer_thermostat_batterie`
 - `light.badezimmer_badezimmer`
 - `light.badezimmer_badezimmer_licht_ch12`
 - `light.badezimmer_badezimmer_licht_ch8`
@@ -74,6 +83,8 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.schlafzimmer_schlafzimmer_thermostat_temperatur`
 - `sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte`
 - `binary_sensor.schlafzimmer_schlafzimmer_fenstertur`
+- `binary_sensor.schlafzimmer_schlafzimmer_thermostat_batterie`
+- `binary_sensor.schlafzimmer_schlafzimmer_fenstertur_batterie`
 - `light.schlafzimmer_schlafzimmer`
 - `light.schlafzimmer_bett_links`
 - `light.schlafzimmer_bett_rechts`
@@ -87,6 +98,8 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.kinderzimmer_kinderzimmer_thermostat_temperatur`
 - `sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte`
 - `binary_sensor.kinderzimmer_kinderzimmer_fenster`
+- `binary_sensor.kinderzimmer_kinderzimmer_thermostat_batterie`
+- `binary_sensor.kinderzimmer_kinderzimmer_fenster_batterie`
 - `light.kinderzimmer_kinderzimmer`
 - `light.kinderzimmer_schrank_licht`
 - `switch.kinderzimmer_kinderzimmer_licht`
@@ -97,6 +110,7 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `switch.flur_flur_licht`
 - `light.sonstiges_festavia_string_lights`
 - `light.sonstiges_sonstiges`
+- `binary_sensor.fernbedienung_batterie`
 
 ## OpenCCU und Home Assistant
 
@@ -150,6 +164,8 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.magguu_schlafzimmer_lichter_an`
 - `sensor.magguu_kinderzimmer_lichter_an`
 - `sensor.magguu_kueche_lichter_an`
+- `sensor.magguu_flur_lichter_an`
+- `sensor.magguu_openccu_meldungstext`
 - `sensor.magguu_wartung_offen`
 - `sensor.magguu_wichtigster_hinweis`
 - `sensor.magguu_sicherheitsstatus`
@@ -163,6 +179,9 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `binary_sensor.magguu_kinderzimmer_heizwarnung`
 - `binary_sensor.magguu_wetterwarnung`
 - `binary_sensor.magguu_iphone_akkuwarnung`
+- `binary_sensor.magguu_klingel_akkuwarnung`
+- `binary_sensor.magguu_kamera_akkuwarnung`
+- `binary_sensor.magguu_watch_akkuwarnung`
 - `binary_sensor.magguu_abwesenheitswarnung`
 - `binary_sensor.magguu_medien_aktiv`
 

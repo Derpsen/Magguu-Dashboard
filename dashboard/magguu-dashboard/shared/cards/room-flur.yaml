@@ -1,0 +1,43 @@
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: custom:button-card
+    template: room_visual_v5
+    name: Flur & Sonstiges
+    icon: mdi:string-lights
+    tap_action: {action: none}
+    variables:
+      accent: '#c4b5fd'
+      device_text: Lichter ohne eigene Raumseite
+      light_count_entity: sensor.magguu_flur_lichter_an
+  - type: grid
+    columns: 2
+    square: false
+    cards:
+      - type: custom:button-card
+        template: room_action_v5
+        entity: switch.flur_flur_licht
+        name: Flur
+        icon: mdi:ceiling-light
+        variables: {accent: '#ffd166'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: light.sonstiges_festavia_string_lights
+        name: Lichterkette
+        icon: mdi:string-lights
+        variables: {accent: '#79d98c'}
+      - type: custom:button-card
+        template: room_action_v5
+        entity: light.sonstiges_sonstiges
+        name: Sonstiges
+        icon: mdi:lightbulb-group-outline
+        variables: {accent: '#c4b5fd'}
+card_mod:
+  style: |
+    ha-card {
+      border-radius: var(--mag-radius-card, 24px);
+      background: var(--mag-surface, rgba(24,25,39,.94));
+      border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+      box-shadow: var(--mag-shadow-card, none);
+      overflow: hidden;
+    }

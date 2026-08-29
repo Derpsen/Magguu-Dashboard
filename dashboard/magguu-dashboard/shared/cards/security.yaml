@@ -61,11 +61,24 @@
           tap_action: {action: more-info}
           card_mod: *security_card
         - type: custom:mushroom-template-card
-          entity: sensor.openccu_alarmmeldungen
+          entity: sensor.openccu_servicemeldungen
           primary: OpenCCU
-          secondary: "{{ states(entity) }} Alarmmeldung(en)"
+          secondary: >-
+            {% set alarms = states('sensor.openccu_alarmmeldungen') | int(0) %}
+            {% set summary = state_attr('sensor.magguu_openccu_meldungstext', 'summary') %}
+            {% if alarms > 0 %}
+              {{ alarms }} Alarmmeldung(en)
+            {% elif states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
+              {{ summary }}
+            {% else %}
+              Keine Meldungen
+            {% endif %}
+          multiline_secondary: true
           icon: mdi:alarm-light-outline
-          icon_color: "{{ 'red' if states(entity) | int(0) > 0 else 'green' }}"
+          icon_color: >-
+            {{ 'red' if states('sensor.openccu_alarmmeldungen') | int(0) > 0
+               else 'orange' if states('sensor.magguu_openccu_meldungstext') | int(0) > 0
+               else 'green' }}
           tap_action: {action: more-info}
           card_mod: *security_card
 
@@ -202,11 +215,12 @@
           icon_color: blue
           tap_action: {action: more-info}
           card_mod: *security_card
-        - type: custom:mushroom-entity-card
+        - type: tile
           entity: number.kinderzimmer_lautstarke
           name: Lautstärke
           icon: mdi:volume-high
-          tap_action: {action: more-info}
+          features:
+            - type: numeric-input
           card_mod: *security_card
 
 - type: vertical-stack

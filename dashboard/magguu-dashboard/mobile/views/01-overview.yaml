@@ -54,6 +54,7 @@
       subtitle: Direkt steuern oder Raum öffnen
     - !include ../../shared/cards/room-wohnzimmer.yaml
     - !include ../../shared/cards/room-esszimmer.yaml
+    - !include ../../shared/cards/room-kueche.yaml
     - type: custom:mushroom-template-card
       primary: Alle Räume
       secondary: Vollständige Raumübersicht öffnen
@@ -62,35 +63,6 @@
       tap_action:
         action: navigate
         navigation_path: /magguu-mobile/raeume
-    - type: grid
-      columns: 2
-      square: false
-      cards:
-        - type: custom:button-card
-          template: quick_v5
-          entity: script.magguu_alle_lichter_aus
-          name: Licht aus
-          icon: mdi:lightbulb-group-off-outline
-          variables: { accent: '#ffd166', sub: Hausweit }
-          tap_action:
-            action: call-service
-            service: script.turn_on
-            service_data:
-              entity_id: script.magguu_alle_lichter_aus
-            confirmation:
-              text: Wirklich alle Lichter im Haus ausschalten?
-        - type: custom:button-card
-          template: quick_v5
-          entity: script.magguu_alle_rollladen_zu
-          name: Rollläden zu
-          icon: mdi:window-shutter
-          variables: { accent: '#71b7ff', sub: Alle Räume }
-          tap_action:
-            action: call-service
-            service: script.turn_on
-            service_data:
-              entity_id: script.magguu_alle_rollladen_zu
-            confirmation:
-              text: Wirklich alle Rollläden im Haus schließen?
+    - !include ../../shared/cards/home-quick.yaml
     - !include ../../shared/cards/modes.yaml
     - !include ../../shared/navbar.yaml

@@ -32,7 +32,7 @@
           primary: OpenCCU
           secondary: "Systemzustand {{ states(entity) }} %"
           icon: mdi:home-automation
-          color: "{{ 'green' if states(entity) | float(0) >= 95 else 'orange' }}"
+          icon_color: "{{ 'green' if states(entity) | float(0) >= 95 else 'orange' }}"
           tap_action: {action: more-info}
           card_mod: &status_card
             style: |
@@ -46,9 +46,10 @@
         - type: custom:mushroom-template-card
           entity: sensor.openccu_servicemeldungen
           primary: Servicemeldungen
-          secondary: "{{ states(entity) }} Meldung(en)"
+          secondary: "{{ state_attr('sensor.magguu_openccu_meldungstext', 'summary') }}"
+          multiline_secondary: true
           icon: mdi:alert-circle-outline
-          color: "{{ 'green' if states(entity) | int(0) == 0 else 'red' }}"
+          icon_color: "{{ 'green' if states('sensor.magguu_openccu_meldungstext') | int(0) == 0 else 'red' }}"
           tap_action: {action: more-info}
           card_mod: *status_card
         - type: custom:mushroom-template-card
@@ -56,7 +57,7 @@
           primary: Duty Cycle
           secondary: "{{ states(entity) }} %"
           icon: mdi:radio-tower
-          color: >-
+          icon_color: >-
             {% set value = states(entity) | float(0) %}
             {{ 'green' if value < 50 else 'orange' if value < 80 else 'red' }}
           tap_action: {action: more-info}
@@ -66,7 +67,7 @@
           primary: Carrier Sense
           secondary: "{{ states(entity) }} %"
           icon: mdi:access-point-network
-          color: >-
+          icon_color: >-
             {% set value = states(entity) | float(0) %}
             {{ 'green' if value < 20 else 'orange' if value < 50 else 'red' }}
           tap_action: {action: more-info}
@@ -76,7 +77,7 @@
           primary: Verbindung
           secondary: "{{ states(entity) }} ms"
           icon: mdi:timer-outline
-          color: blue
+          icon_color: blue
           tap_action: {action: more-info}
           card_mod: *status_card
         - type: custom:mushroom-template-card
@@ -84,7 +85,7 @@
           primary: iPhone von Marco
           secondary: "{{ states(entity) }} % · {{ states('sensor.iphone_von_marco_battery_state') }}"
           icon: mdi:battery
-          color: >-
+          icon_color: >-
             {% set value = states(entity) | int(0) %}
             {{ 'green' if value >= 50 else 'orange' if value >= 20 else 'red' }}
           tap_action: {action: more-info}
@@ -141,6 +142,32 @@
             attributes:
               device_class: battery
             state: 'on'
+          - entity_id: binary_sensor.magguu_iphone_akkuwarnung
+            state: 'on'
+          - entity_id: binary_sensor.wohnzimmer_wohnzimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.wohnzimmer_wohnzimmer_fenster_batterie
+            state: 'on'
+          - entity_id: binary_sensor.wohnzimmer_wohnzimmer_fenstertur_batterie
+            state: 'on'
+          - entity_id: binary_sensor.esszimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.esszimmer_esszimmer_wandtaster_batterie
+            state: 'on'
+          - entity_id: binary_sensor.kuche_kuche_fenstertur_batterie
+            state: 'on'
+          - entity_id: binary_sensor.badezimmer_badezimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.schlafzimmer_schlafzimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.schlafzimmer_schlafzimmer_fenstertur_batterie
+            state: 'on'
+          - entity_id: binary_sensor.kinderzimmer_kinderzimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.kinderzimmer_kinderzimmer_fenster_batterie
+            state: 'on'
+          - entity_id: binary_sensor.fernbedienung_batterie
+            state: 'on'
       sort: {method: friendly_name}
 
     - type: custom:auto-entities
@@ -196,7 +223,7 @@
             {% endif %}
           multiline_secondary: true
           icon: mdi:cloud-download-outline
-          color: >-
+          icon_color: >-
             {% set status = states('input_text.magguu_dashboard_update_status') %}
             {{ 'green' if status.startswith('Erfolgreich') else 'red' if status.startswith('Fehlgeschlagen') else 'purple' }}
           tap_action:
@@ -213,7 +240,7 @@
           primary: Backup-Manager
           secondary: "{{ states(entity) }}"
           icon: mdi:backup-restore
-          color: "{{ 'green' if states(entity) == 'idle' else 'blue' }}"
+          icon_color: "{{ 'green' if states(entity) == 'idle' else 'blue' }}"
           tap_action: {action: more-info}
           card_mod: *status_card
         - type: custom:mushroom-template-card
@@ -227,7 +254,7 @@
             {% endif %}
           multiline_secondary: true
           icon: mdi:cloud-check-outline
-          color: "{{ 'green' if states(entity) not in ['unknown', 'unavailable'] else 'orange' }}"
+          icon_color: "{{ 'green' if states(entity) not in ['unknown', 'unavailable'] else 'orange' }}"
           tap_action: {action: more-info}
           card_mod: *status_card
 

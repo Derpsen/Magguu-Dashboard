@@ -34,6 +34,30 @@ card:
     - type: conditional
       conditions:
         - entity: sensor.magguu_wichtigster_hinweis
+          state: ccu
+      card:
+        type: custom:mushroom-template-card
+        entity: sensor.openccu_servicemeldungen
+        primary: OpenCCU-Meldung
+        secondary: "{{ state_attr('sensor.magguu_wichtigster_hinweis', 'summary') }}"
+        multiline_secondary: true
+        icon: mdi:shield-alert-outline
+        icon_color: orange
+        tap_action:
+          action: navigate
+          navigation_path: system
+        card_mod: &priority_warning
+          style: |
+            ha-card {
+              min-height: 92px;
+              border: 1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 52%, transparent);
+              background: linear-gradient(135deg, rgba(255,159,67,.14), var(--mag-surface, rgba(24,25,39,.96)) 72%);
+              box-shadow: 0 12px 34px rgba(0,0,0,.14);
+            }
+
+    - type: conditional
+      conditions:
+        - entity: sensor.magguu_wichtigster_hinweis
           state: abwesend
       card:
         type: custom:mushroom-template-card
@@ -46,14 +70,7 @@ card:
         tap_action:
           action: navigate
           navigation_path: sicherheit
-        card_mod: &priority_warning
-          style: |
-            ha-card {
-              min-height: 92px;
-              border: 1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 52%, transparent);
-              background: linear-gradient(135deg, rgba(255,159,67,.14), var(--mag-surface, rgba(24,25,39,.96)) 72%);
-              box-shadow: 0 12px 34px rgba(0,0,0,.14);
-            }
+        card_mod: *priority_warning
 
     - type: conditional
       conditions:

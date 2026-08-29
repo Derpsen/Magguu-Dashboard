@@ -47,6 +47,7 @@ Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Helfer melden Ergebniss
 - Klima
 - Medien
 - Sicherheit
+- Energie
 - System
 
 ## Raumkarten

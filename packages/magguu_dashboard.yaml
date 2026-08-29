@@ -365,38 +365,20 @@ template:
       - name: Magguu Lichter an
         unique_id: magguu_lichter_an
         icon: mdi:lightbulb-group
-        state: >-
-          {% set ids = [
-            'light.badezimmer_badezimmer',
-            'light.computerbereich',
-            'light.esszimmer_esszimmer',
-            'light.kinderzimmer_kinderzimmer',
-            'light.schlafzimmer_schlafzimmer',
-            'light.sonstiges_sonstiges',
-            'light.wohnzimmer_wohnzimmer',
-            'switch.flur_flur_licht',
-            'switch.kuche_kuche_licht'
-          ] %}
-          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+        state: "{{ expand('group.magguu_alle_lichter') | selectattr('state', 'eq', 'on') | list | count }}"
 
       - name: Magguu Offene Fenster
         unique_id: magguu_offene_fenster
         icon: mdi:window-open-variant
         state: >-
-          {% set ids = [
-            'binary_sensor.kinderzimmer_kinderzimmer_fenster',
-            'sensor.kuche_kuche_fenstertur',
-            'binary_sensor.schlafzimmer_schlafzimmer_fenstertur',
-            'binary_sensor.wohnzimmer_wohnzimmer_fenster',
-            'sensor.wohnzimmer_wohnzimmer_fenstertur'
-          ] %}
-          {% set ns = namespace(count=0) %}
-          {% for id in ids %}
-            {% if states(id) in ['on', 'open', 'tilted'] %}
-              {% set ns.count = ns.count + 1 %}
-            {% endif %}
-          {% endfor %}
-          {{ ns.count }}
+          {% set wz_window = is_state('binary_sensor.wohnzimmer_wohnzimmer_fenster', 'on') %}
+          {% set wz_door = states('sensor.wohnzimmer_wohnzimmer_fenstertur') in ['on', 'open', 'tilted']
+             or is_state('binary_sensor.wohnzimmer_wohnzimmer_fenstertur_fensterzustand', 'on') %}
+          {% set kitchen = states('sensor.kuche_kuche_fenstertur') in ['on', 'open', 'tilted']
+             or is_state('binary_sensor.kuche_kuche_fenstertur_fensterzustand', 'on') %}
+          {% set bedroom = is_state('binary_sensor.schlafzimmer_schlafzimmer_fenstertur', 'on') %}
+          {% set kids = is_state('binary_sensor.kinderzimmer_kinderzimmer_fenster', 'on') %}
+          {{ [wz_window, wz_door, kitchen, bedroom, kids] | select | list | count }}
 
       - name: Magguu Updates verfuegbar
         unique_id: magguu_updates_verfuegbar
@@ -485,6 +467,12 @@ template:
         unit_of_measurement: °C
         device_class: temperature
         state_class: measurement
+        availability: >-
+          {{ states('sensor.magguu_badezimmer_temperatur_c') not in ['unknown', 'unavailable']
+             or states('sensor.magguu_esszimmer_temperatur_c') not in ['unknown', 'unavailable']
+             or states('sensor.magguu_kinderzimmer_temperatur_c') not in ['unknown', 'unavailable']
+             or states('sensor.magguu_schlafzimmer_temperatur_c') not in ['unknown', 'unavailable']
+             or states('sensor.magguu_wohnzimmer_temperatur_c') not in ['unknown', 'unavailable'] }}
         state: >-
           {% set values = [
             states('sensor.magguu_badezimmer_temperatur_c') | float(none),
@@ -493,13 +481,19 @@ template:
             states('sensor.magguu_schlafzimmer_temperatur_c') | float(none),
             states('sensor.magguu_wohnzimmer_temperatur_c') | float(none)
           ] | reject('eq', none) | list %}
-          {{ (values | sum / values | count) | round(1) if values | count else 0 }}
+          {{ (values | sum / values | count) | round(1) if values | count else none }}
 
       - name: Magguu Durchschnitt Luftfeuchtigkeit
         unique_id: magguu_durchschnitt_luftfeuchtigkeit
         unit_of_measurement: '%'
         device_class: humidity
         state_class: measurement
+        availability: >-
+          {{ states('sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte') not in ['unknown', 'unavailable']
+             or states('sensor.esszimmer_thermostat_rel_luftfeuchte') not in ['unknown', 'unavailable']
+             or states('sensor.kinderzimmer_kinderzimmer_thermostat_rel_luftfeuchte') not in ['unknown', 'unavailable']
+             or states('sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte') not in ['unknown', 'unavailable']
+             or states('sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte') not in ['unknown', 'unavailable'] }}
         state: >-
           {% set values = [
             states('sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte') | float(none),
@@ -508,7 +502,7 @@ template:
             states('sensor.schlafzimmer_schlafzimmer_thermostat_rel_luftfeuchte') | float(none),
             states('sensor.wohnzimmer_wohnzimmer_thermostat_rel_luftfeuchte') | float(none)
           ] | reject('eq', none) | list %}
-          {{ (values | sum / values | count) | round(0) if values | count else 0 }}
+          {{ (values | sum / values | count) | round(0) if values | count else none }}
 
       - name: Magguu Wohnzimmer Lichter an
         unique_id: magguu_wohnzimmer_lichter_an
@@ -519,8 +513,7 @@ template:
             'light.wohnzimmer_licht_fenster',
             'light.wohnzimmer_hue_play_links',
             'light.wohnzimmer_hue_play_rechts',
-            'light.computerbereich',
-            'light.sonstiges_festavia_string_lights'
+            'light.computerbereich'
           ] %}
           {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
 
@@ -567,23 +560,76 @@ template:
         unique_id: magguu_kueche_lichter_an
         state: "{{ 1 if is_state('switch.kuche_kuche_licht', 'on') else 0 }}"
 
+      - name: Magguu Flur Lichter an
+        unique_id: magguu_flur_lichter_an
+        state: >-
+          {% set ids = [
+            'switch.flur_flur_licht',
+            'light.sonstiges_festavia_string_lights',
+            'light.sonstiges_sonstiges'
+          ] %}
+          {{ expand(ids) | selectattr('state', 'eq', 'on') | list | count }}
+
+      - name: Magguu OpenCCU Meldungstext
+        unique_id: magguu_openccu_meldungstext
+        icon: mdi:alert-circle-outline
+        state: >-
+          {% set ns = namespace(items=[]) %}
+          {% for i in range(1, 21) %}
+            {% set msg = state_attr('sensor.openccu_servicemeldungen', 'message_' ~ i) %}
+            {% if msg and 'sabotage' not in msg | lower %}
+              {% set ns.items = ns.items + [msg] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.items | count }}
+        attributes:
+          summary: >-
+            {% set ns = namespace(items=[]) %}
+            {% for i in range(1, 21) %}
+              {% set msg = state_attr('sensor.openccu_servicemeldungen', 'message_' ~ i) %}
+              {% if msg and 'sabotage' not in msg | lower %}
+                {% set ns.items = ns.items + [msg] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.items | join(' · ') if ns.items else 'Keine Servicemeldungen' }}
+
       - name: Magguu Wartung offen
         unique_id: magguu_wartung_offen
         icon: mdi:tools
         state: >-
           {% set updates = states('sensor.magguu_updates_verfuegbar') | int(0) %}
           {% set unavailable = states('sensor.magguu_nicht_verfuegbar') | int(0) %}
-          {% set service = states('sensor.openccu_servicemeldungen') | int(0) %}
+          {% set service = states('sensor.magguu_openccu_meldungstext') | int(0) %}
           {% set battery = 1 if is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') else 0 %}
-          {{ updates + unavailable + service + battery }}
+          {% set watch = 1 if is_state('binary_sensor.magguu_watch_akkuwarnung', 'on') else 0 %}
+          {% set doorbell = 1 if is_state('binary_sensor.magguu_klingel_akkuwarnung', 'on') else 0 %}
+          {% set camera = 1 if is_state('binary_sensor.magguu_kamera_akkuwarnung', 'on') else 0 %}
+          {% set hm_bat = expand([
+            'binary_sensor.badezimmer_badezimmer_thermostat_batterie',
+            'binary_sensor.esszimmer_esszimmer_wandtaster_batterie',
+            'binary_sensor.esszimmer_thermostat_batterie',
+            'binary_sensor.fernbedienung_batterie',
+            'binary_sensor.kinderzimmer_kinderzimmer_fenster_batterie',
+            'binary_sensor.kinderzimmer_kinderzimmer_thermostat_batterie',
+            'binary_sensor.kuche_kuche_fenstertur_batterie',
+            'binary_sensor.schlafzimmer_schlafzimmer_fenstertur_batterie',
+            'binary_sensor.schlafzimmer_schlafzimmer_thermostat_batterie',
+            'binary_sensor.wohnzimmer_wohnzimmer_fenster_batterie',
+            'binary_sensor.wohnzimmer_wohnzimmer_fenstertur_batterie',
+            'binary_sensor.wohnzimmer_wohnzimmer_thermostat_batterie'
+          ]) | selectattr('state', 'eq', 'on') | list | count %}
+          {{ updates + unavailable + service + battery + watch + doorbell + camera + hm_bat }}
         attributes:
           summary: >-
             {% set ns = namespace(items=[]) %}
             {% set updates = states('sensor.magguu_updates_verfuegbar') | int(0) %}
             {% set unavailable = states('sensor.magguu_nicht_verfuegbar') | int(0) %}
-            {% set service = states('sensor.openccu_servicemeldungen') | int(0) %}
+            {% set service = states('sensor.magguu_openccu_meldungstext') | int(0) %}
             {% if service > 0 %}
-              {% set ns.items = ns.items + [service ~ ' OpenCCU-Meldung(en)'] %}
+              {% set ns.items = ns.items + [
+                state_attr('sensor.magguu_openccu_meldungstext', 'summary')
+                or (service ~ ' OpenCCU-Meldung(en)')
+              ] %}
             {% endif %}
             {% if unavailable > 0 %}
               {% set ns.items = ns.items + [unavailable ~ ' Gerät(e) nicht erreichbar'] %}
@@ -593,6 +639,15 @@ template:
             {% endif %}
             {% if is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') %}
               {% set ns.items = ns.items + ['iPhone-Akku niedrig'] %}
+            {% endif %}
+            {% if is_state('binary_sensor.magguu_watch_akkuwarnung', 'on') %}
+              {% set ns.items = ns.items + ['Watch-Akku niedrig'] %}
+            {% endif %}
+            {% if is_state('binary_sensor.magguu_klingel_akkuwarnung', 'on') %}
+              {% set ns.items = ns.items + ['Klingel-Akku niedrig'] %}
+            {% endif %}
+            {% if is_state('binary_sensor.magguu_kamera_akkuwarnung', 'on') %}
+              {% set ns.items = ns.items + ['Kamerabatterie niedrig'] %}
             {% endif %}
             {{ ns.items | join(' · ') if ns.items else 'Keine Wartung nötig' }}
 
@@ -606,6 +661,8 @@ template:
           {% set waste_days = ((((as_timestamp(start, 0) - as_timestamp(today_at(), 0)) / 86400) | round(0)) | int(99)) if start else 99 %}
           {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0 %}
             mdi:alarm-light-outline
+          {% elif states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
+            mdi:shield-alert-outline
           {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
             mdi:home-alert-outline
           {% elif heating %}
@@ -633,6 +690,8 @@ template:
           {% set waste_days = ((((as_timestamp(start, 0) - as_timestamp(today_at(), 0)) / 86400) | round(0)) | int(99)) if start else 99 %}
           {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0 %}
             alarm
+          {% elif states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
+            ccu
           {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
             abwesend
           {% elif heating %}
@@ -661,6 +720,8 @@ template:
             {% set waste_days = ((((as_timestamp(start, 0) - as_timestamp(today_at(), 0)) / 86400) | round(0)) | int(99)) if start else 99 %}
             {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0 %}
               {{ states('sensor.openccu_alarmmeldungen') }} Alarmmeldung(en) in OpenCCU
+            {% elif states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
+              {{ state_attr('sensor.magguu_openccu_meldungstext', 'summary') }}
             {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
               {{ state_attr('binary_sensor.magguu_abwesenheitswarnung', 'summary') }}
             {% elif heating %}
@@ -685,7 +746,8 @@ template:
         unique_id: magguu_sicherheitsstatus
         icon: >-
           {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0
-                or is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+                or is_state('binary_sensor.magguu_abwesenheitswarnung', 'on')
+                or states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
             mdi:shield-alert-outline
           {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
             mdi:shield-half-full
@@ -694,7 +756,8 @@ template:
           {% endif %}
         state: >-
           {% if states('sensor.openccu_alarmmeldungen') | int(0) > 0
-                or is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
+                or is_state('binary_sensor.magguu_abwesenheitswarnung', 'on')
+                or states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
             kritisch
           {% elif states('sensor.magguu_offene_fenster') | int(0) > 0 %}
             pruefen
@@ -707,6 +770,8 @@ template:
             {% set openings = states('sensor.magguu_offene_fenster') | int(0) %}
             {% if alarms > 0 %}
               {{ alarms }} Alarmmeldung(en) – sofort prüfen
+            {% elif states('sensor.magguu_openccu_meldungstext') | int(0) > 0 %}
+              {{ state_attr('sensor.magguu_openccu_meldungstext', 'summary') }}
             {% elif is_state('binary_sensor.magguu_abwesenheitswarnung', 'on') %}
               Niemand zuhause · {{ state_attr('binary_sensor.magguu_abwesenheitswarnung', 'summary') }}
             {% elif openings > 0 %}
@@ -728,17 +793,22 @@ template:
         device_class: window
         availability: >-
           {{ states('binary_sensor.wohnzimmer_wohnzimmer_fenster') not in ['unknown', 'unavailable']
-             and states('sensor.wohnzimmer_wohnzimmer_fenstertur') not in ['unknown', 'unavailable'] }}
+             or states('sensor.wohnzimmer_wohnzimmer_fenstertur') not in ['unknown', 'unavailable']
+             or states('binary_sensor.wohnzimmer_wohnzimmer_fenstertur_fensterzustand') not in ['unknown', 'unavailable'] }}
         state: >-
           {{ is_state('binary_sensor.wohnzimmer_wohnzimmer_fenster', 'on')
-             or states('sensor.wohnzimmer_wohnzimmer_fenstertur') in ['on', 'open', 'tilted'] }}
+             or states('sensor.wohnzimmer_wohnzimmer_fenstertur') in ['on', 'open', 'tilted']
+             or is_state('binary_sensor.wohnzimmer_wohnzimmer_fenstertur_fensterzustand', 'on') }}
 
       - name: Magguu Kueche Oeffnung
         unique_id: magguu_kueche_oeffnung
         device_class: window
-        availability: "{{ states('sensor.kuche_kuche_fenstertur') not in ['unknown', 'unavailable'] }}"
+        availability: >-
+          {{ states('sensor.kuche_kuche_fenstertur') not in ['unknown', 'unavailable']
+             or states('binary_sensor.kuche_kuche_fenstertur_fensterzustand') not in ['unknown', 'unavailable'] }}
         state: >-
-          {{ states('sensor.kuche_kuche_fenstertur') in ['on', 'open', 'tilted'] }}
+          {{ states('sensor.kuche_kuche_fenstertur') in ['on', 'open', 'tilted']
+             or is_state('binary_sensor.kuche_kuche_fenstertur_fensterzustand', 'on') }}
 
       - name: Magguu Schlafzimmer Oeffnung
         unique_id: magguu_schlafzimmer_oeffnung
@@ -859,6 +929,38 @@ template:
           summary: >-
             iPhone bei {{ states('sensor.iphone_von_marco_battery_level') }} %
             · {{ states('sensor.iphone_von_marco_battery_state') }}
+
+      - name: Magguu Klingel Akkuwarnung
+        unique_id: magguu_klingel_akkuwarnung
+        device_class: battery
+        icon: mdi:battery-alert-variant-outline
+        availability: "{{ is_number(states('sensor.vordereingang_batterie')) }}"
+        state: "{{ states('sensor.vordereingang_batterie') | int(100) < 20 }}"
+        attributes:
+          summary: "Klingel Vordereingang bei {{ states('sensor.vordereingang_batterie') }} %"
+
+      - name: Magguu Kamera Akkuwarnung
+        unique_id: magguu_kamera_akkuwarnung
+        device_class: battery
+        icon: mdi:battery-alert-variant-outline
+        availability: "{{ is_number(states('sensor.kinderzimmer_batterie')) }}"
+        state: "{{ states('sensor.kinderzimmer_batterie') | int(100) < 20 }}"
+        attributes:
+          summary: "Kinderzimmer-Kamera bei {{ states('sensor.kinderzimmer_batterie') }} %"
+
+      - name: Magguu Watch Akkuwarnung
+        unique_id: magguu_watch_akkuwarnung
+        device_class: battery
+        icon: mdi:battery-alert-variant-outline
+        availability: "{{ is_number(states('sensor.iphone_von_marco_watch_battery_level')) }}"
+        state: >-
+          {% set level = states('sensor.iphone_von_marco_watch_battery_level') | int(100) %}
+          {% set charging = states('sensor.iphone_von_marco_watch_battery_state') | lower %}
+          {{ level < 20 and charging not in ['charging', 'full', 'lädt', 'voll'] }}
+        attributes:
+          summary: >-
+            Watch bei {{ states('sensor.iphone_von_marco_watch_battery_level') }} %
+            · {{ states('sensor.iphone_von_marco_watch_battery_state') }}
 
       - name: Magguu Abwesenheitswarnung
         unique_id: magguu_abwesenheitswarnung

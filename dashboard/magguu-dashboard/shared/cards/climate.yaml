@@ -60,11 +60,11 @@
       "(max-width: 680px)":
         grid-template-columns: minmax(0, 1fr)
   cards:
-    - type: custom:mushroom-climate-card
+    - type: tile
       entity: climate.wohnzimmer_wohnzimmer_thermostat
       name: Wohnzimmer
-      show_temperature_control: true
-      collapsible_controls: false
+      features:
+        - type: target-temperature
       card_mod: &climate_card
         style: |
           ha-card {
@@ -75,29 +75,29 @@
             border: 1px solid var(--mag-border, rgba(255,255,255,.06));
             box-shadow: var(--mag-shadow-card, none);
           }
-    - type: custom:mushroom-climate-card
+    - type: tile
       entity: climate.esszimmer_thermostat
       name: Esszimmer
-      show_temperature_control: true
-      collapsible_controls: false
+      features:
+        - type: target-temperature
       card_mod: *climate_card
-    - type: custom:mushroom-climate-card
+    - type: tile
       entity: climate.badezimmer_badezimmer_thermostat
       name: Badezimmer
-      show_temperature_control: true
-      collapsible_controls: false
+      features:
+        - type: target-temperature
       card_mod: *climate_card
-    - type: custom:mushroom-climate-card
+    - type: tile
       entity: climate.schlafzimmer_schlafzimmer_thermostat
       name: Schlafzimmer
-      show_temperature_control: true
-      collapsible_controls: false
+      features:
+        - type: target-temperature
       card_mod: *climate_card
-    - type: custom:mushroom-climate-card
+    - type: tile
       entity: climate.kinderzimmer_kinderzimmer_thermostat
       name: Kinderzimmer
-      show_temperature_control: true
-      collapsible_controls: false
+      features:
+        - type: target-temperature
       card_mod: *climate_card
 
 - type: custom:mushroom-title-card

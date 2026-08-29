@@ -41,53 +41,13 @@ cards:
       - type: custom:mushroom-title-card
         title: Beleuchtung
         subtitle: Gruppen und Farblicht dimmen
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
+      - type: tile
         entity: light.badezimmer_badezimmer
         name: Badezimmer gesamt
         icon: mdi:lightbulb-group-outline
-        show_state: true
-        card_layout: large
-        styles: &bubble_style |
-          ha-card {
-            --bubble-border-radius: var(--mag-radius-card, 24px);
-            --bubble-box-shadow: var(--mag-shadow-card, none);
-            --bubble-border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-          }
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.badezimmer_licht_bad
-        name: Hue Licht Bad
-        icon: mdi:ceiling-light
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.badezimmer_badezimmer_licht_ch8
-        name: Farblicht oben
-        icon: mdi:led-strip-variant
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:bubble-card
-        card_type: button
-        button_type: slider
-        entity: light.badezimmer_badezimmer_licht_ch12
-        name: Farblicht unten
-        icon: mdi:led-strip-variant
-        show_state: true
-        card_layout: large
-        styles: *bubble_style
-      - type: custom:mushroom-entity-card
-        entity: switch.badezimmer_badezimmer_licht
-        name: Hauptlicht
-        icon: mdi:ceiling-light
-        tap_action: {action: toggle}
-        hold_action: {action: more-info}
+        color: amber
+        features:
+          - type: light-brightness
         card_mod: &detail_card
           style: |
             ha-card {
@@ -97,6 +57,37 @@ cards:
               border: 1px solid var(--mag-border, rgba(255,255,255,.06));
               box-shadow: var(--mag-shadow-card, none);
             }
+      - type: tile
+        entity: light.badezimmer_licht_bad
+        name: Hue Licht Bad
+        icon: mdi:ceiling-light
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.badezimmer_badezimmer_licht_ch8
+        name: Farblicht oben
+        icon: mdi:led-strip-variant
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: light.badezimmer_badezimmer_licht_ch12
+        name: Farblicht unten
+        icon: mdi:led-strip-variant
+        color: amber
+        features:
+          - type: light-brightness
+        card_mod: *detail_card
+      - type: tile
+        entity: switch.badezimmer_badezimmer_licht
+        name: Hauptlicht
+        icon: mdi:ceiling-light
+        features:
+          - type: toggle
+        card_mod: *detail_card
 
   - type: vertical-stack
     view_layout: {grid-area: climate}
@@ -104,11 +95,11 @@ cards:
       - type: custom:mushroom-title-card
         title: Klima
         subtitle: Heizung und 48-Stunden-Verlauf
-      - type: custom:mushroom-climate-card
+      - type: tile
         entity: climate.badezimmer_badezimmer_thermostat
         name: Badezimmer
-        show_temperature_control: true
-        collapsible_controls: false
+        features:
+          - type: target-temperature
         card_mod: *detail_card
       - type: custom:mini-graph-card
         name: Temperatur · 48 Stunden

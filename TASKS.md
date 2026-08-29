@@ -43,6 +43,8 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [x] Sicherheits- und Wartungsstatus auf Home verlinken
 - [x] kontextabhängige Modi für Morgen, Kochen, Besuch und Gaming ergänzen
 - [x] Home-Overview-Raumkarten auf gemeinsame Includes umgestellt (Wohnzimmer/Esszimmer/Küche)
+- [x] Mobile-Home an Tablet-Schnellzugriff und Küchenkarte angeglichen
+- [x] Flur- und Sonstiges-Lichter auf der Räume-Seite verdrahtet
 
 ## Phase 4 – Kalender und Klima
 
