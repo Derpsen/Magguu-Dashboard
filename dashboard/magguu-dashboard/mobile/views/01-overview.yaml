@@ -5,7 +5,7 @@
   type: custom:grid-layout
   layout:
     margin: 0 auto
-    padding: 10px 10px 96px
+    padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 96px
     grid-gap: 12px
     grid-template-columns: 1fr
   cards:
