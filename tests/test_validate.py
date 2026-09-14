@@ -92,5 +92,41 @@ class ValidateRepositoryTest(unittest.TestCase):
 
         self.assertEqual(errors, [])
 
+    def test_reports_missing_mobile_navbar_clearance_token(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/mobile/views/01-overview.yaml",
+            "- title: Home\n"
+            "  type: custom:grid-layout\n"
+            "  layout:\n"
+            "    padding: var(--mag-space-page-mobile, 10px)\n"
+            "  cards: []\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertTrue(
+            any("mag-space-navbar-clearance" in error for error in errors)
+        )
+
+    def test_accepts_mobile_shell_tokens(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/mobile/views/01-overview.yaml",
+            "- title: Home\n"
+            "  type: custom:grid-layout\n"
+            "  layout:\n"
+            "    max-width: var(--mag-content-max-width-narrow, 760px)\n"
+            "    padding: var(--mag-space-page-mobile, 10px) "
+            "var(--mag-space-page-mobile, 10px) "
+            "var(--mag-space-navbar-clearance, 96px)\n"
+            "  cards:\n"
+            "    - entity: sensor.documented\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertFalse(
+            any("Theme-Token" in error or "navbar-clearance" in error or "max-width hart" in error for error in errors)
+        )
+
 if __name__ == "__main__":
     unittest.main()

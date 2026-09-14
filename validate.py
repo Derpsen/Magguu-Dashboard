@@ -185,6 +185,43 @@ def validate_version(root: Path) -> list[str]:
     return []
 
 
+def validate_view_shell_tokens(root: Path) -> list[str]:
+    """Ensure mobile/tablet grid-layout shells keep layout spacing on theme tokens."""
+    errors: list[str] = []
+    for device in ("mobile", "tablet"):
+        views_dir = root / "dashboard" / "magguu-dashboard" / device / "views"
+        if not views_dir.is_dir():
+            continue
+        for path in sorted(views_dir.glob("*.yaml")):
+            text = path.read_text(encoding="utf-8")
+            if "type: custom:grid-layout" not in text:
+                continue
+            rel = path.relative_to(root)
+            if "padding:" in text and "var(--mag-space-page-" not in text:
+                errors.append(
+                    f"{rel}: Layout-padding ohne Theme-Token (--mag-space-page-*)"
+                )
+            if device == "mobile" and "padding:" in text and (
+                "var(--mag-space-navbar-clearance" not in text
+            ):
+                errors.append(
+                    f"{rel}: Mobile-Bottom-Padding ohne --mag-space-navbar-clearance"
+                )
+            if device == "tablet" and re.search(
+                r"(?m)^\s*max-width:\s*1460px\s*$", text
+            ):
+                errors.append(
+                    f"{rel}: Tablet max-width hart 1460px statt --mag-content-max-width"
+                )
+            if device == "mobile" and re.search(
+                r"(?m)^\s*max-width:\s*760px\s*$", text
+            ):
+                errors.append(
+                    f"{rel}: Mobile max-width hart 760px statt --mag-content-max-width-narrow"
+                )
+    return errors
+
+
 def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     paths = yaml_files(root)
     documents, errors = validate_yaml(paths, root)
@@ -197,6 +234,7 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
         errors.append("docs/entities.md fehlt")
 
     errors.extend(validate_version(root))
+    errors.extend(validate_view_shell_tokens(root))
     return len(paths), errors
 
 

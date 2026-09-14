@@ -2,6 +2,7 @@
 
 ## Unveröffentlicht
 
+- Mobile-/Tablet-View-Shells: Navbar-Clearance und schmale max-width auf Theme-Tokens (--mag-space-navbar-clearance, --mag-content-max-width-narrow); Overview-Reststyles auf Surface/Border-Tokens; Validator sichert Shell-Token-Vertrag
 - Home-Overview Mobile/Tablet: Layout-Abstände und max-width auf Theme-Tokens (--mag-space-page-*, --mag-content-max-width) mit denselben Fallbacks wie die übrigen Views
 - Licht, Klima, Rollläden, Medien und Schalter nutzen HA-Tile-Cards statt Bubble/Mushroom-Spezialkarten (HA 2026.8 / Mushroom 5)
 - OpenCCU-Servicemeldungen zeigen den Gerätetext; Sabotage wird ignoriert (defekter Kontakt, Fehlalarme)

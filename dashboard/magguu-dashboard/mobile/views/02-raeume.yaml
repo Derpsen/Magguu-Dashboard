@@ -5,7 +5,7 @@
   type: custom:grid-layout
   layout:
     margin: 0 auto
-    padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 92px
+    padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) var(--mag-space-navbar-clearance, 96px)
     grid-gap: 12px
     grid-template-columns: minmax(0, 1fr)
   cards: !include ../../shared/cards/rooms.yaml

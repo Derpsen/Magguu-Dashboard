@@ -40,6 +40,8 @@ Magguu Midnight:
   mag-space-card: '16px'
   mag-shadow-card: '0 16px 42px rgba(0,0,0,0.16)'
   mag-content-max-width: '1460px'
+  mag-content-max-width-narrow: '760px'
+  mag-space-navbar-clearance: '96px'
   lovelace-background: >-
     radial-gradient(circle at 20% -10%, rgba(100,76,190,.18), transparent 35%),
     radial-gradient(circle at 100% 5%, rgba(63,105,190,.10), transparent 32%),
