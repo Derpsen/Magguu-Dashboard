@@ -80,3 +80,7 @@ Nach jeder Änderung:
 - Bei großen Aufgaben phasenweise arbeiten.
 - Rückfragen nur bei wirklich fehlenden Informationen stellen.
 - Offene Punkte in `TASKS.md` dokumentieren.
+
+## MagguuUI pack/copy product facts (pointer)
+
+Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When Stack updates Website/Bot WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
