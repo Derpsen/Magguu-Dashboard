@@ -32,7 +32,7 @@ Eine visuelle Neugestaltung wurde in Phase 1 nicht begonnen. Unmittelbar defekte
 - Tablet bindet seine vorhandene `cards/navbar.yaml` derzeit nirgends ein. Die Datei ist daher aktuell toter bzw. vorbereiteter Code.
 - Die Tablet-Navbar enthält keine Kalenderroute, obwohl eine Tablet-Kalenderansicht existiert.
 - Die Include-Wrapper der Raumdetails sind bewusst minimal und für Mobile und Tablet identisch.
-- Der Ordner `Magguu-Dashboard` ist in der aktuellen Workspace-Struktur kein eigenständiges Git-Repository. Das übergeordnete `.git` ist nicht als gültiges Repository nutzbar; dadurch sind Status- und Diff-Prüfungen gegen einen Commit-Bestand derzeit nicht möglich.
+- Das Repository ist ein eigenständiges Git-Repo (`origin` → `Derpsen/Magguu-Dashboard`). Status-/Diff-Prüfungen gegen Commits sind möglich.
 
 ## YAML und Validierung
 
