@@ -84,3 +84,12 @@ Nach jeder Änderung:
 ## MagguuUI pack/copy product facts (pointer)
 
 Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When Stack updates Website/Bot WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
+
+## Dependabot / Merge reports: Actions-only vs App-Image
+
+Dashboard is HA YAML (+ `validate.yml` CI). There is **no** MagguuUI / MagguuBot Unraid image pull from this repo.
+
+- **Actions-only** (github-actions pins, validate workflow, pip `requirements-dev.txt` for CI, docs) → squash-merge when CI green; **no Reviewer** needed; Buddy report: **Actions-only**; Homelab: none.
+- **App-Image / Major** → normally N/A here (no Docker publish / no Magguu container rebuild). If a PR ever touched an App-Image path (it should not), do **not** merge without Reviewer Ship first.
+
+Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
