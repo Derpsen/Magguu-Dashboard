@@ -88,6 +88,8 @@ Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When Webcraft
 - Current state (2026-10-12): MagguuUI addon live **v12.1.7**. The old whisper addon is fully removed everywhere; WowUp Optional includes **Whisper Messenger** (WhisperMessenger) as the whisper chat. The in-game player button is called **„Apply Magguu profiles“**.
 - Node 24 / engines `>=24.17` applies to Website/Bot only (Node 26 locked until Marco says yes); this repo has no `package.json` / npm.
 
+- Current delta (2026-10): WowUp Optional includes **Whisper Messenger** (WhisperMessenger) - not WIM / Ellesmere WIM Skin.
+
 ## Dependabot / Merge reports: Actions-only vs App-Image
 
 Dashboard is HA YAML (+ `validate.yml` CI). There is **no** MagguuUI / MagguuBot Unraid image pull from this repo.
