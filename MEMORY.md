@@ -4,20 +4,20 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## Ownership (2026-10-12)
 
-- **Bot Fixer** owns Magguu-Dashboard and MagguuBot (fixes, Dependabot, AGENTS/MEMORY, Notion log). Stack Fixer covers MagguuUI-Website only.
+- **Botsmith** (formerly Bot Fixer) owns Magguu-Dashboard and MagguuBot (fixes, Dependabot, AGENTS/MEMORY, Notion log). Webcraft (formerly Stack Fixer) covers MagguuUI-Website only.
 - Results go to **Buddy** (front door) as a short German Done-State. Helpers never ask Marco directly.
 
 ## Current state (2026-10-12)
 
 - Version: `6.4.0-dev` (`VERSION`). Last merges: #8 `279f99e` (Dependabot groups + AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
-- Repo is HA YAML only: no `package.json`, no Docker image, no Unraid container. Every merge is **Actions-only**; Homelab is never pinged from here.
+- Repo is HA YAML only: no `package.json`, no Docker image, no Unraid container. Every merge is **Actions-only**; Homebase is never pinged from here.
 - CI: `validate.yml` (push, PR, weekly `17 4 * * 1`), `codeql.yml` (python + actions, SHA-pinned, push/PR to `main` + weekly). Dependabot: github-actions + pip, grouped, Monday Europe/Berlin.
 
 ## Pipeline
 
 - Branch, PR, CI green, squash-merge, delete branch. No force-push. No tags/releases without Marco's explicit yes via Buddy.
-- Actions-only (action pins, workflows, `requirements-dev.txt`, docs): merge when CI is green, no Reviewer needed.
-- Anything that would touch an App-Image path (should not exist here): Reviewer Ship first.
+- Actions-only (action pins, workflows, `requirements-dev.txt`, docs): merge when CI is green, no Sentinel needed.
+- Anything that would touch an App-Image path (should not exist here): Sentinel Ship first.
 - Merge reports always say **Actions-only vs App-Image** (expect Actions-only).
 
 ## Locked majors (cross-repo, need Marco's yes)
@@ -36,3 +36,12 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 ## MagguuUI product facts pointer (2026-10-12)
 
 - Addon live **v12.1.7**. WIM fully removed; Whisper Messenger (WhisperMessenger) is the whisper chat on WowUp Optional. Player button: **Apply Magguu profiles**. Canonical detail lives in MagguuBot / MagguuUI-Website `AGENTS.md`; mirror pack/copy deltas here the same round.
+
+## 2026-10-12 Docs/Bots-Sync
+
+- Helpers renamed (IDs unchanged): Botsmith = MagguuBot + Magguu-Dashboard; Webcraft = MagguuUI-Website only; Luaforge = addon Lua; Sentinel = review; Launchpad = releases/Tag-Gate; Homebase = Unraid; Captain = Notion; Buddy = front door. Old names: Stack Fixer/Stack, Bot Fixer, Addon Fixer, Reviewer, Release Helfer, Homelab Helfer, Projects Manager.
+- Rooms: Addon HQ, Web Studio, Bot Lab, Dashboard Deck, Homebase Ops.
+- Buddy makes small MagguuUI-Website design/text changes directly (own PR, green CI, squash, one pull); bigger work goes to the helpers.
+- Addon live v12.1.7. "Split names" options are becoming "Two-tone unit-frame names" / "Two-tone party and raid names" (MagguuUI PR #30; `SPLIT_NAMES` keys unchanged): half the name in the default color, half in the class color.
+- Website live `sha-1febf58`; legal notice = "free, non-commercial project operated from Switzerland" + `contact@magguu.xyz` (no name, no address).
+- Unchanged: WIM removed, Whisper Messenger used; "Apply Magguu profiles"; Node 26 needs Marco's yes; locked TS 7, h3 2, @types/node 26; uid 99 + Cosign; `engines.node >=24.17`; no tags without Marco's yes; never remove third-party author names.
