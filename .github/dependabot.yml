@@ -8,6 +8,10 @@ updates:
       time: "05:15"
       timezone: Europe/Berlin
     open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     labels:
       - dependencies
       - github-actions
@@ -22,3 +26,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - dependencies
+    groups:
+      dev-tooling:
+        patterns:
+          - "*"

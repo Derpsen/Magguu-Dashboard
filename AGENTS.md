@@ -85,11 +85,16 @@ Nach jeder Änderung:
 
 Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When Stack updates Website/Bot WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
 
+- Current state (2026-10-12): MagguuUI addon live **v12.1.7**. The old whisper addon is fully removed everywhere; WowUp Optional includes **Whisper Messenger** (WhisperMessenger) as the whisper chat. The in-game player button is called **„Apply Magguu profiles“**.
+- Node 24 / engines `>=24.17` applies to Website/Bot only (Node 26 locked until Marco says yes); this repo has no `package.json` / npm.
+
 ## Dependabot / Merge reports: Actions-only vs App-Image
 
 Dashboard is HA YAML (+ `validate.yml` CI). There is **no** MagguuUI / MagguuBot Unraid image pull from this repo.
 
 - **Actions-only** (github-actions pins, validate workflow, pip `requirements-dev.txt` for CI, docs) → squash-merge when CI green; **no Reviewer** needed; Buddy report: **Actions-only**; Homelab: none.
 - **App-Image / Major** → normally N/A here (no Docker publish / no Magguu container rebuild). If a PR ever touched an App-Image path (it should not), do **not** merge without Reviewer Ship first.
+
+CI/Security setup (2026-10-12): `validate.yml` runs on push and PR. Dependabot covers github-actions + pip (grouped, Monday Europe/Berlin). No npm ecosystem unless a `package.json` is added. Planned, not live yet: CodeQL (python + actions, SHA-pinned like MagguuBot) and a weekly `validate.yml` schedule (`17 4 * * 1`).
 
 Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
