@@ -95,6 +95,6 @@ Dashboard is HA YAML (+ `validate.yml` CI). There is **no** MagguuUI / MagguuBot
 - **Actions-only** (github-actions pins, validate workflow, pip `requirements-dev.txt` for CI, docs) → squash-merge when CI green; **no Reviewer** needed; Buddy report: **Actions-only**; Homelab: none.
 - **App-Image / Major** → normally N/A here (no Docker publish / no Magguu container rebuild). If a PR ever touched an App-Image path (it should not), do **not** merge without Reviewer Ship first.
 
-CI/Security setup (2026-10-12): `validate.yml` runs on push and PR. Dependabot covers github-actions + pip (grouped, Monday Europe/Berlin). No npm ecosystem unless a `package.json` is added. Planned, not live yet: CodeQL (python + actions, SHA-pinned like MagguuBot) and a weekly `validate.yml` schedule (`17 4 * * 1`).
+CI/Security setup (2026-10-12): `validate.yml` runs on push, PR and weekly (`17 4 * * 1`); `codeql.yml` (python + actions, SHA-pinned like MagguuBot) runs on push/PR to `main` and weekly. Dependabot covers github-actions + pip (grouped, Monday Europe/Berlin). No npm ecosystem unless a `package.json` is added.
 
 Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
