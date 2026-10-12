@@ -1,0 +1,38 @@
+# MEMORY.md
+
+Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
+
+## Ownership (2026-10-12)
+
+- **Bot Fixer** owns Magguu-Dashboard and MagguuBot (fixes, Dependabot, AGENTS/MEMORY, Notion log). Stack Fixer covers MagguuUI-Website only.
+- Results go to **Buddy** (front door) as a short German Done-State. Helpers never ask Marco directly.
+
+## Current state (2026-10-12)
+
+- Version: `6.4.0-dev` (`VERSION`). Last merges: #8 `279f99e` (Dependabot groups + AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
+- Repo is HA YAML only: no `package.json`, no Docker image, no Unraid container. Every merge is **Actions-only**; Homelab is never pinged from here.
+- CI: `validate.yml` (push, PR, weekly `17 4 * * 1`), `codeql.yml` (python + actions, SHA-pinned, push/PR to `main` + weekly). Dependabot: github-actions + pip, grouped, Monday Europe/Berlin.
+
+## Pipeline
+
+- Branch, PR, CI green, squash-merge, delete branch. No force-push. No tags/releases without Marco's explicit yes via Buddy.
+- Actions-only (action pins, workflows, `requirements-dev.txt`, docs): merge when CI is green, no Reviewer needed.
+- Anything that would touch an App-Image path (should not exist here): Reviewer Ship first.
+- Merge reports always say **Actions-only vs App-Image** (expect Actions-only).
+
+## Locked majors (cross-repo, need Marco's yes)
+
+- Node 26 (~end of Oct 2026), TypeScript 7, h3 2, satori 0.41 (Website), `@types/node` 26 (Bot). Not used here, but do not introduce them via drive-by changes.
+- Website/Bot: `engines.node >=24.17`, containers uid 99, Cosign keyless, no QEMU.
+
+## Hard rules
+
+- Never guess or silently change entity IDs; new entities only from `docs/entities.md` or as a marked TODO.
+- Keep HA `!include*` tags. No unnecessary HACS dependencies. No credentials, tokens, hostnames or private URLs.
+- No WoW/ElvUI/MagguuUI addon code in this repo; only short product-fact pointers in `AGENTS.md`.
+- Never remove or replace third-party author names.
+- Keep PRs in scope; no drive-by dependency bumps.
+
+## MagguuUI product facts pointer (2026-10-12)
+
+- Addon live **v12.1.7**. WIM fully removed; Whisper Messenger (WhisperMessenger) is the whisper chat on WowUp Optional. Player button: **Apply Magguu profiles**. Canonical detail lives in MagguuBot / MagguuUI-Website `AGENTS.md`; mirror pack/copy deltas here the same round.
