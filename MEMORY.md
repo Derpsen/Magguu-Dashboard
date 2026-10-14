@@ -51,3 +51,8 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 - Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; Node <26, TypeScript <7, h3 <2, satori ~0.41 guards. **Renovate GitHub App not installed yet** (no Renovate check suites/PRs) – Marco/Buddy must install it; until then there are no automatic dependency PRs.
 - New subview `dienste` („Magguu-Dienste“, linked from System): Website status, MagguuBot uptime/build, last Docker deploy (Bot + Website), last bot webhook per source. Shared include `shared/views/dienste.yaml` for mobile + tablet.
 - Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`, `github_status_auth`). TODO in `docs/entities.md`; Homebase copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet (Webcraft) – interim `/api/health`.
+
+## 2026-10-15 Arbeitscomputer
+
+- Helfer-Arbeitscomputer ist die Unraid-VM `Ubuntu` (machineId `3ff4cee8-7e7c-4cc9-a262-ebf10016d570`), Repos unter `~/Projekte` nach Homebase-Umzug. Marcos PC (`f01cf815-a384-40fb-ac18-c8450b4d5889`) nur noch für WoW-AddOns-Deploy, darf aus sein.
+- Botsmith schreibt Marco nie im 1:1; Status/Done nur an Buddy.
