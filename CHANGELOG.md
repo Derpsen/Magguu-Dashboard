@@ -2,6 +2,8 @@
 
 ## Unveröffentlicht
 
+- Neue Unterseite „Magguu-Dienste“ (Mobile + Tablet über ein gemeinsames Include, Einstieg von System): Website-Status, MagguuBot-Uptime/Build, letzter Docker-Deploy (Bot + Website) und letzter Bot-Webhook je Quelle. REST-Sensoren als optionales Paket `docs/optional/magguu_dienste.yaml` (nur `!secret`, TODO in `docs/entities.md`); Website-`/api/status` steht noch aus, vorläufig `/api/health`
+- Dependabot durch Renovate ersetzt (`renovate.json`: Montag, Europe/Berlin, Gruppen github-actions/pip, Automerge nur Minor/Patch nach grüner CI)
 - Dependabot-Gruppen (github-actions, pip); AGENTS.md auf Stand 2026-10-12 (u. a. Whisper Messenger, übernimmt PR #7)
 
 - Mobile-/Tablet-View-Shells: Navbar-Clearance und schmale max-width auf Theme-Tokens (--mag-space-navbar-clearance, --mag-content-max-width-narrow); Overview-Reststyles auf Surface/Border-Tokens; Validator sichert Shell-Token-Vertrag

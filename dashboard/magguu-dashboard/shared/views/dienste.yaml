@@ -1,0 +1,146 @@
+# Magguu-Dienste: Website, Bot und letzter Deploy. Sensoren aus docs/optional/magguu_dienste.yaml
+# (TODO, siehe docs/entities.md); ohne Paket zeigen die Karten „nicht eingerichtet“.
+title: Magguu-Dienste
+path: dienste
+icon: mdi:server-network
+subview: true
+theme: Magguu Midnight
+type: custom:grid-layout
+layout:
+  max-width: var(--mag-content-max-width, 1460px)
+  margin: 0 auto
+  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
+  grid-gap: 14px
+  grid-template-columns: repeat(2, minmax(0, 1fr))
+  grid-template-areas: |
+    "hero hero"
+    "services deploy"
+    "webhooks deploy"
+  mediaquery:
+    "(max-width: 860px)":
+      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) var(--mag-space-navbar-clearance, 96px)
+      grid-template-columns: minmax(0, 1fr)
+      grid-template-areas: |
+        "hero"
+        "services"
+        "deploy"
+        "webhooks"
+cards:
+  - type: custom:button-card
+    template: page_header_v6
+    name: Magguu-Dienste
+    icon: mdi:server-network
+    variables:
+      subtitle: Website, Bot und letzter Deploy
+      accent: '#6cf2ff'
+    view_layout:
+      grid-area: hero
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: services
+    cards:
+      - type: custom:mushroom-title-card
+        title: Dienste
+        subtitle: Erreichbarkeit und Laufzeit
+      - type: custom:mushroom-template-card
+        entity: sensor.magguu_website_status
+        primary: Website
+        secondary: >-
+          {% set s = states(entity) %}
+          {% if s in ['unknown', 'unavailable'] %}Nicht eingerichtet oder nicht erreichbar
+          {% else %}{{ 'Online' if s == 'ok' else s }}
+          {%- set ts = state_attr(entity, 'timestamp') %}{% if ts %} · geprüft {{ as_timestamp(ts) | timestamp_custom('%H:%M', true) }}{% endif %}
+          {% endif %}
+        multiline_secondary: true
+        icon: mdi:web
+        icon_color: >-
+          {% set s = states(entity) %}
+          {{ 'green' if s == 'ok' else 'grey' if s in ['unknown', 'unavailable'] else 'red' }}
+        tap_action: {action: more-info}
+        card_mod: &service_card
+          style: |
+            ha-card {
+              min-height: 92px;
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+            }
+      - type: custom:mushroom-template-card
+        entity: sensor.magguu_bot_status
+        primary: MagguuBot
+        secondary: >-
+          {% set s = states(entity) %}
+          {% if s in ['unknown', 'unavailable'] %}Nicht eingerichtet oder nicht erreichbar
+          {% else %}
+            {%- set up = state_attr(entity, 'uptimeSeconds') | int(0) %}
+            {%- set build = state_attr(entity, 'build') or {} %}
+            Uptime {{ (up // 86400) }}d {{ (up % 86400) // 3600 }}h
+            · {{ 'sha-' ~ build.sha[:7] if build.sha else 'Build unbekannt' }}
+          {% endif %}
+        multiline_secondary: true
+        icon: mdi:robot-outline
+        icon_color: >-
+          {% set s = states(entity) %}
+          {{ 'green' if s == 'ok' else 'grey' if s in ['unknown', 'unavailable'] else 'red' }}
+        tap_action: {action: more-info}
+        card_mod: *service_card
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: deploy
+    cards:
+      - type: custom:mushroom-title-card
+        title: Letzter Deploy
+        subtitle: Docker-Workflow auf main
+      - type: custom:mushroom-template-card
+        entity: sensor.magguu_bot_letzter_deploy
+        primary: MagguuBot-Image
+        secondary: &deploy_secondary >-
+          {% set s = states(entity) %}
+          {% if s in ['unknown', 'unavailable'] %}Nicht eingerichtet
+          {% else %}
+            {%- set sha = state_attr(entity, 'head_sha') or '' %}
+            {%- set at = state_attr(entity, 'updated_at') %}
+            {{ {'success': 'Erfolgreich', 'failure': 'Fehlgeschlagen', 'cancelled': 'Abgebrochen'}.get(s, s) }}
+            · sha-{{ sha[:7] }}{% if at %} · {{ as_timestamp(at) | timestamp_custom('%d.%m. · %H:%M', true) }}{% endif %}
+          {% endif %}
+        multiline_secondary: true
+        icon: mdi:docker
+        icon_color: &deploy_color >-
+          {% set s = states(entity) %}
+          {{ 'green' if s == 'success' else 'red' if s == 'failure'
+             else 'grey' if s in ['unknown', 'unavailable'] else 'orange' }}
+        tap_action: {action: more-info}
+        card_mod: *service_card
+      - type: custom:mushroom-template-card
+        entity: sensor.magguu_website_letzter_deploy
+        primary: Website-Image
+        secondary: *deploy_secondary
+        multiline_secondary: true
+        icon: mdi:docker
+        icon_color: *deploy_color
+        tap_action: {action: more-info}
+        card_mod: *service_card
+
+  - type: vertical-stack
+    view_layout:
+      grid-area: webhooks
+    cards:
+      - type: custom:mushroom-title-card
+        title: Bot-Webhooks
+        subtitle: Letzter Empfang je Quelle
+      - type: markdown
+        entity_id: sensor.magguu_bot_status
+        content: >-
+          {% set hooks = state_attr('sensor.magguu_bot_status', 'webhooks') %}
+          {% if not hooks %}Keine Daten – Paket `docs/optional/magguu_dienste.yaml` noch nicht eingerichtet.
+          {% else %}
+          {% for name, h in hooks.items() %}
+          {{ '🟢' if h.state == 'ok' else '🟠' }} **{{ name | capitalize }}** · {% if h.lastReceivedAt %}{{ as_timestamp(h.lastReceivedAt) | timestamp_custom('%d.%m. · %H:%M', true) }}{% else %}noch nie{% endif %}
+          {% endfor %}
+          {% endif %}
+        card_mod: *service_card
+
+  - !include ../navbar.yaml

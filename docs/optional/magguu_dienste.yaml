@@ -1,0 +1,76 @@
+# Optionales HA-Paket für die Seite „Magguu-Dienste“ (Website, Bot, letzter Deploy).
+# TODO(Homebase): erst nach /config/packages/ kopieren, wenn alle !secret-Werte in
+# /config/secrets.yaml existieren – fehlende Secrets brechen die HA-Konfiguration.
+# Benötigte Secrets (nie committen):
+#   magguu_bot_status_url        z. B. http://<unraid-ip>:3000/api/status (LAN, nicht öffentlich)
+#   magguu_bot_status_auth       "Bearer <STATUS_API_TOKEN aus dem MagguuBot-Container>"
+#   magguu_website_status_url    Website-Status-Endpoint (TODO: /api/status gibt es noch nicht;
+#                                 bis dahin <website>/api/health)
+#   github_status_auth           "Bearer <GitHub-Token, nur actions:read auf öffentliche Repos>"
+rest:
+  - resource: !secret magguu_bot_status_url
+    headers:
+      Authorization: !secret magguu_bot_status_auth
+    scan_interval: 300
+    timeout: 10
+    sensor:
+      - name: Magguu Bot Status
+        unique_id: magguu_bot_status
+        icon: mdi:robot-outline
+        value_template: "{{ 'ok' if value_json.ok else 'fehler' }}"
+        json_attributes:
+          - uptimeSeconds
+          - build
+          - staleHours
+          - webhooks
+          - generatedAt
+
+  - resource: !secret magguu_website_status_url
+    scan_interval: 300
+    timeout: 10
+    sensor:
+      - name: Magguu Website Status
+        unique_id: magguu_website_status
+        icon: mdi:web
+        # /api/health liefert {status, timestamp}; ein späteres /api/status soll status beibehalten.
+        value_template: "{{ value_json.status | default('unbekannt') }}"
+        json_attributes:
+          - timestamp
+
+  - resource: https://api.github.com/repos/Derpsen/MagguuBot/actions/workflows/docker.yml/runs?branch=main&per_page=1
+    headers:
+      Authorization: !secret github_status_auth
+      Accept: application/vnd.github+json
+      User-Agent: magguu-dashboard
+    scan_interval: 900
+    timeout: 15
+    sensor:
+      - name: Magguu Bot letzter Deploy
+        unique_id: magguu_bot_letzter_deploy
+        icon: mdi:docker
+        value_template: "{{ value_json.workflow_runs[0].conclusion | default('läuft', true) if value_json.workflow_runs else 'unbekannt' }}"
+        json_attributes_path: "$.workflow_runs[0]"
+        json_attributes:
+          - head_sha
+          - updated_at
+          - html_url
+          - status
+
+  - resource: https://api.github.com/repos/Derpsen/MagguuUI-Website/actions/workflows/docker.yml/runs?branch=main&per_page=1
+    headers:
+      Authorization: !secret github_status_auth
+      Accept: application/vnd.github+json
+      User-Agent: magguu-dashboard
+    scan_interval: 900
+    timeout: 15
+    sensor:
+      - name: Magguu Website letzter Deploy
+        unique_id: magguu_website_letzter_deploy
+        icon: mdi:docker
+        value_template: "{{ value_json.workflow_runs[0].conclusion | default('läuft', true) if value_json.workflow_runs else 'unbekannt' }}"
+        json_attributes_path: "$.workflow_runs[0]"
+        json_attributes:
+          - head_sha
+          - updated_at
+          - html_url
+          - status

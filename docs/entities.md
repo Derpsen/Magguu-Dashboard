@@ -205,6 +205,15 @@ Kinderzimmer-Kamera:
 - `sensor.kinderzimmer_batterie`
 - `sensor.kinderzimmer_letzte_aktivitat`
 
+## Magguu-Dienste (TODO: optionales Paket, in HA noch nicht angelegt)
+
+Definiert in `docs/optional/magguu_dienste.yaml` (REST-Sensoren, URLs/Tokens nur per !secret). Erst aktiv, wenn Homebase das Paket nach /config/packages/ kopiert und die Secrets setzt; bis dahin zeigt die Seite „Magguu-Dienste“ „nicht eingerichtet“.
+
+- `sensor.magguu_bot_status` – MagguuBot GET /api/status (Bearer-Token STATUS_API_TOKEN); Attribute uptimeSeconds, build, webhooks
+- `sensor.magguu_website_status` – TODO: Website-/api/status existiert noch nicht (Webcraft); vorläufig /api/health (status, timestamp)
+- `sensor.magguu_bot_letzter_deploy` – letzter `docker.yml`-Run von Derpsen/MagguuBot auf `main` (GitHub API)
+- `sensor.magguu_website_letzter_deploy` – letzter `docker.yml`-Run von Derpsen/MagguuUI-Website auf `main` (GitHub API)
+
 ## Noch zu ergänzen (nicht verdrahtet, im UI ausgeblendet)
 
 Platzhalter ohne echte IDs – bewusst **nicht** als Live-Widgets im Dashboard gezeigt. Homebase liefert die IDs später; bis dahin keine erfundenen Entity-IDs.
