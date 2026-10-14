@@ -207,7 +207,7 @@ Kinderzimmer-Kamera:
 
 ## Noch zu ergänzen (nicht verdrahtet, im UI ausgeblendet)
 
-Platzhalter ohne echte IDs – bewusst **nicht** als Live-Widgets im Dashboard gezeigt. Homelab liefert die IDs später; bis dahin keine erfundenen Entity-IDs.
+Platzhalter ohne echte IDs – bewusst **nicht** als Live-Widgets im Dashboard gezeigt. Homebase liefert die IDs später; bis dahin keine erfundenen Entity-IDs.
 
 - Nuki-Schloss, Türsensor und Batterie (Entriegeln nur mit Bestätigungsdialog; UI ausgeblendet)
 - Unraid- und Docker-Sensoren

@@ -31,7 +31,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 - Keep HA `!include*` tags. No unnecessary HACS dependencies. No credentials, tokens, hostnames or private URLs.
 - No WoW/ElvUI/MagguuUI addon code in this repo; only short product-fact pointers in `AGENTS.md`.
 - Never remove or replace third-party author names.
-- Keep PRs in scope; no drive-by dependency bumps.
+- Keep commits in scope; no drive-by dependency bumps.
 
 ## MagguuUI product facts pointer (2026-10-12)
 
