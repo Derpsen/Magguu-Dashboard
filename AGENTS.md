@@ -6,6 +6,12 @@ Dieses Repository enthält ein vollständig YAML-basiertes Home-Assistant-Dashbo
 
 ## Grok Bot / Buddy
 
+## Arbeitscomputer (2026-10-15)
+
+- Checkout: Unraid-VM `Ubuntu`, machineId `3ff4cee8-7e7c-4cc9-a262-ebf10016d570`, path `~/Projekte/Magguu-Dashboard` (repos ready).
+- Marcos PC nur WoW-AddOns-Deploy; Status nur an Buddy, nie 1:1 Marco.
+
+
 Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Owner dieses Repos: **Botsmith** (auch MagguuBot), Raum **Dashboard Deck**. Webcraft = nur MagguuUI-Website, Luaforge = Addon-Lua, Sentinel = Review, Launchpad = Releases, Homebase = Unraid, Captain = Notion (Umbenennung 2026-10-12, IDs unverändert). Helfer melden Ergebnisse an Buddy zurück.
 
 - Interaktive/Ad-hoc-Sessions: kein Commit, Push oder Git-Tag ohne ausdrückliche Freigabe für genau diesen Schritt.
