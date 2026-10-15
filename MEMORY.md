@@ -4,18 +4,18 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## Ownership (2026-10-12)
 
-- **Botsmith** (formerly Bot Fixer) owns Magguu-Dashboard and MagguuBot (fixes, Dependabot, AGENTS/MEMORY, Notion log). Webcraft (formerly Stack Fixer) covers MagguuUI-Website only.
+- **Botsmith** (formerly Bot Fixer) owns Magguu-Dashboard and MagguuBot (fixes, Renovate (ex-Dependabot), AGENTS/MEMORY, Notion log). Webcraft (formerly Stack Fixer) covers MagguuUI-Website only.
 - Results go to **Buddy** (front door) as a short German Done-State. Helpers never ask Marco directly.
 
 ## Current state (2026-10-12)
 
 - Version: `6.4.0-dev` (`VERSION`). Last merges: #8 `279f99e` (Dependabot groups + AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
 - Repo is HA YAML only: no `package.json`, no Docker image, no Unraid container. Every merge is **Actions-only**; Homebase is never pinged from here.
-- CI: `validate.yml` (push, PR, weekly `17 4 * * 1`), `codeql.yml` (python + actions, SHA-pinned, push/PR to `main` + weekly). Dependabot: github-actions + pip, grouped, Monday Europe/Berlin.
+- CI: `validate.yml` (push, PR, weekly `17 4 * * 1`), `codeql.yml` (python + actions, SHA-pinned, push/PR to `main` + weekly). Dependency bot: Renovate since 2026-10-14 (ex-Dependabot, `renovate.json`): github-actions + pip, grouped, Monday Europe/Berlin; App not installed yet (see 2026-10-14 Botsmith wave 2).
 
 ## Pipeline
 
-- Push directly to `main` (no PRs, no Sentinel pre-review; Buddy reviews commits afterwards). Dependabot PRs: merge when CI green. No force-push. No tags/releases without Marco's explicit yes via Buddy.
+- Push directly to `main` (no PRs, no Sentinel pre-review; Buddy reviews commits afterwards). Renovate PRs (once the App is installed): merge when CI green. No force-push. No tags/releases without Marco's explicit yes via Buddy.
 - Actions-only (action pins, workflows, `requirements-dev.txt`, docs): push/merge when CI is green.
 - Nothing here touches an App-Image path; no Homebase pull.
 - Merge reports always say **Actions-only vs App-Image** (expect Actions-only).
@@ -35,15 +35,15 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## MagguuUI product facts pointer (2026-10-12)
 
-- Addon live **v12.1.7**. WIM fully removed; Whisper Messenger (WhisperMessenger) is the whisper chat on WowUp Optional. Player button: **Apply Magguu profiles**. Canonical detail lives in MagguuBot / MagguuUI-Website `AGENTS.md`; mirror pack/copy deltas here the same round.
+- Addon live **v12.1.8** (since 2026-10-14; was v12.1.7). WIM fully removed; Whisper Messenger (WhisperMessenger) is the whisper chat on WowUp Optional. Player button: **Apply Magguu profiles**. Canonical detail lives in MagguuBot / MagguuUI-Website `AGENTS.md`; mirror pack/copy deltas here the same round.
 
 ## 2026-10-12 Docs/Bots-Sync
 
 - Helpers renamed (IDs unchanged): Botsmith = MagguuBot + Magguu-Dashboard; Webcraft = MagguuUI-Website only; Luaforge = addon Lua; Sentinel = review; Launchpad = releases/Tag-Gate; Homebase = Unraid; Captain = Notion; Buddy = front door. Old names: Stack Fixer/Stack, Bot Fixer, Addon Fixer, Reviewer, Release Helfer, Homelab Helfer, Projects Manager.
 - Rooms: Addon HQ, Web Studio, Bot Lab, Dashboard Deck, Homebase Ops.
 - Buddy makes small MagguuUI-Website design/text changes directly; bigger work goes to the helpers. Since 2026-10-12 helpers and Buddy push directly to `main` (no PRs, no Sentinel pre-review); Buddy reviews commits afterwards; Homebase pulls autonomously after green Docker publish.
-- Addon live v12.1.7. "Split names" options are becoming "Two-tone unit-frame names" / "Two-tone party and raid names" (MagguuUI PR #30; `SPLIT_NAMES` keys unchanged): half the name in the default color, half in the class color.
-- Website live `sha-d8e734a` (digest `sha256:516f6c21…`, 2026-10-14: admin restyle, admin save clears cache, `/admin/content` shows a page list); legal notice = "free, non-commercial project operated from Switzerland" + `contact@magguu.xyz` (no name, no address).
+- Addon live v12.1.7 (superseded: live **v12.1.8** since 2026-10-14). "Split names" options are becoming "Two-tone unit-frame names" / "Two-tone party and raid names" (MagguuUI PR #30; `SPLIT_NAMES` keys unchanged): half the name in the default color, half in the class color.
+- Website live `sha-d8e734a` (digest `sha256:516f6c21…`, 2026-10-14: admin restyle, admin save clears cache, `/admin/content` shows a page list) — superseded: live since 2026-10-14 late evening is `sha-5db94ed` (digest `sha256:abfe0d1d…`, v12.1.8 changelog notes); legal notice = "free, non-commercial project operated from Switzerland" + `contact@magguu.xyz` (no name, no address).
 - Unchanged: WIM removed, Whisper Messenger used; "Apply Magguu profiles"; Node 26 needs Marco's yes; locked TS 7, h3 2, @types/node 26; uid 99 + Cosign; `engines.node >=24.17`; no tags without Marco's yes; never remove third-party author names.
 
 ## 2026-10-14 Botsmith wave 2
