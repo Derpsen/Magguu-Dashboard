@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+SCRIPT_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
 CONFIG_DIR="${HA_CONFIG_DIR:-/config}"
 INSTALLER="$SCRIPT_DIR/scripts/install-dashboard.sh"
 

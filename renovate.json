@@ -40,14 +40,15 @@
       "groupName": "pip"
     },
     {
-      "description": "Automerge minor/patch only, after green CI",
+      "description": "Automerge minor/patch/pin/digest only after green required status checks; lands directly on main (branch automerge)",
       "matchUpdateTypes": [
         "minor",
         "patch",
         "pin",
         "digest"
       ],
-      "automerge": true
+      "automerge": true,
+      "automergeType": "branch"
     },
     {
       "description": "Majors never automerge",

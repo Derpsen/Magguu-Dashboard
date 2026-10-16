@@ -81,3 +81,7 @@ Danach Home Assistant neu starten und die App vollständig neu laden.
 **Optional (nur mit Git-Klon):** Im geklonten Repository `sh update.sh` (Fast-Forward, danach Backup und Neuinstallation). Auf Home Assistant OS ohne Klon ist dieser Weg nicht verfügbar.
 
 Dieses Repository ist **kein HACS-Dashboard**: YAML-Dashboards und Packages liegen unter mehreren `/config`-Zielen; HACS verwaltet Frontend-JavaScript unter `www/community`. Installation und Updates laufen über die Skripte bzw. die System-Aktion oben.
+
+## Git pre-push hook
+
+Enable the in-repo pre-push checks once per checkout: `git config core.hooksPath .githooks`
