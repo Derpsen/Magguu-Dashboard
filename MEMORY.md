@@ -60,3 +60,4 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 - 2026-10-16: Renovate branch-automerge (minor/patch/pin/digest after green CI, majors manual; TS<7, @types/node<25 locked). Pre-push hook `.githooks/pre-push` (checks + actionlint + shellcheck), enable via `git config core.hooksPath .githooks`; VM checkout enabled.
 - shellcheck SC1007 fixed: `CDPATH='' cd` in install.sh, update.sh, tests/test-install.sh.
 - 2026-10-16: Node 26 approved; Renovate Node hold removed. This repo has no Node runtime/CI references (Python CI only).
+- 2026-10-16: CI Python 3.12 → 3.15 (validate.yml); PyYAML 6.0.3 already latest.
