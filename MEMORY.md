@@ -61,3 +61,4 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 - shellcheck SC1007 fixed: `CDPATH='' cd` in install.sh, update.sh, tests/test-install.sh.
 - 2026-10-16: Node 26 approved; Renovate Node hold removed. This repo has no Node runtime/CI references (Python CI only).
 - 2026-10-16: CI Python 3.12 → 3.15 (validate.yml); PyYAML 6.0.3 already latest.
+- Security (2026-10-16): `scorecard.yml` (ossf/scorecard-action v2.5.0, SHA-pinned; push main + weekly; SARIF → code scanning, upload-sarif SHA = codeql.yml SHA, bump together) and `dependency-review.yml` (actions/dependency-review-action v5.0.0, PRs, fails on >= moderate). Secret scanning + push protection enabled via `gh api` (verified enabled).
