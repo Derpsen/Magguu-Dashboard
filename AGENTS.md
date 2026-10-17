@@ -12,7 +12,7 @@ Dieses Repository enthält ein vollständig YAML-basiertes Home-Assistant-Dashbo
 - Marcos PC nur WoW-AddOns-Deploy; Status nur an Buddy, nie 1:1 Marco.
 
 
-Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Owner dieses Repos: **Botsmith** (auch MagguuBot), Raum **Dashboard Deck**. Webcraft = nur MagguuUI-Website, Luaforge = Addon-Lua, Sentinel = Review, Launchpad = Releases, Homebase = Unraid, Captain = Notion (Umbenennung 2026-10-12, IDs unverändert). Helfer melden Ergebnisse an Buddy zurück.
+Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Owner dieses Repos: **"Bot & Dashboard"** (auch MagguuBot). "Website" = nur MagguuUI-Website, "Addon (Lua)" = Addon-Lua, "Code-Review" = Review, "Release" = Releases, "Unraid & Server" = Unraid (Umbenennung 2026-10-16, IDs unverändert; Captain und Gruppenchats gelöscht). Helfer melden Ergebnisse an Buddy zurück.
 
 - Interaktive/Ad-hoc-Sessions: kein Commit, Push oder Git-Tag ohne ausdrückliche Freigabe für genau diesen Schritt.
 - Helfer unter Buddy-Hub-Standing-Order: klare In-Scope-Fixes dürfen ohne Nachfrage pro Änderung committen, pushen und nach `main` mergen; niemals force-push; niemals unzusammenhängendes dirty WIP mitveröffentlichen; Tags/Releases brauchen eine ausdrückliche Release-Freigabe.
@@ -89,10 +89,10 @@ Nach jeder Änderung:
 
 ## MagguuUI pack/copy product facts (pointer)
 
-Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When Webcraft (Website) or Botsmith (Bot) updates WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
+Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When "Website" or "Bot & Dashboard" updates WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
 
 - Current state (2026-10-15): MagguuUI addon live **v12.1.8** (tagged 2026-10-14; v12.1.7 superseded). The old whisper addon is fully removed everywhere; WowUp Optional includes **Whisper Messenger** (WhisperMessenger) as the whisper chat. The in-game player button is called **„Apply Magguu profiles“**.
-- Node 26 is live for Bot (engines `>=26`, 2026-10-16); Website unchanged; this repo has no `package.json` / npm.
+- Node 26 is live for Bot (engines `>=26`) and Website (`>=26.12.0`) since 2026-10-16; this repo has no `package.json` / npm.
 
 - Current delta (2026-10): WowUp Optional includes **Whisper Messenger** (WhisperMessenger) - not WIM / Ellesmere WIM Skin.
 
@@ -100,27 +100,26 @@ Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When Webcraft
 
 Dashboard is HA YAML (+ `validate.yml` CI). There is **no** MagguuUI / MagguuBot Unraid image pull from this repo.
 
-- **Actions-only** (github-actions pins, validate workflow, pip `requirements-dev.txt` for CI, docs) → direct push to `main` (Renovate PRs, once the Renovate App is installed: merge when CI green); no Sentinel pre-review; Buddy report: **Actions-only**; Homebase: none.
+- **Actions-only** (github-actions pins, validate workflow, pip `requirements-dev.txt` for CI, docs) → direct push to `main` (Renovate PRs, once the Renovate App is installed: merge when CI green); no pre-review; Buddy report: **Actions-only**; "Unraid & Server": none.
 - **App-Image / Major** → normally N/A here (no Docker publish / no Magguu container rebuild). No pre-review step; Buddy reviews commits afterwards.
 
-CI/Security setup (2026-10-12): `validate.yml` runs on push, PR and weekly (`17 4 * * 1`); `codeql.yml` (python + actions, SHA-pinned like MagguuBot) runs on push/PR to `main` and weekly. Since 2026-10-14 Renovate (ex-Dependabot, `renovate.json`) covers github-actions + pip (grouped, Monday Europe/Berlin); see 2026-10-14 Botsmith wave 2 (App not installed yet). No npm ecosystem unless a `package.json` is added.
+CI/Security setup (2026-10-12): `validate.yml` runs on push, PR and weekly (`17 4 * * 1`); `codeql.yml` (python + actions, SHA-pinned like MagguuBot) runs on push/PR to `main` and weekly. Since 2026-10-14 Renovate (ex-Dependabot, `renovate.json`) covers github-actions + pip (grouped, Monday Europe/Berlin); see 2026-10-14 "Bot & Dashboard" wave 2 (App not installed yet). No npm ecosystem unless a `package.json` is added.
 
 Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
 
 ## 2026-10-12 Docs/Bots-Sync
 
-- Helpers renamed (IDs unchanged): Botsmith = MagguuBot + Magguu-Dashboard; Webcraft = MagguuUI-Website only; Luaforge = addon Lua; Sentinel = review; Launchpad = releases/Tag-Gate; Homebase = Unraid; Captain = Notion; Buddy = front door. Old names: Stack Fixer/Stack, Bot Fixer, Addon Fixer, Reviewer, Release Helfer, Homelab Helfer, Projects Manager.
-- Rooms: Addon HQ, Web Studio, Bot Lab, Dashboard Deck, Homebase Ops.
-- Buddy makes small MagguuUI-Website design/text changes directly; bigger work goes to the helpers. Since 2026-10-12 helpers and Buddy push directly to `main` (no PRs, no Sentinel pre-review); Buddy reviews commits afterwards; Homebase pulls autonomously after green Docker publish.
+- Helpers (renamed again 2026-10-16, IDs unchanged): "Website" = MagguuUI-Website only; "Bot & Dashboard" = MagguuBot + Magguu-Dashboard; "Addon (Lua)" = addon Lua; "Code-Review" = review on request; "Release" = releases/Tag-Gate; "Unraid & Server" = Unraid; Buddy = front door. Former names: Webcraft, Botsmith, Luaforge, Sentinel, Launchpad, Homebase. Captain and all group chats/rooms were deleted 2026-10-16; Buddy contacts helpers directly; Notion holds only rules and the daily Docs-Abgleich log.
+- Buddy makes small MagguuUI-Website design/text changes directly; bigger work goes to the helpers. Since 2026-10-12 helpers and Buddy push directly to `main` (no PRs, no pre-review); Buddy reviews commits afterwards; after a green Docker publish the no-AI Unraid pull/test script (`magguu-pull`, rollback on failure) pulls the new image.
 - Addon live v12.1.7 (superseded: live **v12.1.8** since 2026-10-14). "Split names" options are becoming "Two-tone unit-frame names" / "Two-tone party and raid names" (MagguuUI PR #30; `SPLIT_NAMES` keys unchanged): half the name in the default color, half in the class color.
-- Website live `sha-d8e734a` (digest `sha256:516f6c21…`, 2026-10-14: admin restyle, admin save clears cache, `/admin/content` shows a page list) — superseded: live since 2026-10-14 late evening is `sha-5db94ed` (digest `sha256:abfe0d1d…`, v12.1.8 changelog notes); legal notice = "free, non-commercial project operated from Switzerland" + `contact@magguu.xyz` (no name, no address).
-- Unchanged: WIM removed, Whisper Messenger used; "Apply Magguu profiles"; Node 26 live (Bot); locked TS 7, h3 2, @types/node 26; uid 99 + Cosign; Bot `engines.node >=26`; no tags without Marco's yes; never remove third-party author names.
+- Website live `sha-d8e734a` (digest `sha256:516f6c21…`, 2026-10-14: admin restyle, admin save clears cache, `/admin/content` shows a page list) — superseded: live since 2026-10-14 late evening is `sha-5db94ed` (digest `sha256:abfe0d1d…`, v12.1.8 changelog notes; superseded 2026-10-17 by `sha-6dc9870`, build id `da0941f8`, Node 26); legal notice = "free, non-commercial project operated from Switzerland" + `contact@magguu.xyz` (no name, no address).
+- Unchanged: WIM removed, Whisper Messenger used; "Apply Magguu profiles"; Node 26 live (Bot + Website); locked TS 7, h3 2, @types/node 26; uid 99 + Cosign; `engines.node >=26` (Website >=26.12.0); no tags without Marco's yes; never remove third-party author names.
 
-## 2026-10-14 Botsmith wave 2
+## 2026-10-14 "Bot & Dashboard" wave 2
 
 - Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; TypeScript <7, h3 <2, satori ~0.41 guards. Renovate GitHub App installed 2026-10-16 (Dependency Dashboard #12).
 - New subview `dienste` („Magguu-Dienste“, linked from System): Website status, MagguuBot uptime/build, last Docker deploy (Bot + Website), last bot webhook per source. Shared include `shared/views/dienste.yaml` for mobile + tablet.
-- Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`, `github_status_auth`). TODO in `docs/entities.md`; Homebase copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet (Webcraft) – interim `/api/health`.
+- Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`, `github_status_auth`). TODO in `docs/entities.md`; "Unraid & Server" copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet ("Website") – interim `/api/health`.
 
 ## Renovate automerge & pre-push hook (2026-10-16)
 
