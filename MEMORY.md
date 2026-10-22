@@ -9,13 +9,13 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## Current state (2026-10-12)
 
-- Version: `6.4.0-dev` (`VERSION`). Last merges: #8 `279f99e` (Dependabot groups + AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
+- Version: `6.4.0-dev` (`VERSION`). Last merges: #8 `279f99e` (Dependabot groups, superseded by Renovate; AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
 - Repo is HA YAML only: no `package.json`, no Docker image, no Unraid container. Every merge is **Actions-only**; "Unraid & Server" is never pinged from here.
 - CI: `validate.yml` (push, PR, weekly `17 4 * * 1`), `codeql.yml` (python + actions, SHA-pinned, push/PR to `main` + weekly). Dependency bot: Renovate since 2026-10-14 (ex-Dependabot, `renovate.json`): github-actions + pip, grouped, Monday Europe/Berlin; App not installed yet (see 2026-10-14 "Bot & Dashboard" wave 2).
 
 ## Pipeline
 
-- Push directly to `main` (no PRs, no pre-review; Buddy reviews commits afterwards). Renovate PRs (once the App is installed): merge when CI green. No force-push. No tags/releases without Marco's explicit yes via Buddy.
+- Push directly to `main` (no PRs, no pre-review; Buddy reviews commits afterwards). Renovate PRs (App installed 2026-10-16): merge when CI green. No force-push. No tags/releases without Marco's explicit yes via Buddy.
 - Actions-only (action pins, workflows, `requirements-dev.txt`, docs): push/merge when CI is green.
 - Nothing here touches an App-Image path; no "Unraid & Server" pull.
 - Merge reports always say **Actions-only vs App-Image** (expect Actions-only).
@@ -47,7 +47,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## 2026-10-14 "Bot & Dashboard" wave 2
 
-- Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; TypeScript <7, h3 <2, satori ~0.41 guards. **Renovate GitHub App not installed yet** (no Renovate check suites/PRs) – Marco/Buddy must install it; until then there are no automatic dependency PRs.
+- Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; TypeScript <7, h3 <2, satori ~0.41 guards. **Renovate GitHub App not installed yet** (superseded: installed 2026-10-16, Dependency Dashboard #12) (no Renovate check suites/PRs) – Marco/Buddy must install it; until then there are no automatic dependency PRs.
 - New subview `dienste` („Magguu-Dienste“, linked from System): Website status, MagguuBot uptime/build, last Docker deploy (Bot + Website), last bot webhook per source. Shared include `shared/views/dienste.yaml` for mobile + tablet.
 - Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`, `github_status_auth`). TODO in `docs/entities.md`; "Unraid & Server" copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet ("Website") – interim `/api/health`.
 
@@ -62,3 +62,8 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 - 2026-10-16: CI Python 3.12 → 3.15 (validate.yml); PyYAML 6.0.3 already latest.
 - Security (2026-10-16): `scorecard.yml` (ossf/scorecard-action v2.5.0, SHA-pinned; push main + weekly; SARIF → code scanning, upload-sarif SHA = codeql.yml SHA, bump together) and `dependency-review.yml` (actions/dependency-review-action v5.0.0, PRs, fails on >= moderate). Secret scanning + push protection enabled via `gh api` (verified enabled).
 - Quality (2026-10-16): `.github/workflows/quality.yml` runs `tools/drift-check.sh` (banned addon names outside AGENTS/MEMORY/CHANGELOG/tests, EllesmereUI min 9.0.6 in TOCs, Docker uid 99, engines.node = `${NODE_ENGINE:->=26}`), actionlint 1.7.12 + zizmor 1.31.1 (medium+) + shellcheck + osv-scanner 2.7.0 (downloads sha256-verified). All workflows hardened for zizmor: checkout `persist-credentials: false`, validate.yml actions SHA-pinned + contents:read.
+
+## 2026-10-22 Docs drift check
+
+- Adopted `tools/docs-drift.sh` (1:1 from MagguuUI-Website) + `.github/docs-drift-rules.txt` + `docs-drift.yml` (Mon 05:17 UTC + dispatch; issue "Docs-Drift" → Derpsen on hits, closed when clean). No `@health-url` (no endpoint in this repo).
+- Baseline fix: AGENTS.md no longer names Website live sha/digests (rule scoped to AGENTS.md; history stays in MEMORY.md "Docs/Bots-Sync"); stale "Renovate App not installed" wording fixed.
