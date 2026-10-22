@@ -22,7 +22,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## Locked majors (cross-repo, need Marco's yes)
 
-- TypeScript 7, h3 2, js-yaml 5 and satori >=0.48 (Website), `@types/node` 26 (Bot). Node 26 is no longer locked (live in Bot + Website since 2026-10-16). Not used here, but do not introduce them via drive-by changes.
+- TypeScript 7, h3 2, js-yaml 5 and satori >=0.48 (Website uses satori ^0.47.1; >=0.48 locked without Marco's yes), `@types/node` 26 (Bot). Node 26 is no longer locked (live in Bot + Website since 2026-10-16). Not used here, but do not introduce them via drive-by changes.
 - Website: `engines.node >=26.12.0`; Bot: `>=26` (Node 26 live 2026-10-16), containers uid 99, Cosign keyless, no QEMU.
 
 ## Hard rules
@@ -47,7 +47,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## 2026-10-14 "Bot & Dashboard" wave 2
 
-- Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; TypeScript <7, h3 <2, satori ~0.41 guards. **Renovate GitHub App not installed yet** (superseded: installed 2026-10-16, Dependency Dashboard #12) (no Renovate check suites/PRs) – Marco/Buddy must install it; until then there are no automatic dependency PRs.
+- Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; TypeScript <7, h3 <2, satori ~0.41 guards (this repo's `renovate.json`, left as is). Website uses satori ^0.47.1; satori >=0.48 is locked without Marco's yes. **Renovate GitHub App not installed yet** (superseded: installed 2026-10-16, Dependency Dashboard #12) (no Renovate check suites/PRs) – Marco/Buddy must install it; until then there are no automatic dependency PRs.
 - New subview `dienste` („Magguu-Dienste“, linked from System): Website status, MagguuBot uptime/build, last Docker deploy (Bot + Website), last bot webhook per source. Shared include `shared/views/dienste.yaml` for mobile + tablet.
 - Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`, `github_status_auth`). TODO in `docs/entities.md`; "Unraid & Server" copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet ("Website") – interim `/api/health`.
 
