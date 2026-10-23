@@ -25,6 +25,14 @@
       "* 0-12 1 * *"
     ]
   },
+  "pip-compile": {
+    "fileMatch": [
+      "(^|/)requirements-dev\\.txt$"
+    ]
+  },
+  "pip_requirements": {
+    "enabled": false
+  },
   "packageRules": [
     {
       "description": "npm: wait 3 days after publish (supply-chain safety; security fixes via vulnerabilityAlerts ignore this)",
