@@ -19,7 +19,7 @@ LOCK_DIR="$CONFIG_DIR/.magguu-dashboard-update.lockdir"
 LOCK_HELD=""
 WORK_DIR=""
 
-# shellcheck disable=SC2329 # invoked via trap (false positive with exiting functions)
+# shellcheck disable=SC2317,SC2329 # invoked via trap (false positive with exiting functions)
 cleanup() {
   if [ -n "$WORK_DIR" ] && [ -d "$WORK_DIR" ]; then
     rm -rf "$WORK_DIR"
