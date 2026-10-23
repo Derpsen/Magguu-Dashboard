@@ -222,6 +222,69 @@ def validate_view_shell_tokens(root: Path) -> list[str]:
     return errors
 
 
+# shell_command services can be called by any HA user (not admin-gated), so
+# every entry must be a fixed command without templates (no service-data
+# input) and the updater it runs must not read arguments or environment.
+ALLOWED_SHELL_COMMANDS = {
+    "magguu_dashboard_update": "sh /config/magguu-dashboard-update.sh",
+}
+TEMPLATE_MARKERS = ("{{", "{%", "{#")
+UPDATER_FIXED_LINES = (
+    "CONFIG_DIR=/config",
+    "ARCHIVE_URL=https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz",
+)
+# Set by the sourced installer (scripts/install-dashboard.sh), not by the caller.
+UPDATER_SOURCED_VARS = {"MAGGUU_BACKUP_DIR"}
+SHELL_VAR_PATTERN = re.compile(r"\$\{?([A-Za-z_][A-Za-z0-9_]*|[0-9@*#])")
+SHELL_ASSIGN_PATTERN = re.compile(r"(?m)^\s*([A-Za-z_][A-Za-z0-9_]*)=")
+
+
+def validate_shell_commands(documents: Mapping[Path, Any], root: Path) -> list[str]:
+    errors: list[str] = []
+    for path, document in documents.items():
+        if not isinstance(document, Mapping) or "shell_command" not in document:
+            continue
+        rel = path.relative_to(root)
+        commands = document["shell_command"]
+        if not isinstance(commands, Mapping):
+            errors.append(f"{rel}: shell_command muss eine Map sein")
+            continue
+        for name, command in commands.items():
+            if not isinstance(command, str):
+                errors.append(f"{rel}: shell_command.{name} muss ein fester String sein")
+                continue
+            if any(marker in command for marker in TEMPLATE_MARKERS):
+                errors.append(f"{rel}: shell_command.{name} enthält Templates ({{{{ }}}}/{{% %}})")
+            if ALLOWED_SHELL_COMMANDS.get(str(name)) != command:
+                errors.append(
+                    f"{rel}: shell_command.{name} ist nicht erlaubt "
+                    "(nur der feste Update-Befehl, siehe ALLOWED_SHELL_COMMANDS)"
+                )
+    return errors
+
+
+def validate_updater(root: Path) -> list[str]:
+    path = root / "update-ha.sh"
+    if not path.is_file():
+        return []
+    code = "\n".join(
+        line for line in path.read_text(encoding="utf-8").splitlines()
+        if not line.lstrip().startswith("#")
+    )
+    errors: list[str] = []
+    lines = set(code.splitlines())
+    for fixed in UPDATER_FIXED_LINES:
+        if fixed not in lines:
+            errors.append(f"update-ha.sh: feste Zeile fehlt: {fixed}")
+    assigned = set(SHELL_ASSIGN_PATTERN.findall(code)) | UPDATER_SOURCED_VARS
+    for name in sorted(set(SHELL_VAR_PATTERN.findall(code))):
+        if name[0].isdigit() or name in {"@", "*", "#"}:
+            errors.append(f"update-ha.sh: liest Argumente (${name})")
+        elif name not in assigned:
+            errors.append(f"update-ha.sh: liest Umgebungsvariable ${name}")
+    return errors
+
+
 def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     paths = yaml_files(root)
     documents, errors = validate_yaml(paths, root)
@@ -235,6 +298,8 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
 
     errors.extend(validate_version(root))
     errors.extend(validate_view_shell_tokens(root))
+    errors.extend(validate_shell_commands(documents, root))
+    errors.extend(validate_updater(root))
     return len(paths), errors
 
 

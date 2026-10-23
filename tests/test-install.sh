@@ -46,9 +46,19 @@ if grep -q 'magguu-flux\|magguu_flux' "$CONFIG_DIR/configuration.yaml"; then
 fi
 
 printf 'outdated\n' > "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
-HA_CONFIG_DIR="$CONFIG_DIR" \
-  MAGGUU_DASHBOARD_SOURCE_DIR="$ROOT_DIR" \
-  sh "$ROOT_DIR/update-ha.sh"
+# update-ha.sh reads no args/env (shell_command is callable by any HA user):
+# run a copy with the two fixed lines pointed at the test dir and a local archive.
+ARCHIVE_SRC="$TEST_DIR/archive/Magguu-Dashboard-main"
+mkdir -p "$ARCHIVE_SRC"
+(cd "$ROOT_DIR" && tar --exclude=.git -cf - .) | (cd "$ARCHIVE_SRC" && tar -xf -)
+tar -czf "$TEST_DIR/main.tar.gz" -C "$TEST_DIR/archive" Magguu-Dashboard-main
+UPDATER="$TEST_DIR/update-ha.sh"
+sed -e "s#^CONFIG_DIR=/config\$#CONFIG_DIR=$CONFIG_DIR#" \
+  -e "s#^ARCHIVE_URL=https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz\$#ARCHIVE_URL=file://$TEST_DIR/main.tar.gz#" \
+  "$ROOT_DIR/update-ha.sh" > "$UPDATER"
+grep -q "^CONFIG_DIR=$CONFIG_DIR\$" "$UPDATER"
+grep -q "^ARCHIVE_URL=file://" "$UPDATER"
+sh "$UPDATER"
 test ! -e "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
 
 backup_count="$(find "$CONFIG_DIR/backups" -type f -name outdated.marker | wc -l | tr -d ' ')"

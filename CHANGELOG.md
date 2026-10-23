@@ -2,6 +2,7 @@
 
 ## Unveröffentlicht
 
+- Sicherheit: `shell_command.magguu_dashboard_update` bleibt ein fester Befehl ohne Templates; `update-ha.sh` liest keine Argumente/Umgebungsvariablen mehr (feste Pfade, festes Repo-Archiv). `validate.py` prüft beides
 - Sicherheit: Kalendertitel, nicht parsebare Startzeiten und Wetter-/Sensor-States in button-card-Templates werden HTML-escaped (kein Markup aus Kalendern/Entities mehr; Darstellung für normalen Text unverändert)
 - Sicherheit: „Dashboard aktualisieren“ nur noch für HA-Admins (erster Script-Schritt ist der admin-only Core-Service `homeassistant.reload_custom_templates`; Nicht-Admins scheitern mit Unauthorized, bevor etwas geändert wird)
 - CI: beratender zizmor-Workflow (`.github/workflows/zizmor.yml`, blockiert nie, kein Required Check)

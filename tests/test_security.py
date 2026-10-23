@@ -7,7 +7,9 @@ import shutil
 import subprocess
 import unittest
 
-from validate import load_yaml
+import tempfile
+
+from validate import load_yaml, validate_repository, validate_shell_commands, validate_updater
 
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATES = ROOT / "dashboard" / "magguu-dashboard" / "shared" / "templates" / "button_card.yaml"
@@ -86,6 +88,55 @@ class UpdateScriptAdminGateTest(unittest.TestCase):
     def test_first_step_is_admin_only_service(self) -> None:
         script = load_yaml(PACKAGE)["script"]["magguu_dashboard_aktualisieren"]
         self.assertEqual(script["sequence"][0], {"action": "homeassistant.reload_custom_templates"})
+
+
+class ShellCommandLockdownTest(unittest.TestCase):
+    """shell_command is callable by any HA user: fixed command, no templates, updater reads no args/env."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def check(self, yaml_text: str) -> list[str]:
+        path = self.root / "packages" / "p.yaml"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(yaml_text, encoding="utf-8")
+        return validate_shell_commands({path: load_yaml(path)}, self.root)
+
+    def test_repo_is_clean(self) -> None:
+        _, errors = validate_repository(ROOT)
+        self.assertEqual(errors, [])
+        self.assertEqual(load_yaml(PACKAGE)["shell_command"], {"magguu_dashboard_update": "sh /config/magguu-dashboard-update.sh"})
+
+    def test_fixed_command_accepted(self) -> None:
+        self.assertEqual(self.check('shell_command:\n  magguu_dashboard_update: "sh /config/magguu-dashboard-update.sh"\n'), [])
+
+    def test_templates_rejected(self) -> None:
+        for cmd in ("sh /config/x.sh {{ repo }}", "sh {% if a %}x{% endif %}", "sh x {# c #}"):
+            errors = self.check(f'shell_command:\n  magguu_dashboard_update: "{cmd}"\n')
+            self.assertTrue(any("Templates" in e for e in errors), (cmd, errors))
+
+    def test_other_commands_rejected(self) -> None:
+        errors = self.check('shell_command:\n  evil: "rm -rf /config"\n')
+        self.assertTrue(any("nicht erlaubt" in e for e in errors), errors)
+
+    def write_updater(self, text: str) -> list[str]:
+        (self.root / "update-ha.sh").write_text(text, encoding="utf-8")
+        return validate_updater(self.root)
+
+    def test_repo_updater_is_fixed(self) -> None:
+        self.assertEqual(validate_updater(ROOT), [])
+
+    def test_updater_env_and_args_rejected(self) -> None:
+        fixed = (ROOT / "update-ha.sh").read_text(encoding="utf-8")
+        self.assertTrue(any("HA_CONFIG_DIR" in e for e in self.write_updater(fixed + 'X="${HA_CONFIG_DIR:-/config}"\n')))
+        self.assertTrue(any("Argumente" in e for e in self.write_updater(fixed + 'echo "$1"\n')))
+        self.assertTrue(any("Argumente" in e for e in self.write_updater(fixed + 'echo "$@"\n')))
+        broken = fixed.replace("CONFIG_DIR=/config\n", 'CONFIG_DIR="${HA_CONFIG_DIR:-/config}"\n')
+        self.assertTrue(any("feste Zeile" in e for e in self.write_updater(broken)))
 
 
 if __name__ == "__main__":
