@@ -131,7 +131,7 @@ Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
 
 ## zizmor advisory (2026-10-23)
 
-- `.github/workflows/zizmor.yml` (zizmorcore/zizmor-action SHA-pinned, `advanced-security: false`, no SARIF/`security-events`, step + job `continue-on-error`, never a required check) logs all zizmor findings on push main/PR/dispatch; `quality.yml` keeps its pinned zizmor (medium+) gate. Findings not fixed yet, pending Buddy review.
+- `.github/workflows/zizmor.yml` (zizmorcore/zizmor-action SHA-pinned, `advanced-security: false`, no SARIF/`security-events`, step + job `continue-on-error`, never a required check) logs all zizmor findings on push main/PR/dispatch; `quality.yml` keeps its pinned zizmor (medium+) gate. First run: no findings. Checkout comments corrected to `v7.0.1` on 2026-10-23 (SHA `3d3c42e…` is the v7.0.1 tag).
 
 ## Docs drift (2026-10-22)
 
