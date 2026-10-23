@@ -10,6 +10,7 @@ Dieses Repository enthält ein vollständig YAML-basiertes Home-Assistant-Dashbo
 
 - Checkout: Unraid-VM `Ubuntu`, machineId `3ff4cee8-7e7c-4cc9-a262-ebf10016d570`, path `~/Projekte/Magguu-Dashboard` (repos ready).
 - Marcos PC nur WoW-AddOns-Deploy; Status nur an Buddy, nie 1:1 Marco.
+- Reporting an Buddy (ab 2026-10-23): genau eine Done-Meldung pro Auftrag, max. ~800 Zeichen plus Pfad/Commit für Details; Zwischenstände nur bei Aufträgen über 30 Minuten.
 
 
 Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Owner dieses Repos: **"Bot & Dashboard"** (auch MagguuBot). "Website" = nur MagguuUI-Website, "Addon (Lua)" = Addon-Lua, "Code-Review" = Review, "Release" = Releases, "Unraid & Server" = Unraid (Umbenennung 2026-10-16, IDs unverändert; Captain und Gruppenchats gelöscht). Helfer melden Ergebnisse an Buddy zurück.
@@ -127,6 +128,10 @@ Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
 - In-repo pre-push hook `.githooks/pre-push` runs `python -m unittest discover -s tests` + `python validate.py` (no package.json) plus `actionlint` (.github/workflows) and `shellcheck` (tracked `*.sh`); missing tools only warn and skip. Enable once per checkout: `git config core.hooksPath .githooks` (set on the Ubuntu VM checkout).
 - Security (2026-10-16): `scorecard.yml` (ossf/scorecard-action v2.5.0, SHA-pinned; push main + weekly; SARIF → code scanning, upload-sarif SHA = codeql.yml SHA, bump together) and `dependency-review.yml` (actions/dependency-review-action v5.0.0, PRs, fails on >= moderate). Secret scanning + push protection enabled via `gh api` (verified enabled).
 - Quality (2026-10-16): `.github/workflows/quality.yml` runs `tools/drift-check.sh` (banned addon names outside AGENTS/MEMORY/CHANGELOG/tests, EllesmereUI min 9.0.6 in TOCs, Docker uid 99, engines.node = `${NODE_ENGINE:->=26}`), actionlint 1.7.12 + zizmor 1.31.1 (medium+) + shellcheck + osv-scanner 2.7.0 (downloads sha256-verified). All workflows hardened for zizmor: checkout `persist-credentials: false`, validate.yml actions SHA-pinned + contents:read.
+
+## zizmor advisory (2026-10-23)
+
+- `.github/workflows/zizmor.yml` (zizmorcore/zizmor-action SHA-pinned, `advanced-security: false`, no SARIF/`security-events`, step + job `continue-on-error`, never a required check) logs all zizmor findings on push main/PR/dispatch; `quality.yml` keeps its pinned zizmor (medium+) gate. Findings not fixed yet, pending Buddy review.
 
 ## Docs drift (2026-10-22)
 

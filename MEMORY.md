@@ -10,6 +10,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - **"Bot & Dashboard"** (formerly Bot Fixer) owns Magguu-Dashboard and MagguuBot (fixes, Renovate (ex-Dependabot), AGENTS/MEMORY, Notion log). "Website" (formerly Stack Fixer) covers MagguuUI-Website only.
 - Results go to **Buddy** (front door) as a short German Done-State. Helpers never ask Marco directly.
+- Reporting an Buddy (ab 2026-10-23): genau eine Done-Meldung pro Auftrag, max. ~800 Zeichen plus Pfad/Commit für Details; Zwischenstände nur bei Aufträgen über 30 Minuten.
 
 ## Current state (2026-10-12)
 
@@ -66,6 +67,8 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 - 2026-10-16: CI Python 3.12 → 3.15 (validate.yml); PyYAML 6.0.3 already latest.
 - Security (2026-10-16): `scorecard.yml` (ossf/scorecard-action v2.5.0, SHA-pinned; push main + weekly; SARIF → code scanning, upload-sarif SHA = codeql.yml SHA, bump together) and `dependency-review.yml` (actions/dependency-review-action v5.0.0, PRs, fails on >= moderate). Secret scanning + push protection enabled via `gh api` (verified enabled).
 - Quality (2026-10-16): `.github/workflows/quality.yml` runs `tools/drift-check.sh` (banned addon names outside AGENTS/MEMORY/CHANGELOG/tests, EllesmereUI min 9.0.6 in TOCs, Docker uid 99, engines.node = `${NODE_ENGINE:->=26}`), actionlint 1.7.12 + zizmor 1.31.1 (medium+) + shellcheck + osv-scanner 2.7.0 (downloads sha256-verified). All workflows hardened for zizmor: checkout `persist-credentials: false`, validate.yml actions SHA-pinned + contents:read.
+
+- 2026-10-23: advisory zizmor workflow `.github/workflows/zizmor.yml` added (zizmor-action v0.8.0 SHA-pinned, non-SARIF, continue-on-error, not required). Findings not fixed yet, pending Buddy review.
 
 ## 2026-10-22 Docs drift check
 
