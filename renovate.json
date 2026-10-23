@@ -13,7 +13,26 @@
   "prConcurrentLimit": 5,
   "platformAutomerge": true,
   "ignoreTests": false,
+  "configMigration": true,
+  "vulnerabilityAlerts": {
+    "labels": [
+      "security"
+    ]
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": [
+      "* 0-12 1 * *"
+    ]
+  },
   "packageRules": [
+    {
+      "description": "npm: wait 3 days after publish (supply-chain safety; security fixes via vulnerabilityAlerts ignore this)",
+      "matchDatasources": [
+        "npm"
+      ],
+      "minimumReleaseAge": "3 days"
+    },
     {
       "description": "npm non-major updates in one PR (none today)",
       "matchManagers": [
