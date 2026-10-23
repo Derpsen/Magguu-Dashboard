@@ -4,7 +4,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## Knowledge refresh #1 (2026-10-23, repeat every 3 weeks)
 
-- Dependency graph + Dependabot alerts enabled 2026-10-23 (dependency-review green). Renovate: configMigration, vulnerabilityAlerts, monthly lockFileMaintenance, npm minimumReleaseAge 3 days added. Actions behind (Renovate Monday): checkout 7.0.1, setup-python 7.1.0, codeql 4.39.1. Buddy decision same day: pip pinned by hash (requirements-dev.in → pip-compile, CI `--require-hashes`) for Scorecard #8; private vulnerability reporting on + SECURITY.md; dismissed #3/#13 (won't fix). Still open: #9 SAST, #10 SecurityPolicy (should close with SECURITY.md), #11 Fuzzing, #12 License (MIT added 2026-10-23: MagguuUI GPL-3.0 is EllesmereUI-module context, Website unlicensed → MIT; PyYAML MIT, HACS cards not bundled), #14 CII.
+- Dependency graph + Dependabot alerts enabled 2026-10-23 (dependency-review green). Renovate: configMigration, vulnerabilityAlerts, monthly lockFileMaintenance, npm minimumReleaseAge 3 days added. Actions behind (Renovate Monday): checkout 7.0.1, setup-python 7.1.0, codeql 4.39.1. Buddy decision same day: pip pinned by hash (requirements-dev.in → pip-compile, CI `--require-hashes`) for Scorecard #8; private vulnerability reporting on + SECURITY.md; dismissed #3/#13 (won't fix). Still open: #9 SAST, #10 SecurityPolicy (should close with SECURITY.md), #11 Fuzzing, #12 License (MIT added 2026-10-23: MagguuUI GPL-3.0 is EllesmereUI-module context, Website unlicensed → MIT; PyYAML MIT, HACS cards not bundled; copyright holder `Magguu`, owner/git identity stay Derpsen), #14 CII.
 
 ## Ownership (2026-10-12)
 
