@@ -64,6 +64,87 @@ test ! -e "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
 backup_count="$(find "$CONFIG_DIR/backups" -type f -name outdated.marker | wc -l | tr -d ' ')"
 test "$backup_count" -eq 1
 
+LOCK_DIR="$CONFIG_DIR/.magguu-dashboard-update.lockdir"
+LOCK_FILE="$CONFIG_DIR/.magguu-dashboard-update.lock"
+test ! -e "$LOCK_DIR"
+MKDIR_UPDATER="$TEST_DIR/update-ha-mkdir.sh"
+sed -e 's#^LOCK_MODE=auto$#LOCK_MODE=mkdir#' "$UPDATER" > "$MKDIR_UPDATER"
+grep -q '^LOCK_MODE=mkdir$' "$MKDIR_UPDATER"
+
+count_backups() {
+  find "$CONFIG_DIR/backups" -mindepth 1 -maxdepth 1 -type d -name 'magguu-dashboard-*' | wc -l | tr -d ' '
+}
+
+assert_skipped() {
+  # $1 = output of the skipped run, $2 = backup count before
+  printf '%s\n' "$1" | grep -q 'läuft bereits'
+  test -f "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
+  test "$(count_backups)" -eq "$2"
+  if find "$CONFIG_DIR" -maxdepth 1 -name '.magguu-dashboard-update.??????' | grep -q .; then
+    echo "Übersprungener Lauf hat ein Arbeitsverzeichnis angelegt." >&2
+    exit 1
+  fi
+}
+
+# Parallellauf (mkdir-Lock, frisch): Exit 0, keine Wirkung, fremde Sperre bleibt.
+sleep 1
+printf 'outdated\n' > "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
+before="$(count_backups)"
+mkdir "$LOCK_DIR"
+out="$(sh "$MKDIR_UPDATER")"
+assert_skipped "$out" "$before"
+test -d "$LOCK_DIR"
+
+# Parallellauf (flock, Standardmodus): gehaltene Sperre -> Exit 0, keine Wirkung.
+if command -v flock >/dev/null 2>&1; then
+  rmdir "$LOCK_DIR"
+  (
+    exec 9>"$LOCK_FILE"
+    flock 9
+    : > "$TEST_DIR/flock-held"
+    while [ ! -e "$TEST_DIR/flock-release" ]; do sleep 0.1; done
+  ) &
+  holder=$!
+  while [ ! -e "$TEST_DIR/flock-held" ]; do sleep 0.1; done
+  out="$(sh "$UPDATER")"
+  : > "$TEST_DIR/flock-release"
+  wait "$holder"
+  assert_skipped "$out" "$before"
+  mkdir "$LOCK_DIR"
+fi
+
+# Veraltete Sperre (> 10 min) wird übernommen und am Ende freigegeben.
+touch -d "@$(( $(date +%s) - 900 ))" "$LOCK_DIR"
+# Rotation: alte Magguu-Backups + fremde Dateien im Backup-Verzeichnis.
+for day in 01 02 03 04 05 06 07; do
+  mkdir -p "$CONFIG_DIR/backups/magguu-dashboard-202001${day}-000000"
+done
+mkdir -p "$CONFIG_DIR/backups/other-backup" "$CONFIG_DIR/backups/magguu-dashboard-20200101-000000-keep"
+printf 'x\n' > "$CONFIG_DIR/backups/notes.txt"
+printf 'x\n' > "$CONFIG_DIR/backups/magguu-dashboard-20190101-000000"
+printf 'x\n' > "$CONFIG_DIR/backups/magguu-dashboard-20190101-000000.tar"
+ln -s other-backup "$CONFIG_DIR/backups/magguu-dashboard-20180101-000000"
+out="$(sh "$MKDIR_UPDATER")"
+printf '%s\n' "$out" | grep -q 'Veraltete Update-Sperre'
+printf '%s\n' "$out" | grep -q 'Magguu Dashboard aktualisiert'
+test ! -e "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
+test ! -e "$LOCK_DIR"
+
+# Genau 5 Magguu-Backups (neueste), Rest im Backup-Verzeichnis unberührt.
+magguu_backups="$(find "$CONFIG_DIR/backups" -mindepth 1 -maxdepth 1 -type d \
+  -name 'magguu-dashboard-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]' | wc -l | tr -d ' ')"
+test "$magguu_backups" -eq 5
+test ! -e "$CONFIG_DIR/backups/magguu-dashboard-20200101-000000"
+test ! -e "$CONFIG_DIR/backups/magguu-dashboard-20200103-000000"
+newest="$(find "$CONFIG_DIR/backups" -mindepth 1 -maxdepth 1 -type d -name 'magguu-dashboard-20[3-9]*' -o -type d -name 'magguu-dashboard-202[1-9]*' | wc -l | tr -d ' ')"
+test "$newest" -ge 2
+test -d "$CONFIG_DIR/backups/other-backup"
+test -d "$CONFIG_DIR/backups/magguu-dashboard-20200101-000000-keep"
+test -f "$CONFIG_DIR/backups/notes.txt"
+test -f "$CONFIG_DIR/backups/magguu-dashboard-20190101-000000"
+test -f "$CONFIG_DIR/backups/magguu-dashboard-20190101-000000.tar"
+test -L "$CONFIG_DIR/backups/magguu-dashboard-20180101-000000"
+
 
 grep -q 'packages: !include_dir_named packages' "$CONFIG_DIR/configuration.yaml"
 grep -q 'themes: !include_dir_merge_named themes' "$CONFIG_DIR/configuration.yaml"

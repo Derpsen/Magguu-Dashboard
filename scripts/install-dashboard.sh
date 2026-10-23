@@ -193,6 +193,42 @@ magguu_stamp_package_version() {
   mv "$magguu_tmp" "$magguu_package"
 }
 
+magguu_is_backup_dir() {
+  # Strictly Magguu's own naming (magguu-dashboard-YYYYMMDD-HHMMSS), real dirs only.
+  [ -d "$1" ] || return 1
+  [ ! -L "$1" ] || return 1
+  case ${1##*/} in
+    magguu-dashboard-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]) return 0 ;;
+  esac
+  return 1
+}
+
+# Keep the newest $3 Magguu backups in $1 (current run's backup $2 always kept);
+# delete older Magguu backups. Other files/dirs in $1 are never touched.
+magguu_rotate_backups() {
+  magguu_rotate_root=$1
+  magguu_rotate_current=$2
+  magguu_rotate_keep=$3
+  [ -d "$magguu_rotate_root" ] || return 0
+  magguu_rotate_total=0
+  for magguu_rotate_path in "$magguu_rotate_root"/magguu-dashboard-*; do
+    if [ "$magguu_rotate_path" != "$magguu_rotate_current" ] && magguu_is_backup_dir "$magguu_rotate_path"; then
+      magguu_rotate_total=$((magguu_rotate_total + 1))
+    fi
+  done
+  # Glob expands sorted, timestamp names sort oldest first.
+  magguu_rotate_drop=$((magguu_rotate_total - magguu_rotate_keep + 1))
+  for magguu_rotate_path in "$magguu_rotate_root"/magguu-dashboard-*; do
+    if [ "$magguu_rotate_drop" -le 0 ]; then
+      break
+    fi
+    if [ "$magguu_rotate_path" != "$magguu_rotate_current" ] && magguu_is_backup_dir "$magguu_rotate_path"; then
+      rm -rf "$magguu_rotate_path"
+      magguu_rotate_drop=$((magguu_rotate_drop - 1))
+    fi
+  done
+}
+
 magguu_install_dashboard() {
   magguu_source_dir=$1
   magguu_config_dir=$2
@@ -242,6 +278,8 @@ magguu_install_dashboard() {
     fi
     magguu_merge_ha_configuration "$magguu_config_file" "$magguu_backup_dir"
   fi
+
+  magguu_rotate_backups "$magguu_config_dir/backups" "$magguu_backup_dir" 5
 
   MAGGUU_BACKUP_DIR=$magguu_backup_dir
   export MAGGUU_BACKUP_DIR
