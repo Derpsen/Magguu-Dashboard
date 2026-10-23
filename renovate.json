@@ -26,8 +26,8 @@
     ]
   },
   "pip-compile": {
-    "fileMatch": [
-      "(^|/)requirements-dev\\.txt$"
+    "managerFilePatterns": [
+      "/(^|/)requirements-dev\\.txt$/"
     ]
   },
   "pip_requirements": {
