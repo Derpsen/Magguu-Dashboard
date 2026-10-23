@@ -31,6 +31,8 @@ Marco nutzt Grok Bot „Buddy“ als einzige Front Door. Owner dieses Repos: **"
 - Keine Zugangsdaten, Tokens, Hostnamen oder privaten URLs committen.
 - Änderungen klein, nachvollziehbar und rückrollbar halten.
 - Kein ElvUI-/WoW-Addon-Ballast in dieses Home-Assistant-Repo einbringen.
+- button-card-JS-Templates (`[[[ ]]]` in name/label/state/custom_fields) werden als HTML gerendert: externe Strings (Kalendertitel, Entity-States/-Attribute, Namen) immer mit `esc()` (`&<>"'` → Entities) einsetzen; nur feste Markup-Teile und Zahlen roh. Regressionstest: `tests/test_security.py` (führt die Templates mit node aus).
+- `script.magguu_dashboard_aktualisieren` ist admin-only: erster Schritt `homeassistant.reload_custom_templates` (admin-only Core-Service, prüft `is_admin` des Aufrufer-Kontexts; Nicht-Admins bekommen Unauthorized, bevor etwas passiert). Nicht entfernen. Card-Visibility per `condition: user` braucht Marcos HA-User-ID; die steht nicht im Repo (nicht raten).
 
 ## Designsystem
 

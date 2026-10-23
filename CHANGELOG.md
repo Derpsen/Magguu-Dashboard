@@ -2,6 +2,8 @@
 
 ## Unveröffentlicht
 
+- Sicherheit: Kalendertitel, nicht parsebare Startzeiten und Wetter-/Sensor-States in button-card-Templates werden HTML-escaped (kein Markup aus Kalendern/Entities mehr; Darstellung für normalen Text unverändert)
+- Sicherheit: „Dashboard aktualisieren“ nur noch für HA-Admins (erster Script-Schritt ist der admin-only Core-Service `homeassistant.reload_custom_templates`; Nicht-Admins scheitern mit Unauthorized, bevor etwas geändert wird)
 - CI: beratender zizmor-Workflow (`.github/workflows/zizmor.yml`, blockiert nie, kein Required Check)
 - Neue Unterseite „Magguu-Dienste“ (Mobile + Tablet über ein gemeinsames Include, Einstieg von System): Website-Status, MagguuBot-Uptime/Build, letzter Docker-Deploy (Bot + Website) und letzter Bot-Webhook je Quelle. REST-Sensoren als optionales Paket `docs/optional/magguu_dienste.yaml` (nur `!secret`, TODO in `docs/entities.md`); Website-`/api/status` steht noch aus, vorläufig `/api/health`
 - Dependabot durch Renovate ersetzt (`renovate.json`: Montag, Europe/Berlin, Gruppen github-actions/pip, Automerge nur Minor/Patch nach grüner CI)

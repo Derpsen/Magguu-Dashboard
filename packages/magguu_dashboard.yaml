@@ -51,6 +51,13 @@ script:
     icon: mdi:cloud-download-outline
     mode: single
     sequence:
+      # Admin gate: HA templates have no is_admin test, so the first step calls
+      # an admin-only core service (registered via async_register_admin_service).
+      # The script runs with the caller's context, so a non-admin user gets
+      # Unauthorized here and the run stops before anything is changed. Runs
+      # without a user (automations) pass. Side effect: only reloads the
+      # custom_templates/ Jinja macros.
+      - action: homeassistant.reload_custom_templates
       - action: input_text.set_value
         target:
           entity_id: input_text.magguu_dashboard_update_status
