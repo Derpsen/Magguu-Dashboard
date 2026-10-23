@@ -2,6 +2,10 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Knowledge refresh #1 (2026-10-23, repeat every 3 weeks)
+
+- Dependency graph + Dependabot alerts enabled 2026-10-23 (dependency-review green). Renovate: configMigration, vulnerabilityAlerts, monthly lockFileMaintenance, npm minimumReleaseAge 3 days added. Actions behind (Renovate Monday): checkout 7.0.1, setup-python 7.1.0, codeql 4.39.1. Scorecard #8 PinnedDependencies (pip without hashes in validate.yml) open: needs a hashed requirements file (decision). Private vulnerability reporting off; SecurityPolicy/License alerts need Marco.
+
 ## Ownership (2026-10-12)
 
 - **"Bot & Dashboard"** (formerly Bot Fixer) owns Magguu-Dashboard and MagguuBot (fixes, Renovate (ex-Dependabot), AGENTS/MEMORY, Notion log). "Website" (formerly Stack Fixer) covers MagguuUI-Website only.
