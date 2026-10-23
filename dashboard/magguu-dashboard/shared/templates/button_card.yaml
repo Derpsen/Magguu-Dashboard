@@ -81,6 +81,7 @@ hero_v5:
           'windy-variant':'Windig',
           exceptional:'Unwetter'
         };
+        const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
         const temperature=Number(weather.attributes?.temperature);
         const humidity=Number(weather.attributes?.humidity);
         const wind=Number(weather.attributes?.wind_speed);
@@ -92,7 +93,7 @@ hero_v5:
         return `<div class="hero-weather">
           <ha-icon class="hero-weather-icon" icon="${icons[weather.state]||'mdi:weather-partly-cloudy'}"></ha-icon>
           <div class="hero-weather-copy">
-            <span class="hero-weather-condition">${labels[weather.state]||weather.state}</span>
+            <span class="hero-weather-condition">${labels[weather.state]||esc(weather.state)}</span>
             <strong class="hero-weather-temperature">${tempText}</strong>
             <span class="hero-weather-meta">
               <span><ha-icon icon="mdi:water-percent"></ha-icon>${humidityText}</span>
@@ -103,6 +104,7 @@ hero_v5:
       ]]]
     chips: |
       [[[
+        const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
         const S = id => states[id];
         const lights = Number(S('sensor.magguu_lichter_an')?.state || 0);
         const windows = Number(S('sensor.magguu_offene_fenster')?.state || 0);
@@ -114,8 +116,8 @@ hero_v5:
           ${pill(home?'mdi:home-account':'mdi:account-arrow-right-outline',home?'Marco zuhause':'Marco unterwegs',home?'#79d98c':'#9aa0b4')}
           ${pill('mdi:lightbulb-group',`${lights} an`,lights?'#ffd166':'#9aa0b4')}
           ${pill(windows?'mdi:window-open-variant':'mdi:window-closed-variant',windows?`${windows} offen`:'Alles zu',windows?'#ff9f43':'#79d98c')}
-          ${pill('mdi:thermometer',avg&&!['unknown','unavailable'].includes(avg.state)?`${avg.state} °C`:'—','#71b7ff')}
-          ${pill('mdi:battery',battery&&!['unknown','unavailable'].includes(battery.state)?`${battery.state} %`:'—','#b48cff')}
+          ${pill('mdi:thermometer',avg&&!['unknown','unavailable'].includes(avg.state)?`${esc(avg.state)} °C`:'—','#71b7ff')}
+          ${pill('mdi:battery',battery&&!['unknown','unavailable'].includes(battery.state)?`${esc(battery.state)} %`:'—','#b48cff')}
         </div>`;
       ]]]
   styles:
@@ -590,11 +592,12 @@ next_event_v5:
     empty: Kein Eintrag
   label: |
     [[[
+      const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
       if(!entity||['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
       const start=entity.attributes?.start_time;
       if(!start) return variables.empty||'Kein Eintrag';
       const raw=String(start); const d=new Date(raw.length===10?`${raw}T00:00:00`:raw);
-      if(Number.isNaN(d.getTime())) return raw;
+      if(Number.isNaN(d.getTime())) return esc(raw);
       const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
       const target=new Date(d.getFullYear(),d.getMonth(),d.getDate()); const diff=Math.round((target-today)/86400000);
       const day=diff===0?'Heute':diff===1?'Morgen':new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}).format(d);
@@ -604,7 +607,9 @@ next_event_v5:
   custom_fields:
     event: |
       [[[
-        return entity?.attributes?.message || variables.empty || 'Kein Eintrag';
+        const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+        const message=entity?.attributes?.message;
+        return message ? esc(message) : (variables.empty || 'Kein Eintrag');
       ]]]
   styles:
     card:
@@ -643,7 +648,7 @@ waste_event_v6:
       if(!start) return 'Kein Eintrag';
       const raw=String(start);
       const date=new Date(raw.length===10?`${raw}T00:00:00`:raw);
-      if(Number.isNaN(date.getTime())) return raw;
+      if(Number.isNaN(date.getTime())) return String(raw).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
       const now=new Date();
       const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
       const target=new Date(date.getFullYear(),date.getMonth(),date.getDate());
