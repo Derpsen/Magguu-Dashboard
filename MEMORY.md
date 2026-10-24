@@ -2,6 +2,23 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Runde 4 (2026-10-24, 6.9.0-dev): Politur nach Live-Prüfung von 6.8.0-dev
+
+Rollback: `rollback/pre-round4-4b59979` (= `4b59979`, Endstand Runde 3). Tabelle ergänzt:
+
+| Branch | zeigt auf | Bedeutung |
+| --- | --- | --- |
+| `rollback/pre-round4-4b59979` | `4b59979` | Endstand Runde 3 (6.8.0-dev) = „vor Runde 4“ |
+
+(Die übrigen Branches stehen in der Tabelle unter Runde 3.)
+
+- HA-Sections-View ist ein reines CSS-Grid mit `grid-auto-flow: row` (kein Masonry): Sections liegen zeilenweise, eine Section mit `column_span: 1` nach einer Section mit Span 2 landet in der nächsten Zeile ganz links. Will man etwas in die rechte Spalte neben einer langen Section, muss es in dieselbe Section (Quelltext `hui-sections-view.ts` geprüft, dev-Branch).
+- Flex-Umbruch (`display:flex; flex-wrap:wrap; flex: 1 1 160px` per card_mod auf `#root` des Grid-Cards) statt `auto-fit`: die letzte Kachel einer Zeile füllt den Rest.
+- Kamera: Conditions/visibility prüfen nur Zustände, nicht Attribute. Offline-Ring-Kamera (`unavailable`/`unknown`) → Platzhalter-Kachel. `idle` ohne Bild (HTTP 500 auf dem Kamera-Proxy) bleibt per Config unlösbar; Ursache liegt bei Ring/Integration.
+- **Befund Konsolenfehler `this._layoutElement.setConfig is not a function`** (nur Kaltstart Overview): Der Text steht in HAs `hui-view.ts` (`_setConfig`: `else { this._layoutElement.setConfig(viewConfig); }`), nicht in layout-card 2.4.7 (dort `setConfig?.()` und `_layoutElement` ist ein anderes Feld). Der Ablauf passt zu einem Ladereihenfolge-Rennen im Frontend: `sections` ist ein lazy geladener View-Typ (`LAZY_LOAD_LAYOUTS`); wird `_setConfig` auf einem noch nicht per Import definierten `hui-sections-view` ein zweites Mal aufgerufen (Neuaufbau beim Kaltstart), existiert `setConfig` noch nicht. Das Repo nutzt `custom:layout-card`/`grid-layout` in keiner View mehr (Test), die Config ist also nicht die Ursache; Fix per Config nicht möglich, Auswirkung vermutlich nur Konsole. Nicht gegen das echte HA-2026.10.2-Frontend nachgestellt (Quelltext nur dev-Branch).
+
+Untested im echten HA: Flex-Umbruch der Sicherheits-Reihen, Szenen & Modi als Stack in der Schnellzugriff-Section (Abstände), Navbar-Padding 112 px, Wetter-Kachel hell, Kamera-Platzhalter, multiline-Untertitel.
+
 ## Runde 3 (2026-10-24, 6.8.0-dev): Layout-Feinschliff nach Live-Prüfung
 
 Rollback: `rollback/pre-round3-ce7de7a` (= ce7de7a, Endstand Runde 2). Reverts nur ab dem neuesten Commit rückwärts.

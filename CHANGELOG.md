@@ -1,5 +1,17 @@
 # Changelog
 
+## 6.9.0-dev – 2026-10-24
+
+Vierte Runde (kleine Politur) nach Marcos Live-Prüfung von 6.8.0-dev (Rollback-Branch `rollback/pre-round4-4b59979`, kein Tag; Reverts nur ab dem neuesten Commit rückwärts). Alles nur offline validiert, nicht im echten HA gesehen:
+
+- Handy Sicherheit: die dreikachligen Reihen (Hausstatus, Vordereingang, Kinderzimmer) brechen per Flex-Umbruch um; die letzte Kachel füllt die Zeile (2 + 1 volle Breite) statt halbbreit allein; Mindestbreite 160 px (auf dem Tablet nicht mehr „Letzte Ak…“)
+- System: Untertitel der Bereichs-Kacheln Medien/Energie brechen um (`multiline_secondary`) statt „Wiedergabe und S…“
+- Tablet-Übersicht: HA legt Sections zeilenweise ins Raster, die eigene Section „Szenen & Modi“ landete deshalb unter den Räumen in Spalte 1. Sie liegt jetzt als Stack in der Schnellzugriff-Section (rechte Spalte, gleiche Zeile wie „Wohnbereiche“); `modes-compact.yaml` entfällt. Navbar-Bottom-Padding 86 → 112 px (Medien-Leiste 90 → 118), live waren nur ~7 px Abstand
+- Hell-Modus: Wetter-Kachel im Hero nutzt das neue Theme-Token `mag-weather-surface` (hell: weiß, 72 %) statt des Overlay-Grautons; WCAG-Test deckt Text darauf ab. Küche: Raumkarte nutzt wie die anderen Räume das Standard-Label (Beschreibungs-Override entfernt); eine Farbhervorhebung von „Licht“ war in den Vollbild-Screenshots nicht nachweisbar (vermutlich Skalierungsartefakt)
+- Kinderzimmer-Kamera (`camera.kinderzimmer_live_ansicht`): bei `unavailable`/`unknown` erscheint statt des kaputten Bildes (HTTP 500) eine Kachel „Kamera nicht erreichbar“. Gewählt, weil Conditions nur den Zustand prüfen können; `idle` ohne Bild lässt sich nicht erkennen (dann bleibt die Kamera sichtbar, Dokumentation in MEMORY.md)
+- Konsolenfehler `this._layoutElement.setConfig is not a function` beim Kaltstart: Befund in MEMORY.md (stammt aus dem HA-Frontend `hui-view`, nicht aus layout-card; keine Config-Änderung nötig/möglich)
+- Version `6.9.0-dev`; Tests jetzt 86
+
 ## 6.8.0-dev – 2026-10-24
 
 Dritte Runde nach Buddys Prüfung von 6.7.0-dev im echten HA (Rollback-Branch `rollback/pre-round3-ce7de7a`, kein Tag; Reverts nur ab dem neuesten Commit rückwärts). Alles nur offline validiert (Unit-Tests, `validate.py`), nicht im echten HA gesehen:

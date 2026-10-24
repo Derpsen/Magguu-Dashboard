@@ -100,6 +100,8 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [ ] Sichtprüfung 6.7.0-dev im echten HA (Mobile, Tablet, Hell/Dunkel): Hero-Breite, Navbar, Lücken in den Sections, `.card-header`-Schrift, Light-Mode, Conditions/Visibility
 - [x] Raumakzente im Light-Mode per Theme-Mix tokenisiert, WCAG-Test (6.8.0-dev)
 - [ ] Sichtprüfung 6.8.0-dev im echten HA: Sicherheits-Kachelreihen (auto-fit), Navbar unten zentriert + Raumseiten, vollbreite letzte Raumkachel, Szenen rechts im Tablet, Hell-Modus-Akzente, Handy-Kürzungen
+- [ ] Sichtprüfung 6.9.0-dev im echten HA: Sicherheits-Reihen (Handy 2+1), Szenen rechts im Tablet, Navbar-Abstand, Wetter-Kachel hell, Kamera-Platzhalter; Konsolenfehler `_layoutElement.setConfig` beobachten (Befund in MEMORY.md)
+- [x] Runde 4 (6.9.0-dev): Flex-Umbruch, Szenen-Stack, Navbar-Padding, Wetter-Token, Kamera-Platzhalter
 - [x] Dienste als optionale Unterseite markiert; Nicht-erreichbar-Ausnahmen; Backup „Noch kein Backup“; doppelte YAML-Keys geprüft (6.8.0-dev)
 - [ ] View-Badges für Status-Chips prüfen
 - [ ] `condition: user` für „Dashboard aktualisieren“, sobald Marcos User-ID vorliegt (optional)
