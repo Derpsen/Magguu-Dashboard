@@ -359,12 +359,13 @@ class DashboardSchemaTest(unittest.TestCase):
                     self.assertEqual(card.get("grid_options"), {"columns": "full", "rows": "auto"}, f"{path.name}: grid columns={card['columns']}")
         self.assertGreaterEqual(checked, 9)
 
-    def test_security_tile_rows_adapt_to_the_available_width(self) -> None:
+    def test_security_tile_rows_wrap_and_the_last_tile_fills_the_row(self) -> None:
         sections = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "sicherheit.yaml", REPO_ROOT)
         rows = [c for c in _flatten(sections) if c.get("type") == "grid" and c.get("columns") == 3]
         self.assertEqual(len(rows), 3)
         for row in rows:
-            self.assertIn("auto-fit", row["card_mod"]["style"])
+            self.assertIn("flex-wrap: wrap", row["card_mod"]["style"])
+            self.assertIn("flex: 1 1 160px", row["card_mod"]["style"])
 
     def test_room_cards_have_no_half_empty_tile_rows(self) -> None:
         """Ungerade Kachelzahl: die letzte Kachel liegt als volle Zeile außerhalb des 2-Spalten-Grids."""
@@ -403,6 +404,13 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertIn("Optional", str(view["sections"][0]["cards"][0]["variables"]["subtitle"]))
         navbar = load_resolved(shared / "navbar.yaml", REPO_ROOT)
         self.assertNotIn("dienste", [r["url"].strip("/") for r in navbar["routes"]])
+
+    def test_system_area_tiles_wrap_their_subtitles(self) -> None:
+        system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)
+        tiles = [c for c in _flatten(system) if c.get("tap_action", {}).get("navigation_path") in {"sicherheit", "medien", "energie"} and c.get("type") == "custom:mushroom-template-card"]
+        self.assertEqual(len(tiles), 3)
+        for tile in tiles:
+            self.assertTrue(tile.get("multiline_secondary"), tile["primary"])
 
 
 def _flatten_outside_stacks(node):

@@ -63,11 +63,17 @@
         rows: auto
       columns: 3
       square: false
-      # Responsiv: so viele Spalten wie Platz ist (min. 140 px), auf dem Handy 2 statt 3 gequetschter Kacheln
+      # Responsiv: Flex-Umbruch statt festem Raster – so viele Kacheln pro Zeile wie Platz ist (min. 160 px),
+      # die letzte Kachel einer Zeile füllt den Rest (Handy: 2 + 1 volle Breite statt einer halbbreiten Einzelkachel)
       card_mod:
         style: |
           #root {
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+          }
+          #root > * {
+            flex: 1 1 160px !important;
+            min-width: 0 !important;
           }
       cards:
         - type: custom:mushroom-template-card
@@ -126,11 +132,17 @@
         rows: auto
       columns: 3
       square: false
-      # Responsiv: so viele Spalten wie Platz ist (min. 140 px), auf dem Handy 2 statt 3 gequetschter Kacheln
+      # Responsiv: Flex-Umbruch statt festem Raster – so viele Kacheln pro Zeile wie Platz ist (min. 160 px),
+      # die letzte Kachel einer Zeile füllt den Rest (Handy: 2 + 1 volle Breite statt einer halbbreiten Einzelkachel)
       card_mod:
         style: |
           #root {
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+          }
+          #root > * {
+            flex: 1 1 160px !important;
+            min-width: 0 !important;
           }
       cards:
         - type: custom:mushroom-template-card
@@ -259,11 +271,17 @@
         rows: auto
       columns: 3
       square: false
-      # Responsiv: so viele Spalten wie Platz ist (min. 140 px), auf dem Handy 2 statt 3 gequetschter Kacheln
+      # Responsiv: Flex-Umbruch statt festem Raster – so viele Kacheln pro Zeile wie Platz ist (min. 160 px),
+      # die letzte Kachel einer Zeile füllt den Rest (Handy: 2 + 1 volle Breite statt einer halbbreiten Einzelkachel)
       card_mod:
         style: |
           #root {
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+          }
+          #root > * {
+            flex: 1 1 160px !important;
+            min-width: 0 !important;
           }
       cards:
         - type: custom:mushroom-template-card

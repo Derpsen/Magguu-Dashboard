@@ -360,6 +360,7 @@
           entity: media_player.av_samsung_soundbar_q90r
           primary: Medien
           secondary: Wiedergabe und Szenen
+          multiline_secondary: true
           icon: mdi:play-box-multiple-outline
           icon_color: purple
           tap_action:
@@ -369,6 +370,7 @@
         - type: custom:mushroom-template-card
           primary: Energie
           secondary: Verbrauch und Messquellen
+          multiline_secondary: true
           icon: mdi:home-lightning-bolt-outline
           icon_color: amber
           tap_action:
