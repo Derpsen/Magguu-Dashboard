@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased – CI
+
+- CI-Fehleralarm (nur Actions, kein Dashboard-Code): wiederverwendbarer Workflow `.github/workflows/ci-alarm.yml`, aufgerufen von `validate` und `quality` (nur Push auf main, nur bei `failure()`). Sendet Repo, Workflow, SHA, Run-URL und die letzten ~20 geschwärzten Logzeilen als JSON an das Repo-Secret `ESCALATION_WEBHOOK_URL` (`Authorization: Bearer` aus `ESCALATION_BEARER`, nur per env, nie ausgegeben). Leeres Secret oder kein https = stilles Überspringen, `continue-on-error`, 10 s Timeout, kein Alarm bei Re-Runs, `Idempotency-Key` = sha256(repo|workflow|sha).
+
 ## 6.10.1-dev – 2026-10-24
 
 Hotfix zu 6.10.0-dev (Rollback-Branch `rollback/pre-hotfix-a25fc4b`, kein Tag). Offline validiert, nicht im echten HA gesehen:

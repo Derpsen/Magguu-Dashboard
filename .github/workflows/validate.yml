@@ -35,3 +35,15 @@ jobs:
           persist-credentials: false
       - name: Test dashboard installation and self-update
         run: sh tests/test-install.sh
+
+  alarm:
+    name: failure alarm
+    needs: [yaml, updater]
+    if: ${{ failure() && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: read
+      actions: read
+    uses: ./.github/workflows/ci-alarm.yml
+    secrets:
+      ESCALATION_WEBHOOK_URL: ${{ secrets.ESCALATION_WEBHOOK_URL }}
+      ESCALATION_BEARER: ${{ secrets.ESCALATION_BEARER }}

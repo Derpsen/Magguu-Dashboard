@@ -225,3 +225,6 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 - Adopted `tools/docs-drift.sh` (1:1 from MagguuUI-Website) + `.github/docs-drift-rules.txt` + `docs-drift.yml` (Mon 05:17 UTC + dispatch; issue "Docs-Drift" → Derpsen on hits, closed when clean). No `@health-url` (no endpoint in this repo).
 - Baseline fix: AGENTS.md no longer names Website live sha/digests (rule scoped to AGENTS.md; history stays in MEMORY.md "Docs/Bots-Sync"); stale "Renovate App not installed" wording fixed.
+
+## 2026-10-24 CI failure alarm
+- Same template as MagguuBot: `.github/workflows/ci-alarm.yml` (workflow_call) + `alarm` job in `validate.yml` and `quality.yml` (`if: failure()`, push on main only). Secrets `ESCALATION_WEBHOOK_URL` / `ESCALATION_BEARER` are GitHub repo secrets (never in Git/logs); the step prints only "set yes/no" and the HTTP status. Offline validated (actionlint, zizmor, stubbed gh/curl in the MagguuBot test); the real webhook call is only seen after the first real main failure. Actions-only: no Unraid/HA action needed.
