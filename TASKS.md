@@ -88,13 +88,16 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 - [x] `docs/audit.md` als historischer Snapshot gekennzeichnet
 - [x] `configuration.yaml`: packages/themes/lovelace per Merge ergänzen (Backup, keine vorhandenen Keys überschreiben)
 
-## Phase 8 – Sections-Migration (6.6.0-dev)
+## Phase 8 – Sections-Migration (6.6.0-dev / 6.7.0-dev)
 
 - [x] `validate.py`: strukturelle Dashboard-/Theme-Prüfung offline
 - [x] Theme auf `modes.dark`
 - [x] `mushroom-title-card` → Heading-Karten
 - [x] sechs Raumdetailseiten auf native Sections
 - [ ] visuelle Prüfung von Theme, Heading-Karten und Raum-Sections im echten HA (Mobile + Tablet)
-- [ ] Home, Räume, Klima, System, Kalender, Sicherheit, Medien, Energie, Dienste auf Sections migrieren (Navbar-card-Platzierung und Stack-in-Card-Verhalten vorher testen)
+- [x] Home, Räume, Klima, System, Kalender, Sicherheit, Medien, Energie, Dienste auf Sections migriert (6.7.0-dev; Navbar-card-Platzierung und Stack-in-Card-Verhalten in Sections noch im echten HA prüfen)
+- [x] `modes.light` im Theme + WCAG-Test
+- [ ] Sichtprüfung 6.7.0-dev im echten HA (Mobile, Tablet, Hell/Dunkel): Hero-Breite, Navbar, Lücken in den Sections, `.card-header`-Schrift, Light-Mode, Conditions/Visibility
+- [ ] Raumakzente (`accent` je Raum, Hex in `shared/rooms/*`) im Light-Mode auf Kontrast prüfen/tokenisieren
 - [ ] View-Badges für Status-Chips prüfen
 - [ ] `condition: user` für „Dashboard aktualisieren“, sobald Marcos User-ID vorliegt (optional)

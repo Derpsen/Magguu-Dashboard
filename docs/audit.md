@@ -160,7 +160,7 @@ Phase 2 und Phase 3 wurden am 2026-07-16 umgesetzt:
 
 - Das Theme enthält nun semantische `mag-*`-Tokens für Oberflächen, Zustände, Abstände, Radien, Schatten und maximale Inhaltsbreite.
 - Room-Header, Aktionen und interne Navigation liegen in gemeinsamen Button-Card-Templates.
-- Mobile und Tablet laden dieselbe deklarative Kartenliste aus `shared/cards/rooms.yaml`; nur die responsive View-Hülle bleibt gerätespezifisch.
+- Mobile und Tablet laden dieselbe deklarative Kartenliste aus `shared/sections/raeume.yaml`; nur die responsive View-Hülle bleibt gerätespezifisch.
 - Die Rooms-Seite besitzt eine gemeinsame Navbar mit relativen Routen, damit sie in beiden Dashboard-Pfaden funktioniert.
 - Unbekannte Temperatur-, Luftfeuchte- und Öffnungszustände werden defensiv dargestellt.
 - Rollläden werden aus der Übersicht nicht blind umgeschaltet: einzelne Cover öffnen `more-info`, gruppierte Cover führen zur Raumdetailseite.

@@ -2,6 +2,24 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Runde 2 (2026-10-24, 6.7.0-dev): Sections für alle Seiten, Light-Theme
+
+Rollback: Branch `rollback/pre-round2-3528f6c` (Tags verboten). `git revert` nur ab dem neuesten Commit rückwärts (spätere Commits bauen auf früheren auf, z. B. Sections-Dateien auf den Raum-Conditions); alles auf einmal per `git checkout rollback/pre-round2-3528f6c -- .` plus Commit.
+
+Entscheidungen und Gründe:
+
+- Eine Quelle der Wahrheit: `shared/sections/*.yaml`; Geräteunterschiede nur über `max_columns` (HA begrenzt `column_span` selbst auf die sichtbare Spaltenzahl, deshalb darf `column_span` > `max_columns` sein; der Validator-Check dazu wurde entfernt).
+- Gehobene layout-card-Grids wurden zu Karten mit `grid_options` (je Karte `columns`), damit das Layout der Section-Breite folgt; vorhandene verschachtelte `grid`-Karten (N-up) bleiben.
+- `rows: auto` auf mushroom-template/conditional/stack: HA gibt diesen Karten sonst eine feste 56-px-Zeile; `grid_options.rows` numerisch = feste Höhe (`fit-rows`), `auto` = natürliche Höhe.
+- Navbar-card: als Karte in der ersten Section (Hero-Section, immer sichtbar). Doku der Karte beschreibt Sections nur knapp, feste Positionierung bleibt daher ungetestet; sicherste Variante ist die immer sichtbare erste Section mit `columns: full`, `rows: auto`.
+- Überschriften: Entities-/auto-entities-Karten behalten ihre Funktion; ihr Kopf bekommt per card_mod die Schriftvariablen der Heading-Karte (`--ha-heading-card-title-*`), statt auto-entities zu ersetzen.
+- Fehlende Entities werden ausgeblendet, nicht gelöscht (laut `docs/entities.md` optional/dokumentiert): `calendar.erinnerungen`, Dienste-Link (`sensor.magguu_bot_status`, `sensor.magguu_website_status`; optionales Paket), Bad-Licht, Festavia, „Tür öffnen“-Button, Lichterkette. Nur gemeldet, nicht geändert: `binary_sensor.magguu_watch_akkuwarnung` (in Templates mit Fallback sicher) und der Backup-Sensor.
+- Räume-Seite: Flur + Modi als Füller; bei zwei Spalten bleibt bei ungerader Zahl eine Lücke. „Schnell starten“ kann bei sichtbarem Morgen-Conditional ungerade enden (in verschachteltem Grid nicht lösbar).
+- Light-Theme: ohne `modes.light` definiert ein Dark-only-Theme im Hell-Modus nichts, die dunklen `--mag-*`-Fallbacks kollidierten mit dunkler Standardschrift (unlesbare Kacheln). Jetzt eigene Palette, Tokens identisch, Kontrast per Test.
+- `section_mode` der button-card nicht genutzt (ohne Grid-Optionen = 12 Spalten, natürliche Höhe).
+
+Untested im echten HA (nur offline validiert, 70 Tests + `validate.py`): Optik aller Sections (Spaltenumbruch, Lücken), Hero-Breite, Navbar-card in Sections, `visibility`/conditional-Verhalten, Tablet-Spans bei 3 Spalten, `.card-header`-Schrift, kompletter Light-Mode (Raumakzente `accent` bleiben Hex-Werte mit niedrigem Kontrast auf Weiß), `modes.dark` unverändert erwartet.
+
 ## Overhaul 2026-10-24: Inventar, Recherche, Plan (6.6.0-dev)
 
 Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sind verboten). `git revert` läuft nur ab dem neuesten Commit rückwärts sauber (Commits bauen aufeinander auf, ein einzelner älterer Revert kollidiert oder bricht Folgeänderungen); alles auf einmal ohne History-Umschreiben per `git checkout rollback/pre-overhaul-fcf36c1 -- .` plus Commit.
@@ -40,7 +58,7 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 - Umgesetzt wie geplant (Punkte 1–4 und 6); Reihenfolge der Commits: Plan/Recherche → `validate.py`-Schema-Checks → Theme `modes.dark` → Heading-Karten → Sections-Pilot → Docs/Version. Die Commits sind klein, aber nur ab dem neuesten rückwärts sauber revertierbar; Tests jetzt 55 (vorher 37), `validate.py` und `tests/test-install.sh` grün.
 - Der Validator fand beim ersten Lauf echte Drift: `--mag-accent-danger` / `--mag-accent-media` wurden mit Fallback benutzt, waren aber nicht im Theme definiert → beide Tokens mit den Fallback-Werten ergänzt (optisch unverändert).
-- Heading-Karten: 40 `mushroom-title-card` → je ein `heading_style: title` plus (falls vorhanden) ein zweites `heading_style: subtitle`. Die Heading-Karte hat kein Untertitel-Feld (Doku https://www.home-assistant.io/dashboards/heading/), daher zwei Karten. `custom:mushroom-title-card` ist im Validator nicht mehr erlaubt. In `openings.yaml` liegt die Überschrift in einer Condition → dort `vertical-stack` mit beiden Headings.
+- Heading-Karten: 40 `mushroom-title-card` → je ein `heading_style: title` plus (falls vorhanden) ein zweites `heading_style: subtitle`. Die Heading-Karte hat kein Untertitel-Feld (Doku https://www.home-assistant.io/dashboards/heading/), daher zwei Karten. `custom:mushroom-title-card` ist im Validator nicht mehr erlaubt. In `shared/sections/hinweise.yaml` liegt die Überschrift in einer Condition → dort `vertical-stack` mit beiden Headings.
 - Sections-Pilot: die sechs Raum-Subviews sind `type: sections`, `max_columns: 2`; Hero = erste Section mit `column_span: 2`; je bisherige Grid-Area eine Section; Reihenfolge entspricht der Mobile-Reihenfolge des alten Grids. Tiles, die vorher eine volle Stack-Breite hatten, bekommen `grid_options: {columns: full}`; die Wohnzimmer-Lichter (vorher 2-Spalten-Raster) bleiben bei der Tile-Standardbreite (2 pro Zeile). Entity-IDs, Bestätigungsdialoge und das `&detail_card`-Styling sind unverändert (per Diff der Entity-/Namens-/Confirmation-Menge je Datei geprüft). **Hinweis:** `docs/audit.md`/CHANGELOG 6.x nennen eine frühere Migration Sections → `custom:grid-layout` für diese Seiten; der Pilot kehrt das bewusst um (Entscheidung: nativ, weniger Custom-Abhängigkeit). Rückgängig: nur ab dem neuesten Commit rückwärts per `git revert` (Reihenfolge beachten) oder per Rollback-Branch.
 - **Untested im echten HA** (nur offline validiert): Optik von `modes.dark` (Standard-Dark als Basis statt Light), Heading-Karten statt Mushroom-Titeln (Abstände in `vertical-stack` mit zwei Headings), Sections-Layout der Raumseiten (Breite/Zeilenumbruch, `grid_options: columns: full`, mini-graph-card in Sections, Mobile-Umbruch). Navbar-card wird in den umgestellten Seiten nicht benutzt (Subviews), Sections-Platzierung weiterhin ungetestet.
 - Nicht gemacht (offen, siehe TASKS.md): Sections-Migration der übrigen Views (Home, Räume, Klima, System, Kalender, Sicherheit, Medien, Energie, Dienste; Navbar/Stack-in-Card-Verhalten in Sections ungeprüft), View-Badges, `condition: user` (User-ID fehlt).

@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.7.0-dev – 2026-10-24
+
+Zweite Runde nach Marcos Prüfung im echten HA 2026.10.2 (Rollback-Branch `rollback/pre-round2-3528f6c`, kein Tag; Reverts nur ab dem neuesten Commit rückwärts):
+
+- Alle neun Seiten (Home, Räume, Klima, System, Kalender, Sicherheit, Medien, Energie, Dienste) in Mobile und Tablet sind native `type: sections`-Views; die Inhalte liegen einmal in `dashboard/magguu-dashboard/shared/sections/` (Mobile `max_columns: 1`, Tablet `max_columns: 3`, `column_span` wird von HA automatisch auf die sichtbare Spaltenzahl begrenzt). `custom:grid-layout`/`layout-card` werden nicht mehr benutzt (Handy-Überlauf durch das Grid-Layout entfällt)
+- Hero ist breit über alle Spalten (`grid_options.columns: full`), Navbar-card liegt als Karte in der ersten (immer sichtbaren) Section mit `grid_options` full/auto (feste Positionierung in Sections im echten HA ungetestet; Alternative wäre eine eigene Section am Ende)
+- Karten mit `rows`-Standardhöhe (mushroom-template, conditional, stack) bekommen `rows: auto`, damit nichts bei 56 px abgeschnitten wird; `validate.py` erzwingt das
+- Überschriften der Entities-/auto-entities-Karten (Updates, Batteriewarnungen, Nicht erreichbar, Klingel-Lautstärke) nutzen per card_mod die Schrift der Heading-Karten; Szenen-Untertitel gekürzt, `quick_v5`-Labels brechen um, Telefonnamen kürzer
+- Fehlende Entities blenden sich aus statt Fehler zu zeigen: `calendar.erinnerungen`, Dienste-Link/-Karten, Bad-Licht, Festavia, „Tür öffnen“, Lichterkette (Conditions/`visibility`, kein Konsolenfehler); leere Zellen mit Füllkarten (Modi) geschlossen
+- Theme: `modes.light` ergänzt (helle Palette, dieselben `mag-*`-Tokens); `modes.dark` optisch unverändert. Fest verdrahtete dunkle Flächen/Pill-Farben in den button-card-Templates laufen jetzt über Tokens (`mag-surface-strong`, `mag-overlay`, `mag-overlay-border`, `mag-hero-glow`, `mag-accent-*`). WCAG-AA per Rechnung (`tests/test_theme.py`: Text ≥ 4,5:1, Akzente ≥ 4,5:1, Zustandsfarben ≥ 3:1, Dark/Light-Parität)
+- Tile-Features (Helligkeit, Rollladen-Position, Zieltemperatur) per Test abgesichert; Heizungen auf der Klima-Seite mit Zieltemperatur-Feature
+- Version `6.7.0-dev`; README-Version wird von `validate.py` geprüft; Tests jetzt 70
+
 ## 6.6.0-dev – 2026-10-24
 
 - Überholung auf den Stand Home Assistant 2026.10 (kleine Commits, Reverts nur ab dem neuesten rückwärts; Rollback-Branch `rollback/pre-overhaul-fcf36c1`, kein Tag):
