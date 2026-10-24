@@ -221,6 +221,10 @@
             domain: cover
           - state: unavailable
             domain: media_player
+        # Dauerhaft nicht erreichbare, optionale Leuchten (Bad-Licht, Festavia) sind kein Fehler und stehen nicht in der Liste.
+        exclude:
+          - entity_id: light.badezimmer_licht_bad
+          - entity_id: light.sonstiges_festavia_string_lights
       sort: {method: friendly_name}
 
 - type: grid
@@ -309,8 +313,10 @@
       secondary: >-
         {% if states(entity) not in ['unknown', 'unavailable'] %}
           {{ as_timestamp(states(entity)) | timestamp_custom('%d.%m.%Y · %H:%M', true) }}
+        {% elif states(entity) == 'unknown' %}
+          Noch kein Backup
         {% else %}
-          Noch kein Zeitpunkt verfügbar
+          Backup-Zeit nicht verfügbar
         {% endif %}
       multiline_secondary: true
       icon: mdi:cloud-check-outline
@@ -350,7 +356,7 @@
         - type: custom:mushroom-template-card
           entity: media_player.av_samsung_soundbar_q90r
           primary: Medien
-          secondary: Soundbar, TV, Computer und Szenen
+          secondary: Wiedergabe und Szenen
           icon: mdi:play-box-multiple-outline
           icon_color: purple
           tap_action:
@@ -359,7 +365,7 @@
           card_mod: *status_card
         - type: custom:mushroom-template-card
           primary: Energie
-          secondary: Energie-Dashboard und vorbereitete Messquellen
+          secondary: Verbrauch und Messquellen
           icon: mdi:home-lightning-bolt-outline
           icon_color: amber
           tap_action:

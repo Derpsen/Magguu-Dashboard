@@ -321,6 +321,21 @@ class DashboardSchemaTest(unittest.TestCase):
                         self.assertIn(feature, types, f"{path.name}: {card['entity']}")
         self.assertGreater(checked, 20)
 
+    def test_unreachable_list_skips_permanently_unavailable_optional_lights(self) -> None:
+        system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)
+        lists = [c for c in _flatten(system) if c.get("type") == "custom:auto-entities" and c.get("card", {}).get("title") == "Nicht erreichbar"]
+        self.assertEqual(len(lists), 1)
+        excluded = {rule["entity_id"] for rule in lists[0]["filter"]["exclude"]}
+        self.assertEqual(excluded, {"light.badezimmer_licht_bad", "light.sonstiges_festavia_string_lights"})
+
+    def test_backup_card_says_no_backup_yet_when_the_sensor_is_unknown(self) -> None:
+        system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)
+        cards = [c for c in _flatten(system) if c.get("entity") == "sensor.backup_last_successful_automatic_backup"]
+        self.assertEqual(len(cards), 1)
+        self.assertIn("== 'unknown' %}", cards[0]["secondary"])
+        self.assertIn("Noch kein Backup", cards[0]["secondary"])
+        self.assertNotIn("Noch kein Zeitpunkt", cards[0]["secondary"])
+
 
 def _flatten(node):
     if isinstance(node, dict):
