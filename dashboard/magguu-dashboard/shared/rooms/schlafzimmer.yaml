@@ -23,6 +23,7 @@ sections:
           opening_entity: binary_sensor.magguu_schlafzimmer_oeffnung
           light_count_entity: sensor.magguu_schlafzimmer_lichter_an
           climate_entity: climate.schlafzimmer_schlafzimmer_thermostat
+      - !include ../navbar.yaml
 
   - type: grid
     cards:

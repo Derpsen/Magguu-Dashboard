@@ -20,6 +20,7 @@ sections:
           accent: '#79d98c'
           opening_entity: binary_sensor.magguu_kueche_oeffnung
           light_count_entity: sensor.magguu_kueche_lichter_an
+      - !include ../navbar.yaml
 
   - type: grid
     cards:

@@ -1,5 +1,7 @@
 type: custom:navbar-card
-# Sections-View: fixed positioniert, belegt nur eine Zeile im ersten Abschnitt; Auto-Padding der Karte hält Platz frei.
+# Sections-View: Die Karte ist fixed positioniert (kein Platz im Fluss) und liegt immer in der ersten Section der Seite
+# (alle Seiten inkl. Raum-/Dienste-Unterseiten). Am unteren Rand zentriert (docs: desktop.position bottom + mode floating),
+# damit sie auf Handy und Tablet gleich aussieht und nicht links neben dem Inhalt schwebt; Auto-Padding hält unten Platz frei.
 grid_options:
   columns: full
   rows: auto
@@ -10,7 +12,8 @@ layout:
     mobile_px: 74
     media_player_px: 90
 desktop:
-  position: left
+  mode: floating
+  position: bottom
   min_width: 768
   show_labels: true
 mobile:

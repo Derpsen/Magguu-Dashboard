@@ -22,6 +22,7 @@ sections:
           humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
           light_count_entity: sensor.magguu_esszimmer_lichter_an
           climate_entity: climate.esszimmer_thermostat
+      - !include ../navbar.yaml
 
   - type: grid
     cards:

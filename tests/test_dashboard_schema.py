@@ -288,7 +288,7 @@ class DashboardSchemaTest(unittest.TestCase):
                 self.assertEqual(view.get("type"), "sections", where)
                 sections = view["sections"]
                 navbars = [(i, c) for i, s in enumerate(sections) for c in s.get("cards", []) if c.get("type") == "custom:navbar-card"]
-                if view["path"] in {"overview", "raeume", "klima", "system", "kalender", "sicherheit", "medien", "energie", "dienste"}:
+                if view["path"] in {"overview", "raeume", "klima", "system", "kalender", "sicherheit", "medien", "energie", "dienste", "wohnzimmer", "esszimmer", "kueche", "schlafzimmer", "kinderzimmer", "badezimmer"}:
                     self.assertEqual([i for i, _ in navbars], [0], where)
                     self.assertEqual(navbars[0][1]["grid_options"], {"columns": "full", "rows": "auto"}, where)
                 for card in _flatten(view):
@@ -389,6 +389,12 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertEqual([s.get("column_span") for s in modes], [1])
         rooms = [v for v in _dashboard_views(REPO_ROOT, "tablet")[0] if v["path"] == "raeume"][0]
         self.assertEqual([s.get("column_span") for s in rooms["sections"] if any(c.get("heading") == "Szenen & Modi" for c in s.get("cards", []))], [2])
+
+    def test_navbar_is_centered_at_the_bottom_on_every_page(self) -> None:
+        navbar = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "navbar.yaml", REPO_ROOT)
+        self.assertEqual(navbar["desktop"]["position"], "bottom")
+        self.assertEqual(navbar["desktop"]["mode"], "floating")
+        self.assertTrue(navbar["layout"]["auto_padding"]["enabled"])
 
 
 def _flatten_outside_stacks(node):

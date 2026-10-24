@@ -22,6 +22,7 @@ sections:
           humidity_entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
           light_count_entity: sensor.magguu_badezimmer_lichter_an
           climate_entity: climate.badezimmer_badezimmer_thermostat
+      - !include ../navbar.yaml
 
   - type: grid
     cards:
