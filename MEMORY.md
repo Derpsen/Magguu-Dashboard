@@ -2,6 +2,40 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Overhaul 2026-10-24: Inventar, Recherche, Plan (6.6.0-dev)
+
+Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sind verboten). Rollback einzeln per `git revert <sha>` je Commit oder komplett per `git reset`-freiem Weg: `git checkout rollback/pre-overhaul-fcf36c1 -- .` + Commit.
+
+### Inventar (Stand fcf36c1)
+
+- Dashboards: `magguu-mobile` / `magguu-tablet` (YAML-Mode), je 15 Views per `!include_dir_merge_list views/`: Home, Räume, Klima, System, Kalender, Sicherheit, Medien, Energie, Magguu-Dienste (Subview) und 6 Raum-Subviews (Wohnzimmer, Esszimmer, Küche, Badezimmer, Schlafzimmer, Kinderzimmer). Inhalte liegen gemeinsam in `shared/cards/`, `shared/rooms/`, `shared/views/`; nur die View-Hüllen unterscheiden Mobile/Tablet.
+- Layout: alle Views `type: custom:grid-layout` (layout-card, Grid-Areas + Media-Queries per `view_layout`), dazu verschachtelte `custom:layout-card` (7x). Keine nativen Sections-Views, keine View-Badges.
+- Kartentypen (Anzahl grob): button-card 78 (Templates in `shared/templates/button_card.yaml`: `mag_card`, `hero_v5`, `page_header_v6`, `room_detail_header_v7`, `room_visual_v5`, `room_action_v5`, `room_link_v5`, `quick_v5`, `next_event_v5`, `waste_event_v6`), tile 43 (Features: light-brightness, target-temperature, cover-open-close/-position, toggle, media-player-*, numeric-input), mushroom-title-card 40, mushroom-template-card ~47, vertical-stack 34, conditional 22, grid 18, stack-in-card 7, mini-graph-card 7, auto-entities 3, navbar-card 1 (pro View via `shared/navbar.yaml`), plus calendar, weather-forecast, picture-entity, markdown, entities.
+- Custom-Frontend-Abhängigkeiten (README): Mushroom, Button Card, Layout Card, Card Mod, Mini Graph Card, Auto Entities, Navbar Card, Stack In Card. Alle sind schon vorhanden; es kommt keine neue hinzu.
+- Theme: `themes/magguu_midnight.yaml` ein Theme im Legacy-Format (Top-Level-Variablen, Basis = Standard-Light-Theme), Tokens `mag-*`.
+- Packages: `packages/magguu_dashboard.yaml` (Template-Sensoren, Wartung, Version/Commit/Update-Hinweis, shell_command, Script „Dashboard aktualisieren“), optional `docs/optional/magguu_dienste.yaml`.
+- Installer/Updater: `install.sh`, `update.sh`, `update-ha.sh` (Tarball, Sperre, Backup-Rotation), `scripts/install-dashboard.sh`; Tests `tests/test-install.sh`; CI validate/CodeQL/Scorecard/quality/zizmor/docs-drift.
+- Prüfungen: `validate.py` (YAML, Includes, Entitäts-IDs gegen `docs/entities.md`, Sicherheits-Invarianten), 37 Unit-Tests (`tests/`).
+
+### Recherche (nur Verifiziertes; Stand 2026-10-24)
+
+- Aktuelle stabile Version: Home Assistant **2026.10** (Release 2026-10-07; Frontend-Release `20260930.5`). Quellen: https://www.home-assistant.io/blog/2026/10/07/release-202610/ , https://github.com/home-assistant/frontend/releases (API `releases/latest`).
+- **Sections** ist der Standard-View-Typ (Header mit Titel/Badges, Footer, Section-Hintergrund, Section-Theme, Section-Sichtbarkeit): https://www.home-assistant.io/dashboards/sections/ , https://www.home-assistant.io/dashboards/views/ . YAML-Schlüssel der View (`max_columns`, `dense_section_placement`, `top_margin`, `header`, `footer`, `sections`, `subview`, `back_path`, `visible`) und der Section (`type: grid`, `cards`, `column_span`, `row_span`, `background`, `theme`, `visibility`; `title` ist deprecated, stattdessen Heading-Karte) stammen aus dem Frontend-Quelltext `src/data/lovelace/config/view.ts` / `section.ts` (Branch `dev`, nicht der Release-Tag; deshalb nur die dort stabilen Felder nutzen).
+- **Heading-Karte** (`type: heading`, `heading`, `heading_style: title|subtitle`, `icon`, `tap_action`, `badges` vom Typ `entity`/`button`): https://www.home-assistant.io/dashboards/heading/
+- **Tile-Karte** (`features`, `features_position: bottom|inline`, `state_content`, `vertical`, `icon_tap_action`, `color`): https://www.home-assistant.io/dashboards/tile/ ; **Features-Liste** (u. a. `light-brightness`, `light-color-temp`, `target-temperature`, `climate-hvac-modes`, `climate-preset-modes`, `cover-open-close`, `cover-position`, `toggle`, `media-player-playback`, `media-player-volume-slider`, `media-player-source`, `numeric-input`, `select-options`, `timer-presets`, `trend-graph`, `update-actions`, `lock-commands`, `lock-open-door`, `alarm-modes`, `bar-gauge`, `temperature-forecast`, `precipitation-forecast`): https://www.home-assistant.io/dashboards/features/
+- **Badges** (`entity`, `shortcut`, `entity-filter`; Sichtbarkeit per Bedingungen): https://www.home-assistant.io/dashboards/badges/ . Neu in 2026.10: Visibility-Tab kennt alle Automations-Bedingungen (Template, Sun, Zone, Device) plus Screen/User; bestehende Bedingungen bleiben gültig (Release-Blog oben). Nicht genutzt: `condition: user` braucht Marcos User-ID (nicht im Repo).
+- **Themes**: `modes: {dark: …, light: …}` macht ein Theme auf dem Standard-Dark-Theme aufsetzend; das Legacy-Format (Variablen auf oberster Ebene) setzt auf dem Light-Theme auf; nur `dark` definiert → Dark wird automatisch genutzt: https://www.home-assistant.io/integrations/frontend/ (Abschnitt „Dark mode support“; Quelle `source/_integrations/frontend.markdown`). `ha-section-background-color` / `ha-section-border-radius` sind laut Sections-Doku themebar.
+- Nicht verfügbar/nicht belegt: **Context7** (`user-Context7`) lieferte „Monthly quota exceeded“ (kein API-Key) → Recherche stattdessen direkt auf home-assistant.io und im Frontend-Quelltext. button-card dokumentiert kein `aria_label`/ARIA-Option (https://custom-cards.github.io/button-card/stable/ , `types.ts` ohne Treffer) → keine A11y-Behauptungen für button-card. navbar-card: Autor nutzt es in Sections-Views (https://github.com/joseluis9595/lovelace-navbar-card Discussion #55); Platzierung innerhalb einer Section ist nicht dokumentiert → **untested**.
+
+### Entscheidungen und Plan (kleine, einzeln revertierbare Commits)
+
+1. `validate.py`: strukturelle Schema-Prüfungen offline (erlaubte View-/Section-Schlüssel, eindeutige View-Pfade je Dashboard, Navigationsziele existieren, Theme-Name existiert, Tile-Features gegen die verifizierte Liste, Heading-Schlüssel, Theme-Modi) + Unit-Tests. Bestehende Sicherheits-Invarianten bleiben unverändert.
+2. Theme: `modes.dark` mit denselben `mag-*`-Tokens statt Legacy-Format (Basis Standard-Dark). Entscheidung: nur `dark`, weil Midnight bewusst dunkel ist; sonst würde der Profilschalter ein ungestyltes Light anbieten. **Untested** im echten HA (Optik).
+3. Heading-Karten ersetzen `custom:mushroom-title-card` (40x): natives, themebares, semantisches Element ohne Custom-JS. Untertitel bleiben als `heading_style: subtitle`.
+4. Sections-Pilot: die sechs Raum-Subviews (gemeinsame Datei je Raum für Mobile + Tablet) auf `type: sections` (`max_columns: 2`), jede bisherige Grid-Area wird eine Section mit Heading. Alternative (alle 30 View-Hüllen blind migrieren) verworfen: Hero-/Navbar-/Stack-in-Card-Aufbau ist ohne HA-Laufzeit nicht prüfbar; Home/Räume/System/Klima/… bleiben deshalb vorerst auf layout-card (Rest steht in TASKS.md).
+5. Bewusst nicht geändert (Begründung): mini-graph-card bleibt (Mehrfach-Entity-Graphen mit Achsen; `trend-graph`-Feature ist nur ein Einzel-Sensor-Verlauf ohne Achsen), button-card-Templates bleiben (kein nativer Ersatz für Hero/Chips), kein Wechsel von Mushroom-Template-Karten (Tile braucht eine Entity).
+6. Doku/Version: `6.6.0-dev` (`VERSION` + Package-Sensor gleichzeitig), AGENTS/MEMORY/CHANGELOG/README/TASKS; kein Tag.
+
 ## Security audit fixes (2026-10-23)
 
 - Audit `~/security-audit-skill/magguu-dashboard/run-20261023/REPORT.md` (#1 calendar-title unsafeHTML, #2 non-admin update trigger, both needs_validation). Fixed anyway: `esc()` in `next_event_v5` (message + unparseable start_time), `waste_event_v6` label, `hero_v5` weather state + temperature/battery chips. Rest of the templates only interpolate numbers/fixed text.
