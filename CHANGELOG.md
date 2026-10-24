@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.6.0-dev – 2026-10-24
+
+- Überholung auf den Stand Home Assistant 2026.10 (kleine, einzeln revertierbare Commits; Rollback-Branch `rollback/pre-overhaul-fcf36c1`, kein Tag):
+  - `validate.py` prüft offline die Dashboard- und Theme-Struktur (View-/Section-Schlüssel, eindeutige View-Pfade, Navigationsziele, Theme-Name und `modes`, Tile-Features, Heading-Karten, erlaubte Kartentypen, `column_span`, definierte `--mag-*`-Tokens); 18 neue Unit-Tests (`tests/test_dashboard_schema.py`), insgesamt 55
+  - Theme „Magguu Midnight“ nutzt `modes.dark` (Standard-Dark als Basis, sonst unveränderte `mag-*`-Tokens); `mag-accent-danger` und `mag-accent-media` ergänzt (waren nur als Fallback verwendet) – Optik im echten HA ungetestet
+  - 40 `custom:mushroom-title-card` durch native Heading-Karten ersetzt (Titel + Untertitel als zwei Heading-Karten); Mushroom-Titelkarte nicht mehr erlaubt
+  - Die sechs Raumdetailseiten (Mobile + Tablet gemeinsam) nutzen native Sections (`max_columns: 2`, Hero über zwei Spalten, eine Section je Bereich); Entitäten, Bestätigungsdialoge und Funktionen unverändert, Layout im echten HA ungetestet. Kehrt die frühere Umstellung Sections → `custom:grid-layout` nur für diese Seiten bewusst um
+  - Version `6.6.0-dev` (`VERSION` + Package-Sensor)
+- Update: „Dashboard aktualisieren“ ausführen, HA neu laden bzw. Browser/App neu laden (Theme neu laden)
+
 ## 6.5.0-dev – 2026-10-24
 
 - Neu: Die System-Seite zeigt unter „Dashboard-Version“ die installierte Version samt Commit-SHA (7 Zeichen) und einen Update-Hinweis (aktuell / neuer Stand auf main / unbekannt). Der Installer (`update-ha.sh`, `install.sh`) stempelt die SHA in `sensor.magguu_dashboard_commit`; `sensor.magguu_dashboard_main_commit` fragt höchstens stündlich die öffentliche GitHub-API ab (ohne Token/Secret, bei Fehlern „unbekannt“ statt Fehlermeldungen). Nach einem erfolgreichen Update lädt das Script die Template-Sensoren neu und aktualisiert den main-Commit. `validate.py` erzwingt den Aufbau (feste URL, keine Secrets, mindestens 3600 s Intervall, SHA-Format, Fallbacks)

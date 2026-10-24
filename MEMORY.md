@@ -4,7 +4,7 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 ## Overhaul 2026-10-24: Inventar, Recherche, Plan (6.6.0-dev)
 
-Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sind verboten). Rollback einzeln per `git revert <sha>` je Commit oder komplett per `git reset`-freiem Weg: `git checkout rollback/pre-overhaul-fcf36c1 -- .` + Commit.
+Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sind verboten). Rollback einzeln per `git revert <sha>` je Commit oder komplett ohne History-Umschreiben per `git checkout rollback/pre-overhaul-fcf36c1 -- .` plus Commit.
 
 ### Inventar (Stand fcf36c1)
 
@@ -15,7 +15,7 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 - Theme: `themes/magguu_midnight.yaml` ein Theme im Legacy-Format (Top-Level-Variablen, Basis = Standard-Light-Theme), Tokens `mag-*`.
 - Packages: `packages/magguu_dashboard.yaml` (Template-Sensoren, Wartung, Version/Commit/Update-Hinweis, shell_command, Script „Dashboard aktualisieren“), optional `docs/optional/magguu_dienste.yaml`.
 - Installer/Updater: `install.sh`, `update.sh`, `update-ha.sh` (Tarball, Sperre, Backup-Rotation), `scripts/install-dashboard.sh`; Tests `tests/test-install.sh`; CI validate/CodeQL/Scorecard/quality/zizmor/docs-drift.
-- Prüfungen: `validate.py` (YAML, Includes, Entitäts-IDs gegen `docs/entities.md`, Sicherheits-Invarianten), 37 Unit-Tests (`tests/`).
+- Prüfungen: `validate.py` (YAML, Includes, Entitäts-IDs gegen `docs/entities.md`, Sicherheits-Invarianten), 37 Unit-Tests (`tests/`, vor dem Umbau).
 
 ### Recherche (nur Verifiziertes; Stand 2026-10-24)
 
@@ -35,6 +35,16 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 4. Sections-Pilot: die sechs Raum-Subviews (gemeinsame Datei je Raum für Mobile + Tablet) auf `type: sections` (`max_columns: 2`), jede bisherige Grid-Area wird eine Section mit Heading. Alternative (alle 30 View-Hüllen blind migrieren) verworfen: Hero-/Navbar-/Stack-in-Card-Aufbau ist ohne HA-Laufzeit nicht prüfbar; Home/Räume/System/Klima/… bleiben deshalb vorerst auf layout-card (Rest steht in TASKS.md).
 5. Bewusst nicht geändert (Begründung): mini-graph-card bleibt (Mehrfach-Entity-Graphen mit Achsen; `trend-graph`-Feature ist nur ein Einzel-Sensor-Verlauf ohne Achsen), button-card-Templates bleiben (kein nativer Ersatz für Hero/Chips), kein Wechsel von Mushroom-Template-Karten (Tile braucht eine Entity).
 6. Doku/Version: `6.6.0-dev` (`VERSION` + Package-Sensor gleichzeitig), AGENTS/MEMORY/CHANGELOG/README/TASKS; kein Tag.
+
+### Ergebnis (Umsetzung, 6.6.0-dev)
+
+- Umgesetzt wie geplant (Punkte 1–4 und 6); Reihenfolge der Commits: Plan/Recherche → `validate.py`-Schema-Checks → Theme `modes.dark` → Heading-Karten → Sections-Pilot → Docs/Version. Jeder Commit ist einzeln revertierbar (`git revert <sha>`); Tests jetzt 55 (vorher 37), `validate.py` und `tests/test-install.sh` grün.
+- Der Validator fand beim ersten Lauf echte Drift: `--mag-accent-danger` / `--mag-accent-media` wurden mit Fallback benutzt, waren aber nicht im Theme definiert → beide Tokens mit den Fallback-Werten ergänzt (optisch unverändert).
+- Heading-Karten: 40 `mushroom-title-card` → je ein `heading_style: title` plus (falls vorhanden) ein zweites `heading_style: subtitle`. Die Heading-Karte hat kein Untertitel-Feld (Doku https://www.home-assistant.io/dashboards/heading/), daher zwei Karten. `custom:mushroom-title-card` ist im Validator nicht mehr erlaubt. In `openings.yaml` liegt die Überschrift in einer Condition → dort `vertical-stack` mit beiden Headings.
+- Sections-Pilot: die sechs Raum-Subviews sind `type: sections`, `max_columns: 2`; Hero = erste Section mit `column_span: 2`; je bisherige Grid-Area eine Section; Reihenfolge entspricht der Mobile-Reihenfolge des alten Grids. Tiles, die vorher eine volle Stack-Breite hatten, bekommen `grid_options: {columns: full}`; die Wohnzimmer-Lichter (vorher 2-Spalten-Raster) bleiben bei der Tile-Standardbreite (2 pro Zeile). Entity-IDs, Bestätigungsdialoge und das `&detail_card`-Styling sind unverändert (per Diff der Entity-/Namens-/Confirmation-Menge je Datei geprüft). **Hinweis:** `docs/audit.md`/CHANGELOG 6.x nennen eine frühere Migration Sections → `custom:grid-layout` für diese Seiten; der Pilot kehrt das bewusst um (Entscheidung: nativ, weniger Custom-Abhängigkeit). Rückgängig: `git revert` des Sections-Commits.
+- **Untested im echten HA** (nur offline validiert): Optik von `modes.dark` (Standard-Dark als Basis statt Light), Heading-Karten statt Mushroom-Titeln (Abstände in `vertical-stack` mit zwei Headings), Sections-Layout der Raumseiten (Breite/Zeilenumbruch, `grid_options: columns: full`, mini-graph-card in Sections, Mobile-Umbruch). Navbar-card wird in den umgestellten Seiten nicht benutzt (Subviews), Sections-Platzierung weiterhin ungetestet.
+- Nicht gemacht (offen, siehe TASKS.md): Sections-Migration der übrigen Views (Home, Räume, Klima, System, Kalender, Sicherheit, Medien, Energie, Dienste; Navbar/Stack-in-Card-Verhalten in Sections ungeprüft), View-Badges, `condition: user` (User-ID fehlt).
+- Validator-Umfang neu (`validate.py`): View-/Section-Schlüssel, eindeutige gültige View-Pfade je Dashboard, View-Typen, Theme existiert, `column_span <= max_columns`, Tile-Features gegen die verifizierte Liste, Heading-Schema, erlaubte Kartentypen (built-in + feste Custom-Liste), `navigation_path`/Navbar-Routen zeigen auf existierende Views des richtigen Dashboards, Theme-`modes`-Schlüssel, jedes `var(--mag-*)` im Theme definiert. Tests: `tests/test_dashboard_schema.py`.
 
 ## Security audit fixes (2026-10-23)
 
@@ -65,7 +75,7 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 ## Current state (2026-10-12)
 
-- Version: `6.5.0-dev` (`VERSION`, since 2026-10-24; was `6.4.0-dev`). Last merges (2026-10-12 handover): #8 `279f99e` (Dependabot groups, superseded by Renovate; AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
+- Version: `6.6.0-dev` (`VERSION`, since 2026-10-24; was `6.5.0-dev`, davor `6.4.0-dev`). Last merges (2026-10-12 handover): #8 `279f99e` (Dependabot groups, superseded by Renovate; AGENTS refresh, absorbs #7), #9 `4e47296` (CodeQL python + actions, weekly validate). No open PRs at handover.
 - Repo is HA YAML only: no `package.json`, no Docker image, no Unraid container. Every merge is **Actions-only**; "Unraid & Server" is never pinged from here.
 - CI: `validate.yml` (push, PR, weekly `17 4 * * 1`), `codeql.yml` (python + actions, SHA-pinned, push/PR to `main` + weekly). Dependency bot: Renovate since 2026-10-14 (ex-Dependabot, `renovate.json`): github-actions + pip, grouped, Monday Europe/Berlin; App not installed yet (see 2026-10-14 "Bot & Dashboard" wave 2).
 

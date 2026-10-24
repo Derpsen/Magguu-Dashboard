@@ -178,7 +178,7 @@ class TemplateTest(unittest.TestCase):
         for bad in ({"message": "API rate limit exceeded"}, [], "x", None):
             self.assertEqual(render(self.rest, {}, bad), "unbekannt", bad)
 
-    def card_text(self, installed: str, main: str, hint: str, version: str = "6.5.0-dev") -> str:
+    def card_text(self, installed: str, main: str, hint: str, version: str = "6.6.0-dev") -> str:
         return render(
             version_card()["secondary"],
             {
@@ -190,9 +190,9 @@ class TemplateTest(unittest.TestCase):
         )
 
     def test_card_shows_version_sha_and_hint(self) -> None:
-        self.assertEqual(self.card_text(SHA_A, SHA_A, "aktuell"), "6.5.0-dev · aaaaaaa · aktuell mit main")
+        self.assertEqual(self.card_text(SHA_A, SHA_A, "aktuell"), "6.6.0-dev · aaaaaaa · aktuell mit main")
         out = self.card_text(SHA_A, SHA_B, "verfuegbar")
-        self.assertIn("6.5.0-dev · aaaaaaa", out)
+        self.assertIn("6.6.0-dev · aaaaaaa", out)
         self.assertIn("Neuer Stand auf main (bbbbbbb)", out)
         out = self.card_text("unbekannt", "unavailable", "unbekannt")
         self.assertIn("Commit unbekannt", out)
