@@ -254,8 +254,10 @@
       heading: Live-Ansicht der Ring-Kamera
       heading_style: subtitle
 
-    # Ring-Kamera offline (unavailable/unknown) liefert HTTP 500 für das Bild: dann kein kaputtes Bild, sondern ein klarer Hinweis.
-    # (Zustand `idle` ohne Bild ist per Condition nicht erkennbar; dann bleibt die Kamera sichtbar.)
+    # Ring-"Live-Ansicht": Zustand `idle` liefert kein Standbild, der Bild-Proxy antwortet mit HTTP 500 (graue Platzhalterkarte).
+    # Der Frontend-Zustand verrät das nicht: `entity_picture` ist bei jeder Kamera immer gesetzt (HA-Core, camera/entity.py), eine
+    # attribute-Bedingung auf entity_picture würde den 500er also NICHT erkennen. Robust ist deshalb der Zustand:
+    # Bild nur beim echten Live-Feed (streaming/recording), sonst eine kompakte Kachel, die per Tipp die Live-Ansicht öffnet.
     - type: conditional
       grid_options:
         columns: full
@@ -263,9 +265,9 @@
       conditions:
         - condition: state
           entity: camera.kinderzimmer_live_ansicht
-          state_not:
-            - unavailable
-            - unknown
+          state:
+            - streaming
+            - recording
       card:
         type: picture-entity
         entity: camera.kinderzimmer_live_ansicht
@@ -281,18 +283,22 @@
       conditions:
         - condition: state
           entity: camera.kinderzimmer_live_ansicht
-          state:
-            - unavailable
-            - unknown
+          state_not:
+            - streaming
+            - recording
       card:
         type: custom:mushroom-template-card
         grid_options:
           columns: full
           rows: auto
-        primary: Kamera nicht erreichbar
-        secondary: Ring-Kamera Kinderzimmer ist offline
-        icon: mdi:video-off-outline
-        icon_color: grey
+        entity: camera.kinderzimmer_live_ansicht
+        primary: Kinderzimmer
+        secondary: >-
+          {% if states('camera.kinderzimmer_live_ansicht') in ['unavailable', 'unknown'] %}Kamera nicht erreichbar{% else %}Tippen für die Live-Ansicht{% endif %}
+        icon: >-
+          {% if states('camera.kinderzimmer_live_ansicht') in ['unavailable', 'unknown'] %}mdi:video-off-outline{% else %}mdi:video-outline{% endif %}
+        icon_color: >-
+          {% if states('camera.kinderzimmer_live_ansicht') in ['unavailable', 'unknown'] %}grey{% else %}cyan{% endif %}
         multiline_secondary: true
         tap_action:
           action: more-info

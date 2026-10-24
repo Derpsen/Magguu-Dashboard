@@ -417,16 +417,18 @@ class DashboardSchemaTest(unittest.TestCase):
         for tile in tiles:
             self.assertTrue(tile.get("multiline_secondary"), tile["primary"])
 
-    def test_offline_ring_camera_shows_a_placeholder_instead_of_a_broken_picture(self) -> None:
+    def test_idle_ring_camera_shows_a_compact_tile_instead_of_a_broken_picture(self) -> None:
         sections = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "sicherheit.yaml", REPO_ROOT)
         pictures = [c for c in _flatten(sections) if c.get("type") == "picture-entity" and c.get("entity") == "camera.kinderzimmer_live_ansicht"]
         self.assertEqual(len(pictures), 1)
         guards = [c for c in _flatten(sections) if c.get("type") == "conditional" and "camera.kinderzimmer_live_ansicht" in str(c.get("conditions"))]
         self.assertEqual(len(guards), 2)
         shown = next(g for g in guards if g["card"]["type"] == "picture-entity")
-        self.assertEqual(shown["conditions"][0]["state_not"], ["unavailable", "unknown"])
-        placeholder = next(g for g in guards if g["card"]["type"] != "picture-entity")
-        self.assertEqual(placeholder["conditions"][0]["state"], ["unavailable", "unknown"])
+        self.assertEqual(shown["conditions"][0]["state"], ["streaming", "recording"])
+        tile = next(g for g in guards if g["card"]["type"] != "picture-entity")
+        self.assertEqual(tile["conditions"][0]["state_not"], ["streaming", "recording"])
+        self.assertEqual(tile["card"]["tap_action"]["action"], "more-info")
+        self.assertIn("nicht erreichbar", tile["card"]["secondary"])
 
     def test_system_area_tiles_wrap_with_a_full_width_last_tile(self) -> None:
         system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)
