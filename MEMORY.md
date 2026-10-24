@@ -2,6 +2,23 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Runde 5 (2026-10-24, 6.10.0-dev): Befunde aus der Live-Prüfung von 6.9.0-dev
+
+Rollback: `rollback/pre-round5-29338f2` (= `29338f2`, Endstand Runde 4). Tabelle ergänzt:
+
+| Branch | zeigt auf | Bedeutung |
+| --- | --- | --- |
+| `rollback/pre-round5-29338f2` | `29338f2` | Endstand Runde 4 (6.9.0-dev) = „vor Runde 5“ |
+
+(Weitere Branches: Tabellen unter Runde 4 und Runde 3.)
+
+- System „Bereiche & Erweiterungen“: derselbe Flex-Umbruch wie in der Sicherheit (min. 150 px), damit Energie auf dem Handy vollbreit ist.
+- button-card: `variables` kann beim Kaltstart kurz `undefined` sein (`reading 'accent'`). Alle JS-Templates nutzen jetzt `variables?.x`, `states?.[…]`, `entity?.…`; `validate.py::validate_button_card_js` verbietet die ungeschützten Formen. Ursache nicht im echten HA nachgestellt.
+- **Kamera-Korrektur zu Runde 4:** `visibility`/conditional-card UNTERSTÜTZEN Attribute (`attribute:` an `state`/`numeric_state`, siehe `validate-condition.ts`; fehlendes Attribut = `unknown`). Für den 500er hilft das nicht: `Camera.entity_picture` (HA-Core `camera/entity.py`) liefert immer `/api/camera_proxy/<id>?token=…`, das Attribut ist also auch bei defektem Proxy gesetzt. Gewählt: Bild nur bei `streaming`/`recording` (dann gibt es einen Live-Feed), sonst kompakte Kachel mit Tipp → more-info (dort läuft die Live-Ansicht). Nachteil: ein funktionierendes Standbild im Zustand `idle` wird nicht mehr gezeigt.
+- Theme-Test Wetter: gemessen über dem Hero-Verlauf; dunkel liegt der Worst Case (Glow-Ecke) für Sekundärtext bei 4.28:1, deshalb dort Untergrenze 4.0.
+
+Untested im echten HA: Flex-Umbruch System (2+1 bzw. 2+2), defensive Templates beim Kaltstart, Kamera-Kachel (Zustände streaming/idle/unavailable), Hell-Wetter-Kachel.
+
 ## Runde 4 (2026-10-24, 6.9.0-dev): Politur nach Live-Prüfung von 6.8.0-dev
 
 Rollback: `rollback/pre-round4-4b59979` (= `4b59979`, Endstand Runde 3). Tabelle ergänzt:
@@ -14,7 +31,7 @@ Rollback: `rollback/pre-round4-4b59979` (= `4b59979`, Endstand Runde 3). Tabelle
 
 - HA-Sections-View ist ein reines CSS-Grid mit `grid-auto-flow: row` (kein Masonry): Sections liegen zeilenweise, eine Section mit `column_span: 1` nach einer Section mit Span 2 landet in der nächsten Zeile ganz links. Will man etwas in die rechte Spalte neben einer langen Section, muss es in dieselbe Section (Quelltext `hui-sections-view.ts` geprüft, dev-Branch).
 - Flex-Umbruch (`display:flex; flex-wrap:wrap; flex: 1 1 160px` per card_mod auf `#root` des Grid-Cards) statt `auto-fit`: die letzte Kachel einer Zeile füllt den Rest.
-- Kamera: Conditions/visibility prüfen nur Zustände, nicht Attribute. Offline-Ring-Kamera (`unavailable`/`unknown`) → Platzhalter-Kachel. `idle` ohne Bild (HTTP 500 auf dem Kamera-Proxy) bleibt per Config unlösbar; Ursache liegt bei Ring/Integration.
+- Kamera (in Runde 5 korrigiert: Attribute gehen, helfen hier aber nicht): Conditions/visibility prüfen nur Zustände. Offline-Ring-Kamera (`unavailable`/`unknown`) → Platzhalter-Kachel. `idle` ohne Bild (HTTP 500 auf dem Kamera-Proxy) bleibt per Config unlösbar; Ursache liegt bei Ring/Integration.
 - **Befund Konsolenfehler `this._layoutElement.setConfig is not a function`** (nur Kaltstart Overview): Der Text steht in HAs `hui-view.ts` (`_setConfig`: `else { this._layoutElement.setConfig(viewConfig); }`), nicht in layout-card 2.4.7 (dort `setConfig?.()` und `_layoutElement` ist ein anderes Feld). Der Ablauf passt zu einem Ladereihenfolge-Rennen im Frontend: `sections` ist ein lazy geladener View-Typ (`LAZY_LOAD_LAYOUTS`); wird `_setConfig` auf einem noch nicht per Import definierten `hui-sections-view` ein zweites Mal aufgerufen (Neuaufbau beim Kaltstart), existiert `setConfig` noch nicht. Das Repo nutzt `custom:layout-card`/`grid-layout` in keiner View mehr (Test), die Config ist also nicht die Ursache; Fix per Config nicht möglich, Auswirkung vermutlich nur Konsole. Nicht gegen das echte HA-2026.10.2-Frontend nachgestellt (Quelltext nur dev-Branch).
 
 Untested im echten HA: Flex-Umbruch der Sicherheits-Reihen, Szenen & Modi als Stack in der Schnellzugriff-Section (Abstände), Navbar-Padding 112 px, Wetter-Kachel hell, Kamera-Platzhalter, multiline-Untertitel.

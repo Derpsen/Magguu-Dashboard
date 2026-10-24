@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.10.0-dev – 2026-10-24
+
+Fünfte Runde nach Marcos Live-Prüfung von 6.9.0-dev (Rollback-Branch `rollback/pre-round5-29338f2`, kein Tag). Alles nur offline validiert, nicht im echten HA gesehen:
+
+- System Handy, „Bereiche & Erweiterungen“: die Kacheln brechen per Flex-Umbruch um (min. 150 px); die letzte Kachel (Energie) füllt die Zeile, bei sichtbarer Dienste-Kachel 2 + 2
+- button-card-JS-Templates defensiv (Kaltstart-Fehler `ButtonCardJSTemplateError: Cannot read properties of undefined (reading 'accent')`): `variables?.x`, `states?.[…]`, `entity?.…`, Default-Hex für den Raumakzent; `validate.py` meldet ungeschützte Zugriffe in `[[[ … ]]]` (Tests mit gutem/schlechtem Beispiel)
+- Kinderzimmer-Kamera (`camera.kinderzimmer_live_ansicht`): Bild nur noch bei `streaming`/`recording`, sonst eine kompakte Kachel („Tippen für die Live-Ansicht“ bzw. „Kamera nicht erreichbar“, Tipp öffnet more-info). Begründung in MEMORY.md: attribute-Bedingungen gibt es zwar, `entity_picture` ist bei Kameras aber immer gesetzt und erkennt den 500er nicht
+- Theme-Test Wetter-Kachel: Kontrast über dem Hero-Verlauf (Glow über `mag-surface-strong`) statt über dem Seitenhintergrund, Alpha-Minimum 0.6 und Luminanz > 0.9 im Hell-Modus; lokaler Mutationstest mit Alpha 0.3/0.5 wird rot (nicht committet)
+
 ## 6.9.0-dev – 2026-10-24
 
 Vierte Runde (kleine Politur) nach Marcos Live-Prüfung von 6.8.0-dev (Rollback-Branch `rollback/pre-round4-4b59979`, kein Tag; Reverts nur ab dem neuesten Commit rückwärts). Alles nur offline validiert, nicht im echten HA gesehen:
