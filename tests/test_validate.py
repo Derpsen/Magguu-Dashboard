@@ -84,6 +84,16 @@ class ValidateRepositoryTest(unittest.TestCase):
 
         self.assertTrue(any("Version drift" in error for error in errors))
 
+    def test_reports_stale_version_in_readme(self) -> None:
+        (self.root / "VERSION").write_text("1.0.0-dev\n", encoding="utf-8")
+        self.write_package("1.0.0-dev")
+        self.write_yaml("cards/item.yaml", "entity: sensor.documented\n")
+        (self.root / "README.md").write_text("Beispiel `0.9.0-dev · abc1234`\n", encoding="utf-8")
+
+        _, errors = validate_repository(self.root)
+
+        self.assertIn("README.md: nennt Version 0.9.0-dev, VERSION ist 1.0.0-dev", errors)
+
     def test_accepts_matching_version(self) -> None:
         (self.root / "VERSION").write_text("1.0.0-dev\n", encoding="utf-8")
         self.write_package("1.0.0-dev")

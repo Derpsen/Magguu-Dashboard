@@ -166,6 +166,13 @@ VERSION_SENSOR_PATTERN = re.compile(
 VERSION_FORMAT_PATTERN = re.compile(r"\d+\.\d+\.\d+(?:-dev)?")
 
 
+# Doc places that must always name the current version (README example, AGENTS "aktuell").
+DOC_VERSION_PATTERNS = (
+    ("README.md", re.compile(r"\b(\d+\.\d+\.\d+-dev)\b")),
+    ("AGENTS.md", re.compile(r"aktuell `(\d+\.\d+\.\d+(?:-dev)?)`")),
+)
+
+
 def validate_version(root: Path) -> list[str]:
     package_path = root / "packages" / "magguu_dashboard.yaml"
     if not package_path.is_file():
@@ -188,7 +195,15 @@ def validate_version(root: Path) -> list[str]:
             "Version drift: VERSION="
             f"{version} vs packages/magguu_dashboard.yaml={match.group(1)}"
         ]
-    return []
+    errors: list[str] = []
+    for name, pattern in DOC_VERSION_PATTERNS:
+        doc_path = root / name
+        if not doc_path.is_file():
+            continue
+        for found in sorted(set(pattern.findall(doc_path.read_text(encoding="utf-8")))):
+            if found != version:
+                errors.append(f"{name}: nennt Version {found}, VERSION ist {version}")
+    return errors
 
 
 def validate_view_shell_tokens(root: Path) -> list[str]:
