@@ -341,6 +341,17 @@
         rows: auto
       columns: 2
       square: false
+      # Flex-Umbruch wie in der Sicherheit: 2 Kacheln pro Zeile (min. 150 px), eine einzelne letzte Kachel füllt die Zeile
+      card_mod:
+        style: |
+          #root {
+            display: flex !important;
+            flex-wrap: wrap !important;
+          }
+          #root > * {
+            flex: 1 1 150px !important;
+            min-width: 0 !important;
+          }
       cards:
         - type: custom:mushroom-template-card
           entity: sensor.magguu_sicherheitsstatus

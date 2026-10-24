@@ -428,6 +428,15 @@ class DashboardSchemaTest(unittest.TestCase):
         placeholder = next(g for g in guards if g["card"]["type"] != "picture-entity")
         self.assertEqual(placeholder["conditions"][0]["state"], ["unavailable", "unknown"])
 
+    def test_system_area_tiles_wrap_with_a_full_width_last_tile(self) -> None:
+        system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)
+        grids = [c for c in _flatten(system) if c.get("type") == "grid" and any(
+            n.get("tap_action", {}).get("navigation_path") == "energie" for n in c.get("cards", []) if isinstance(n, dict))]
+        self.assertEqual(len(grids), 1)
+        style = grids[0]["card_mod"]["style"]
+        self.assertIn("flex-wrap: wrap", style)
+        self.assertIn("flex: 1 1 150px", style)
+
 
 def _flatten_outside_stacks(node):
     """Wie _flatten, steigt aber nicht in stack-in-card ein (dort bestimmt der Stack die Breite)."""
