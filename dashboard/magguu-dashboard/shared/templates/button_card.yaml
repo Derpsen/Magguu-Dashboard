@@ -513,7 +513,7 @@ room_action_v5:
       - border: 1px solid var(--mag-border, rgba(255,255,255,.04))
     grid:
       - grid-template-areas: '"i n" "i l"'
-      - grid-template-columns: 34px 1fr
+      - grid-template-columns: 34px minmax(0, 1fr)
       - column-gap: 9px
     img_cell:
       - width: 34px
@@ -568,7 +568,7 @@ quick_v5:
       - padding: 13px
     grid:
       - grid-template-areas: '"i n" "i l"'
-      - grid-template-columns: 44px 1fr
+      - grid-template-columns: 44px minmax(0, 1fr)
       - column-gap: 10px
     img_cell:
       - width: 42px
@@ -581,6 +581,10 @@ quick_v5:
     name:
       - justify-self: start
       - font-size: 13px
+      - white-space: normal
+      - text-align: left
+      - line-height: 1.2
+      - min-width: 0
     label:
       - justify-self: start
       - font-size: 11px
@@ -620,7 +624,7 @@ next_event_v5:
       - min-height: 104px
     grid:
       - grid-template-areas: '"i n" "i event" "i l"'
-      - grid-template-columns: 46px 1fr
+      - grid-template-columns: 46px minmax(0, 1fr)
       - grid-template-rows: min-content min-content min-content
     custom_fields:
       event:
@@ -628,10 +632,17 @@ next_event_v5:
         - font-size: 12px
         - font-weight: 700
         - color: var(--primary-text-color)
+        # bis zu zwei Zeilen statt Überlauf am Kachelrand (Spalte darf schrumpfen: minmax(0, 1fr))
+        - display: -webkit-box
+        - -webkit-box-orient: vertical
+        - -webkit-line-clamp: 2
         - overflow: hidden
-        - text-overflow: ellipsis
-        - white-space: nowrap
-        - max-width: 210px
+        - overflow-wrap: anywhere
+        - white-space: normal
+        - min-width: 0
+        - max-width: 100%
+        - text-align: left
+        - line-height: 1.25
 
 waste_event_v6:
   template: next_event_v5

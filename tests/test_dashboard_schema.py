@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from validate import load_resolved, validate_dashboards, validate_themes
+from validate import load_resolved, load_yaml, validate_dashboards, validate_themes
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DASH = "dashboard/magguu-dashboard"
@@ -335,6 +335,18 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertIn("== 'unknown' %}", cards[0]["secondary"])
         self.assertIn("Noch kein Backup", cards[0]["secondary"])
         self.assertNotIn("Noch kein Zeitpunkt", cards[0]["secondary"])
+
+    def test_tile_texts_wrap_instead_of_overflowing_the_tile(self) -> None:
+        templates = load_yaml(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "templates" / "button_card.yaml")
+        for name in ("quick_v5", "next_event_v5", "room_action_v5"):
+            columns = [rule for rule in templates[name]["styles"]["grid"] if "grid-template-columns" in rule]
+            self.assertTrue(columns and "minmax(0, 1fr)" in columns[0]["grid-template-columns"], name)
+        event = {k: v for rule in templates["next_event_v5"]["styles"]["custom_fields"]["event"] for k, v in rule.items()}
+        self.assertEqual(event["white-space"], "normal")
+        self.assertEqual(event["max-width"], "100%")
+        self.assertEqual(event["-webkit-line-clamp"], 2)
+        overview = (REPO_ROOT / "dashboard" / "magguu-dashboard" / "mobile" / "views" / "01-overview.yaml").read_text(encoding="utf-8")
+        self.assertIn(".name-state .state", overview)
 
 
 def _flatten(node):

@@ -59,6 +59,13 @@
           grid_options: { columns: full, rows: auto }
           card_mod:
             style: |
+              /* lange Wetterlagen („Teilweise bewölkt“) umbrechen statt mit „…“ abzuschneiden */
+              .name-state .state {
+                white-space: normal !important;
+                font-size: var(--ha-font-size-xl, 20px) !important;
+                line-height: 1.15 !important;
+                overflow-wrap: anywhere;
+              }
               ha-card {
                 border-radius: var(--ha-section-border-radius, 28px);
                 background: var(--mag-surface, rgba(24,25,39,.94));
