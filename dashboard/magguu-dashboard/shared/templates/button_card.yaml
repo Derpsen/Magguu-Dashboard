@@ -574,10 +574,10 @@ quick_v5:
       - width: 42px
       - height: 42px
       - border-radius: 15px
-      - background: '[[[ return `color-mix(in srgb, ${variables?.accent || '#9b8cff'} 15%, transparent)`; ]]]'
+      - background: '[[[ return `color-mix(in srgb, ${variables?.accent || "#9b8cff"} 15%, transparent)`; ]]]'
     icon:
       - width: 23px
-      - color: '[[[ return `color-mix(in srgb, ${variables?.accent || '#9b8cff'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
+      - color: '[[[ return `color-mix(in srgb, ${variables?.accent || "#9b8cff"} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
     name:
       - justify-self: start
       - font-size: 13px

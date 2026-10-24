@@ -229,28 +229,58 @@ def validate_version(root: Path) -> list[str]:
 JS_TEMPLATE_BLOCK = re.compile(r"\[\[\[(.*?)\]\]\]", re.DOTALL)
 UNSAFE_JS_ACCESS = (
     (re.compile(r"(?<![\w?.])variables\.[A-Za-z_]"), "variables.x statt variables?.x"),
+    (re.compile(r"(?<![\w?.])variables\[\s*[\"']"), "variables[\"x\"] statt variables?.[\"x\"]"),
     (re.compile(r"(?<![\w?.])states\["), "states[...] statt states?.[...]"),
     (re.compile(r"(?<![\w?.])(?:entity|hass)\.[A-Za-z_]"), "entity./hass. ohne optional chaining"),
+    (re.compile(r"(?<![\w?.])hass\?\.states\["), "hass?.states[...] ohne ?.[...]"),
     (re.compile(r"\$\{\s*variables\?\.accent\s*\}"), "${variables?.accent} ohne Default-Hex"),
 )
 
 
+def _template_strings(node: Any, location: str = "") -> Iterable[tuple[str, str]]:
+    if isinstance(node, dict):
+        for key, value in node.items():
+            yield from _template_strings(value, f"{location}/{key}")
+    elif isinstance(node, list):
+        for index, value in enumerate(node):
+            yield from _template_strings(value, f"{location}[{index}]")
+    elif isinstance(node, str) and ("[[[" in node or "]]]" in node):
+        yield location, node
+
+
+def check_js_template_string(value: str) -> list[str]:
+    """Prüft einen GEPARSTEN YAML-String: vollständig geklammert und ohne ungeschützte Zugriffe."""
+    problems: list[str] = []
+    stripped = value.strip()
+    if value.count("[[[") != value.count("]]]"):
+        problems.append("[[[ und ]]] passen nicht zusammen (abgeschnitten? innere ' in einem YAML-Single-Quote-String)")
+    elif stripped.startswith("[[[") and not stripped.endswith("]]]"):
+        problems.append("Template endet nicht mit ]]] (abgeschnitten? innere ' in einem YAML-Single-Quote-String)")
+    for block in JS_TEMPLATE_BLOCK.finditer(value):
+        for pattern, message in UNSAFE_JS_ACCESS:
+            if pattern.search(block.group(1)):
+                problems.append(f"ungeschütztes JS-Template ({message})")
+    return problems
+
+
 def validate_button_card_js(root: Path) -> list[str]:
     """button-card-JS-Templates laufen beim Kaltstart vor dem Merge der Variablen/Entitäten: ungeschützte Zugriffe werfen
-    `ButtonCardJSTemplateError: Cannot read properties of undefined`."""
+    `ButtonCardJSTemplateError: Cannot read properties of undefined`. Geprüft werden die geparsten Strings (ein ' in
+    einem Single-Quote-String kürzt das Template stillschweigend, YAML bleibt dabei gültig: der Rest wird Kommentar)."""
     errors: list[str] = []
     dashboards = root / "dashboard"
     if not dashboards.is_dir():
         return errors
     for path in sorted(dashboards.rglob("*.yaml")):
-        text = path.read_text(encoding="utf-8")
-        if "[[[" not in text:
+        if "[[[" not in path.read_text(encoding="utf-8"):
             continue
-        for block in JS_TEMPLATE_BLOCK.finditer(text):
-            line = text.count("\n", 0, block.start()) + 1
-            for pattern, message in UNSAFE_JS_ACCESS:
-                if pattern.search(block.group(1)):
-                    errors.append(f"{path.relative_to(root)}:{line}: ungeschütztes JS-Template ({message})")
+        try:
+            document = load_yaml(path)
+        except Exception:  # Parse-Fehler meldet validate_yaml
+            continue
+        for location, value in _template_strings(document):
+            for problem in check_js_template_string(value):
+                errors.append(f"{path.relative_to(root)}{location}: {problem}")
     return errors
 
 

@@ -126,6 +126,30 @@ class ValidateRepositoryTest(unittest.TestCase):
         found = [e for e in errors if "ungeschütztes JS-Template" in e]
         self.assertEqual(len(found), 4, errors)
 
+    def test_reports_truncated_button_card_template_from_inner_single_quote(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/shared/templates/cut.yaml",
+            "t:\n  styles:\n    icon:\n"
+            "      - color: '[[[ return `x ${variables?.accent || '#9b8cff'} y`; ]]]'\n"
+            "      - fill: '[[[ return variables?.accent || \"#fff\"; ]]]'\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        found = [e for e in errors if "abgeschnitten" in e]
+        self.assertEqual(len(found), 1, errors)
+        self.assertIn("/t/styles/icon[0]/color", found[0])
+
+    def test_reports_bracket_access_to_variables(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/shared/templates/br.yaml",
+            "t:\n  styles:\n    icon:\n      - color: '[[[ return variables[\"accent\"]; ]]]'\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertTrue(any('variables["x"]' in e for e in errors), errors)
+
     def test_accepts_guarded_button_card_js_access(self) -> None:
         self.write_yaml(
             "dashboard/magguu-dashboard/shared/templates/ok.yaml",
