@@ -18,7 +18,7 @@ sections:
         name: Magguu-Dienste
         icon: mdi:server-network
         variables:
-          subtitle: Website, Bot und letzter Deploy
+          subtitle: Optional – benötigt das Paket magguu_dienste
           accent: '#6cf2ff'
       - !include ../navbar.yaml
 

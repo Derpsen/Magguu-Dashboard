@@ -396,6 +396,14 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertEqual(navbar["desktop"]["mode"], "floating")
         self.assertTrue(navbar["layout"]["auto_padding"]["enabled"])
 
+    def test_dienste_page_is_an_optional_subview_outside_the_navigation(self) -> None:
+        shared = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared"
+        view = load_resolved(shared / "views" / "dienste.yaml", REPO_ROOT)
+        self.assertTrue(view["subview"])
+        self.assertIn("Optional", str(view["sections"][0]["cards"][0]["variables"]["subtitle"]))
+        navbar = load_resolved(shared / "navbar.yaml", REPO_ROOT)
+        self.assertNotIn("dienste", [r["url"].strip("/") for r in navbar["routes"]])
+
 
 def _flatten_outside_stacks(node):
     """Wie _flatten, steigt aber nicht in stack-in-card ein (dort bestimmt der Stack die Breite)."""
