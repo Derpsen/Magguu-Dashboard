@@ -197,7 +197,7 @@ page_header_v6:
       - border-radius: 18px
       - background: '[[[ return `color-mix(in srgb, ${variables.accent || "#a891ff"} 18%, transparent)`; ]]]'
     icon:
-      - color: '[[[ return variables.accent || "#a891ff"; ]]]'
+      - color: '[[[ return `color-mix(in srgb, ${variables.accent || "#a891ff"} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
     name:
       - justify-self: start
       - align-self: end
@@ -373,7 +373,7 @@ room_visual_v5:
       - box-shadow: |
           [[[
             const c=Number(states[variables.light_count_entity]?.state||0);
-            return c>0?`inset 0 0 0 1px ${variables.accent||'#9b8cff'}, 0 0 18px color-mix(in srgb, ${variables.accent||'#9b8cff'} 24%, transparent)`:'none';
+            return c>0?`inset 0 0 0 1px color-mix(in srgb, ${variables.accent||'#9b8cff'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826)), 0 0 18px color-mix(in srgb, ${variables.accent||'#9b8cff'} 24%, transparent)`:'none';
           ]]]
     grid:
       - grid-template-areas: '"n climate" "l climate" "meta meta" "i ." "orb orb"'
@@ -524,7 +524,7 @@ room_action_v5:
       - color: |
           [[[
             const active=['on','open','opening','playing','heat'].includes(entity?.state);
-            return active?(variables.accent||'#ffd166'):'var(--secondary-text-color)';
+            return active?`color-mix(in srgb, ${variables.accent||'#ffd166'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`:'var(--secondary-text-color)';
           ]]]
     name:
       - justify-self: start
@@ -577,7 +577,7 @@ quick_v5:
       - background: '[[[ return `color-mix(in srgb, ${variables.accent} 15%, transparent)`; ]]]'
     icon:
       - width: 23px
-      - color: '[[[ return variables.accent; ]]]'
+      - color: '[[[ return `color-mix(in srgb, ${variables.accent} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
     name:
       - justify-self: start
       - font-size: 13px

@@ -36,6 +36,9 @@ Magguu Midnight:
       mag-border: 'rgba(255,255,255,0.06)'
       mag-text: '#f2f2fb'
       mag-text-muted: '#989caf'
+      # Raum-Akzente (Hex aus den Karten) bleiben im Dunkelmodus unverändert; im Hellmodus werden sie zum Text-Ton hin abgedunkelt.
+      mag-room-accent-strength: '100%'
+      mag-room-accent-ink: '#f2f2fb'
       mag-accent-light: '#ffd166'
       mag-accent-climate: '#57cbd3'
       mag-accent-cover: '#71b7ff'
@@ -90,6 +93,8 @@ Magguu Midnight:
       mag-border: 'rgba(15,23,42,0.10)'
       mag-text: '#171826'
       mag-text-muted: '#585c70'
+      mag-room-accent-strength: '40%'
+      mag-room-accent-ink: '#171826'
       mag-accent-light: '#b45309'
       mag-accent-climate: '#0e7490'
       mag-accent-cover: '#1d4ed8'

@@ -80,6 +80,27 @@ class ThemeTest(unittest.TestCase):
                 ratio = contrast(parse_color(THEME[mode][name]), surface(mode))
                 self.assertGreaterEqual(ratio, 4.5, f"{mode}: {name} = {ratio:.2f}")
 
+    def test_room_accent_hex_values_stay_readable_after_the_light_mode_mix(self) -> None:
+        """Kartenakzente sind Hex-Werte (z. B. #ffd166 = 1,5:1 auf Weiß); im Hellmodus mischt das Theme sie zum Text-Ton."""
+        used = set()
+        for path in (REPO_ROOT / "dashboard").rglob("*.yaml"):
+            used |= {m.lower() for m in re.findall(r"accent: *'(#[0-9a-fA-F]{6})'", path.read_text(encoding="utf-8"))}
+        self.assertGreaterEqual(len(used), 10)
+        for mode in ("dark", "light"):
+            strength = float(THEME[mode]["mag-room-accent-strength"].rstrip("%")) / 100
+            ink = parse_color(THEME[mode]["mag-room-accent-ink"])
+            for hex_value in sorted(used):
+                base = parse_color(hex_value)
+                mixed = tuple(strength * b + (1 - strength) * i for b, i in zip(base[:3], ink[:3])) + (1.0,)
+                for label, bg in (("Karte", surface(mode)), ("Seite", page_background(mode))):
+                    ratio = contrast(mixed, bg)
+                    self.assertGreaterEqual(ratio, 4.5, f"{mode}: {hex_value} auf {label} = {ratio:.2f}")
+
+    def test_room_accent_foregrounds_always_go_through_the_theme_mix(self) -> None:
+        text = (REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "templates" / "button_card.yaml").read_text(encoding="utf-8")
+        self.assertNotRegex(text, r"color: '\[\[\[ return variables\.accent")
+        self.assertGreaterEqual(text.count("--mag-room-accent-strength"), 4)
+
     def test_state_and_primary_colors_reach_non_text_contrast_in_both_modes(self) -> None:
         for mode in ("dark", "light"):
             for name in ("primary-color", "state-light-active-color", "state-cover-active-color", "state-climate-heat-color"):
