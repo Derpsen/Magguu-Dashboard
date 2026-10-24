@@ -111,6 +111,33 @@ class ValidateRepositoryTest(unittest.TestCase):
 
         self.assertTrue(any("kein gültiges Format" in error for error in errors))
 
+    def test_reports_unguarded_button_card_js_access(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/shared/templates/bad.yaml",
+            "t:\n  styles:\n    icon:\n"
+            "      - color: '[[[ return variables.accent; ]]]'\n"
+            "      - background: '[[[ return `x ${variables?.accent} y`; ]]]'\n"
+            "      - border: '[[[ return states[variables?.e]?.state; ]]]'\n"
+            "      - fill: '[[[ return entity.state; ]]]'\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        found = [e for e in errors if "ungeschütztes JS-Template" in e]
+        self.assertEqual(len(found), 4, errors)
+
+    def test_accepts_guarded_button_card_js_access(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/shared/templates/ok.yaml",
+            "t:\n  styles:\n    icon:\n"
+            "      - color: '[[[ return variables?.accent || \"#fff\"; ]]]'\n"
+            "      - fill: '[[[ return states?.[variables?.e]?.state ?? entity?.state; ]]]'\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertFalse(any("ungeschütztes JS-Template" in e for e in errors), errors)
+
     def test_reports_duplicate_yaml_mapping_keys(self) -> None:
         self.write_yaml(
             "dashboard/magguu-dashboard/shared/cards/dup.yaml",

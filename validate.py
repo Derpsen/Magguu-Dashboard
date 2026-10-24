@@ -226,6 +226,34 @@ def validate_version(root: Path) -> list[str]:
     return errors
 
 
+JS_TEMPLATE_BLOCK = re.compile(r"\[\[\[(.*?)\]\]\]", re.DOTALL)
+UNSAFE_JS_ACCESS = (
+    (re.compile(r"(?<![\w?.])variables\.[A-Za-z_]"), "variables.x statt variables?.x"),
+    (re.compile(r"(?<![\w?.])states\["), "states[...] statt states?.[...]"),
+    (re.compile(r"(?<![\w?.])(?:entity|hass)\.[A-Za-z_]"), "entity./hass. ohne optional chaining"),
+    (re.compile(r"\$\{\s*variables\?\.accent\s*\}"), "${variables?.accent} ohne Default-Hex"),
+)
+
+
+def validate_button_card_js(root: Path) -> list[str]:
+    """button-card-JS-Templates laufen beim Kaltstart vor dem Merge der Variablen/Entitäten: ungeschützte Zugriffe werfen
+    `ButtonCardJSTemplateError: Cannot read properties of undefined`."""
+    errors: list[str] = []
+    dashboards = root / "dashboard"
+    if not dashboards.is_dir():
+        return errors
+    for path in sorted(dashboards.rglob("*.yaml")):
+        text = path.read_text(encoding="utf-8")
+        if "[[[" not in text:
+            continue
+        for block in JS_TEMPLATE_BLOCK.finditer(text):
+            line = text.count("\n", 0, block.start()) + 1
+            for pattern, message in UNSAFE_JS_ACCESS:
+                if pattern.search(block.group(1)):
+                    errors.append(f"{path.relative_to(root)}:{line}: ungeschütztes JS-Template ({message})")
+    return errors
+
+
 def validate_view_shell_tokens(root: Path) -> list[str]:
     """Ensure mobile/tablet grid-layout shells keep layout spacing on theme tokens."""
     errors: list[str] = []
@@ -852,6 +880,7 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
 
     errors.extend(validate_version(root))
     errors.extend(validate_view_shell_tokens(root))
+    errors.extend(validate_button_card_js(root))
     errors.extend(validate_shell_commands(documents, root))
     errors.extend(validate_updater(root))
     errors.extend(validate_update_hint(root))

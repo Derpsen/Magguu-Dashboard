@@ -52,11 +52,11 @@ routes:
     badge:
       show: >-
         [[[
-          return Number(states['sensor.magguu_wartung_offen']?.state || 0) > 0;
+          return Number(states?.['sensor.magguu_wartung_offen']?.state || 0) > 0;
         ]]]
       count: >-
         [[[
-          return Number(states['sensor.magguu_wartung_offen']?.state || 0);
+          return Number(states?.['sensor.magguu_wartung_offen']?.state || 0);
         ]]]
 styles: |
   .navbar {

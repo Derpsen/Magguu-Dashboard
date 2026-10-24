@@ -39,8 +39,8 @@ hero_v5:
   custom_fields:
     weather: |
       [[[
-        if (!variables.show_weather) return '';
-        const weather=states['weather.forecast_home'];
+        if (!variables?.show_weather) return '';
+        const weather=states?.['weather.forecast_home'];
         if(!weather||['unknown','unavailable'].includes(weather.state)) {
           return `<div class="hero-weather hero-weather-unavailable">
             <ha-icon icon="mdi:weather-cloudy-alert"></ha-icon>
@@ -105,7 +105,7 @@ hero_v5:
     chips: |
       [[[
         const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-        const S = id => states[id];
+        const S = id => states?.[id];
         const lights = Number(S('sensor.magguu_lichter_an')?.state || 0);
         const windows = Number(S('sensor.magguu_offene_fenster')?.state || 0);
         const battery = S('sensor.iphone_von_marco_battery_level');
@@ -128,13 +128,13 @@ hero_v5:
     grid:
       - grid-template-areas: |
           [[[
-            return variables.show_weather
+            return variables?.show_weather
               ? '"n weather" "l weather" "chips weather"'
               : '"n" "l" "chips"';
           ]]]
       - grid-template-columns: |
           [[[
-            return variables.show_weather
+            return variables?.show_weather
               ? 'minmax(0, 1fr) minmax(210px, .34fr)'
               : 'minmax(0, 1fr)';
           ]]]
@@ -149,10 +149,10 @@ hero_v5:
       - padding-top: 4px
     custom_fields:
       weather:
-        - display: '[[[ return variables.show_weather ? "block" : "none"; ]]]'
+        - display: '[[[ return variables?.show_weather ? "block" : "none"; ]]]'
         - align-self: stretch
         - justify-self: stretch
-        - padding-left: '[[[ return variables.show_weather ? "24px" : "0"; ]]]'
+        - padding-left: '[[[ return variables?.show_weather ? "24px" : "0"; ]]]'
       chips:
         - align-self: end
         - justify-self: start
@@ -177,14 +177,14 @@ page_header_v6:
   show_icon: true
   show_label: true
   size: 38px
-  label: '[[[ return variables.subtitle || ""; ]]]'
+  label: '[[[ return variables?.subtitle || ""; ]]]'
   styles:
     card:
       - min-height: 132px
       - padding: 24px
       - background: |
           [[[
-            return `linear-gradient(140deg, color-mix(in srgb, ${variables.accent || '#a891ff'} 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 64%)`;
+            return `linear-gradient(140deg, color-mix(in srgb, ${variables?.accent || '#a891ff'} 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 64%)`;
           ]]]
       - box-shadow: var(--mag-shadow-card, none)
     grid:
@@ -195,9 +195,9 @@ page_header_v6:
       - width: 52px
       - height: 52px
       - border-radius: 18px
-      - background: '[[[ return `color-mix(in srgb, ${variables.accent || "#a891ff"} 18%, transparent)`; ]]]'
+      - background: '[[[ return `color-mix(in srgb, ${variables?.accent || "#a891ff"} 18%, transparent)`; ]]]'
     icon:
-      - color: '[[[ return `color-mix(in srgb, ${variables.accent || "#a891ff"} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
+      - color: '[[[ return `color-mix(in srgb, ${variables?.accent || "#a891ff"} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
     name:
       - justify-self: start
       - align-self: end
@@ -227,11 +227,11 @@ room_detail_header_v7:
             <ha-icon icon="${icon}" style="color:${color}"></ha-icon>${text}
           </span>`;
         const items=[];
-        const temperature=variables.temperature_entity ? states[variables.temperature_entity] : null;
-        const humidity=variables.humidity_entity ? states[variables.humidity_entity] : null;
-        const opening=variables.opening_entity ? states[variables.opening_entity] : null;
-        const lights=variables.light_count_entity ? states[variables.light_count_entity] : null;
-        const climate=variables.climate_entity ? states[variables.climate_entity] : null;
+        const temperature=variables?.temperature_entity ? states?.[variables?.temperature_entity] : null;
+        const humidity=variables?.humidity_entity ? states?.[variables?.humidity_entity] : null;
+        const opening=variables?.opening_entity ? states?.[variables?.opening_entity] : null;
+        const lights=variables?.light_count_entity ? states?.[variables?.light_count_entity] : null;
+        const climate=variables?.climate_entity ? states?.[variables?.climate_entity] : null;
         const temperatureValue=Number(temperature?.state);
         const humidityValue=Number(humidity?.state);
         const lightCount=Number(lights?.state);
@@ -244,7 +244,7 @@ room_detail_header_v7:
           items.push(pill('mdi:water-percent',`${Math.round(humidityValue)} %`,'var(--mag-accent-climate, #57cbd3)'));
         if(valid(lights) && Number.isFinite(lightCount))
           items.push(pill(lightCount?'mdi:lightbulb-group':'mdi:lightbulb-group-off',lightCount?`${lightCount} an`:'Licht aus',lightCount?'var(--mag-accent-light, #ffd166)':'var(--mag-text-muted, #9aa0b4)'));
-        if(variables.opening_entity) {
+        if(variables?.opening_entity) {
           if(isOpen)
             items.push(pill('mdi:window-open-variant','Öffnung offen','var(--mag-accent-warning, #ff9f43)',true));
           else if(valid(opening))
@@ -264,17 +264,17 @@ room_detail_header_v7:
       - min-height: 166px
       - background: |
           [[[
-            const opening=variables.opening_entity ? states[variables.opening_entity] : null;
-            const climate=variables.climate_entity ? states[variables.climate_entity] : null;
+            const opening=variables?.opening_entity ? states?.[variables?.opening_entity] : null;
+            const climate=variables?.climate_entity ? states?.[variables?.climate_entity] : null;
             const warning=opening?.state==='on' && climate?.attributes?.hvac_action==='heating';
             const open=opening?.state==='on';
             if(warning) return 'linear-gradient(140deg, color-mix(in srgb, var(--mag-accent-danger, #ff6b6b) 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)';
             if(open) return 'linear-gradient(140deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 20%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)';
-            return `linear-gradient(140deg, color-mix(in srgb, ${variables.accent||'#a891ff'} 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)`;
+            return `linear-gradient(140deg, color-mix(in srgb, ${variables?.accent||'#a891ff'} 24%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 66%)`;
           ]]]
       - border: |
           [[[
-            const opening=variables.opening_entity ? states[variables.opening_entity] : null;
+            const opening=variables?.opening_entity ? states?.[variables?.opening_entity] : null;
             if(opening?.state==='on') return '1px solid color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 54%, transparent)';
             return '1px solid var(--mag-border, rgba(255,255,255,.06))';
           ]]]
@@ -309,7 +309,7 @@ room_visual_v5:
     navigation_path: |
       [[[
         const root = window.location.pathname.split('/').filter(Boolean)[0] || 'magguu-mobile';
-        return `/${root}/${variables.room_path}`;
+        return `/${root}/${variables?.room_path}`;
       ]]]
   hold_action:
     action: none
@@ -317,14 +317,14 @@ room_visual_v5:
   size: 82px
   label: |
     [[[
-      if (variables.device_text) return variables.device_text;
-      return variables.temperature_entity ? 'Raumklima' : 'Raumsteuerung';
+      if (variables?.device_text) return variables?.device_text;
+      return variables?.temperature_entity ? 'Raumklima' : 'Raumsteuerung';
     ]]]
   custom_fields:
     climate: |
       [[[
-        const t=variables.temperature_entity ? states[variables.temperature_entity] : null;
-        const h=variables.humidity_entity ? states[variables.humidity_entity] : null;
+        const t=variables?.temperature_entity ? states?.[variables?.temperature_entity] : null;
+        const h=variables?.humidity_entity ? states?.[variables?.humidity_entity] : null;
         const tv=Number(t?.state), hv=Number(h?.state);
         const validTemperature=t&&!['unknown','unavailable'].includes(t.state)&&Number.isFinite(tv);
         const validHumidity=h&&!['unknown','unavailable'].includes(h.state)&&Number.isFinite(hv);
@@ -341,14 +341,14 @@ room_visual_v5:
       ]]]
     meta: |
       [[[
-        const c=Number(states[variables.light_count_entity]?.state||0);
-        const opening=variables.opening_entity ? states[variables.opening_entity] : null;
+        const c=Number(states?.[variables?.light_count_entity]?.state||0);
+        const opening=variables?.opening_entity ? states?.[variables?.opening_entity] : null;
         const open=opening?.state==='on';
         const a=[];
         a.push(c?`${c} ${c===1?'Licht':'Lichter'} an`:'Licht aus');
         if(open) a.push('Fenster offen');
         else if(opening && !['unknown','unavailable'].includes(opening.state)) a.push('Fenster zu');
-        else if(variables.opening_entity) a.push('Fensterstatus fehlt');
+        else if(variables?.opening_entity) a.push('Fensterstatus fehlt');
         return a.join(' · ');
       ]]]
     orb: |
@@ -363,17 +363,17 @@ room_visual_v5:
       - border-bottom: none
       - background: |
           [[[
-            const c=Number(states[variables.light_count_entity]?.state||0);
-            const open=variables.opening_entity && states[variables.opening_entity]?.state==='on';
-            const accent=variables.accent||'#9b8cff';
+            const c=Number(states?.[variables?.light_count_entity]?.state||0);
+            const open=variables?.opening_entity && states?.[variables?.opening_entity]?.state==='on';
+            const accent=variables?.accent||'#9b8cff';
             if(open) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 22%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 62%)';
             if(c>0) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 20%, var(--mag-surface-strong, rgba(24,25,39,.96))), var(--mag-surface-strong, rgba(24,25,39,.96)) 60%)`;
             return 'var(--mag-surface, rgba(24,25,39,.92))';
           ]]]
       - box-shadow: |
           [[[
-            const c=Number(states[variables.light_count_entity]?.state||0);
-            return c>0?`inset 0 0 0 1px color-mix(in srgb, ${variables.accent||'#9b8cff'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826)), 0 0 18px color-mix(in srgb, ${variables.accent||'#9b8cff'} 24%, transparent)`:'none';
+            const c=Number(states?.[variables?.light_count_entity]?.state||0);
+            return c>0?`inset 0 0 0 1px color-mix(in srgb, ${variables?.accent||'#9b8cff'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826)), 0 0 18px color-mix(in srgb, ${variables?.accent||'#9b8cff'} 24%, transparent)`:'none';
           ]]]
     grid:
       - grid-template-areas: '"n climate" "l climate" "meta meta" "i ." "orb orb"'
@@ -420,7 +420,7 @@ room_visual_v5:
         - border-radius: 50%
         - background: |
             [[[
-              return `color-mix(in srgb, ${variables.accent||'#9b8cff'} 7%, transparent)`;
+              return `color-mix(in srgb, ${variables?.accent||'#9b8cff'} 7%, transparent)`;
             ]]]
         - pointer-events: none
   extra_styles: |
@@ -484,17 +484,17 @@ room_action_v5:
     active_label: An
   label: |
     [[[
-      if (!entity || ['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
-      if (entity.entity_id.startsWith('cover.')) {
-        if (entity.state === 'open') return 'Geöffnet';
-        if (entity.state === 'closed') return 'Geschlossen';
-        return entity.state === 'opening' ? 'Öffnet' : entity.state === 'closing' ? 'Schließt' : 'Bedienen';
+      if (!entity || ['unknown','unavailable'].includes(entity?.state)) return 'Nicht verfügbar';
+      if (entity?.entity_id?.startsWith('cover.')) {
+        if (entity?.state === 'open') return 'Geöffnet';
+        if (entity?.state === 'closed') return 'Geschlossen';
+        return entity?.state === 'opening' ? 'Öffnet' : entity?.state === 'closing' ? 'Schließt' : 'Bedienen';
       }
-      if (entity.entity_id.startsWith('climate.')) {
-        const value = entity.attributes?.current_temperature;
+      if (entity?.entity_id?.startsWith('climate.')) {
+        const value = entity?.attributes?.current_temperature;
         return Number.isFinite(Number(value)) ? `${Number(value).toFixed(1).replace('.', ',')} °C` : 'Heizung';
       }
-      return ['on','playing','heat'].includes(entity.state) ? (variables.active_label || 'An') : (variables.inactive_label || 'Aus');
+      return ['on','playing','heat'].includes(entity?.state) ? (variables?.active_label || 'An') : (variables?.inactive_label || 'Aus');
     ]]]
   tap_action:
     action: toggle
@@ -508,7 +508,7 @@ room_action_v5:
       - background: |
           [[[
             const active=['on','open','opening','playing','heat'].includes(entity?.state);
-            return active?`color-mix(in srgb, ${variables.accent||'#ffd166'} 18%, var(--mag-surface-soft, rgba(255,255,255,.035)))`:'var(--mag-surface-soft, rgba(255,255,255,.035))';
+            return active?`color-mix(in srgb, ${variables?.accent||'#ffd166'} 18%, var(--mag-surface-soft, rgba(255,255,255,.035)))`:'var(--mag-surface-soft, rgba(255,255,255,.035))';
           ]]]
       - border: 1px solid var(--mag-border, rgba(255,255,255,.04))
     grid:
@@ -524,7 +524,7 @@ room_action_v5:
       - color: |
           [[[
             const active=['on','open','opening','playing','heat'].includes(entity?.state);
-            return active?`color-mix(in srgb, ${variables.accent||'#ffd166'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`:'var(--secondary-text-color)';
+            return active?`color-mix(in srgb, ${variables?.accent||'#ffd166'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`:'var(--secondary-text-color)';
           ]]]
     name:
       - justify-self: start
@@ -545,13 +545,13 @@ room_link_v5:
     room_path: ''
     link_label: Details
   entity: null
-  label: '[[[ return variables.link_label || "Details"; ]]]'
+  label: '[[[ return variables?.link_label || "Details"; ]]]'
   tap_action:
     action: navigate
     navigation_path: |
       [[[
         const root = window.location.pathname.split('/').filter(Boolean)[0] || 'magguu-mobile';
-        return `/${root}/${variables.room_path}`;
+        return `/${root}/${variables?.room_path}`;
       ]]]
   hold_action:
     action: none
@@ -561,7 +561,7 @@ quick_v5:
   variables:
     accent: '#9b8cff'
     sub: ''
-  label: '[[[ return variables.sub || ""; ]]]'
+  label: '[[[ return variables?.sub || ""; ]]]'
   styles:
     card:
       - min-height: 86px
@@ -574,10 +574,10 @@ quick_v5:
       - width: 42px
       - height: 42px
       - border-radius: 15px
-      - background: '[[[ return `color-mix(in srgb, ${variables.accent} 15%, transparent)`; ]]]'
+      - background: '[[[ return `color-mix(in srgb, ${variables?.accent || '#9b8cff'} 15%, transparent)`; ]]]'
     icon:
       - width: 23px
-      - color: '[[[ return `color-mix(in srgb, ${variables.accent} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
+      - color: '[[[ return `color-mix(in srgb, ${variables?.accent || '#9b8cff'} var(--mag-room-accent-strength, 100%), var(--mag-room-accent-ink, #171826))`; ]]]'
     name:
       - justify-self: start
       - font-size: 13px
@@ -601,15 +601,15 @@ next_event_v5:
   label: |
     [[[
       const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
-      if(!entity||['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
-      const start=entity.attributes?.start_time;
-      if(!start) return variables.empty||'Kein Eintrag';
+      if(!entity||['unknown','unavailable'].includes(entity?.state)) return 'Nicht verfügbar';
+      const start=entity?.attributes?.start_time;
+      if(!start) return variables?.empty||'Kein Eintrag';
       const raw=String(start); const d=new Date(raw.length===10?`${raw}T00:00:00`:raw);
       if(Number.isNaN(d.getTime())) return esc(raw);
       const now=new Date(); const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
       const target=new Date(d.getFullYear(),d.getMonth(),d.getDate()); const diff=Math.round((target-today)/86400000);
       const day=diff===0?'Heute':diff===1?'Morgen':new Intl.DateTimeFormat('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'}).format(d);
-      const allDay=entity.attributes?.all_day===true||raw.length===10;
+      const allDay=entity?.attributes?.all_day===true||raw.length===10;
       return allDay?day:`${day} · ${new Intl.DateTimeFormat('de-DE',{hour:'2-digit',minute:'2-digit'}).format(d)}`;
     ]]]
   custom_fields:
@@ -617,7 +617,7 @@ next_event_v5:
       [[[
         const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
         const message=entity?.attributes?.message;
-        return message ? esc(message) : (variables.empty || 'Kein Eintrag');
+        return message ? esc(message) : (variables?.empty || 'Kein Eintrag');
       ]]]
   styles:
     card:
@@ -658,8 +658,8 @@ waste_event_v6:
     ]]]
   label: |
     [[[
-      if(!entity||['unknown','unavailable'].includes(entity.state)) return 'Nicht verfügbar';
-      const start=entity.attributes?.start_time;
+      if(!entity||['unknown','unavailable'].includes(entity?.state)) return 'Nicht verfügbar';
+      const start=entity?.attributes?.start_time;
       if(!start) return 'Kein Eintrag';
       const raw=String(start);
       const date=new Date(raw.length===10?`${raw}T00:00:00`:raw);
