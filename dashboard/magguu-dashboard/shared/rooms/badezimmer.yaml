@@ -10,6 +10,8 @@ sections:
     column_span: 2
     cards:
       - type: custom:button-card
+        grid_options:
+          columns: full
         template: room_detail_header_v7
         name: Badezimmer
         icon: mdi:shower
@@ -51,6 +53,10 @@ sections:
         grid_options:
           columns: full
         entity: light.badezimmer_licht_bad
+        visibility:
+          - condition: state
+            entity: light.badezimmer_licht_bad
+            state_not: [unknown, unavailable]
         name: Hue Licht Bad
         icon: mdi:ceiling-light
         color: amber

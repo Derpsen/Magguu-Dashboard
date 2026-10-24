@@ -20,12 +20,18 @@ cards:
         name: Flur
         icon: mdi:ceiling-light
         variables: {accent: '#ffd166'}
-      - type: custom:button-card
-        template: room_action_v5
-        entity: light.sonstiges_festavia_string_lights
-        name: Lichterkette
-        icon: mdi:string-lights
-        variables: {accent: '#79d98c'}
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: light.sonstiges_festavia_string_lights
+            state_not: [unknown, unavailable]
+        card:
+          type: custom:button-card
+          template: room_action_v5
+          entity: light.sonstiges_festavia_string_lights
+          name: Lichterkette
+          icon: mdi:string-lights
+          variables: {accent: '#79d98c'}
       - type: custom:button-card
         template: room_action_v5
         entity: light.sonstiges_sonstiges

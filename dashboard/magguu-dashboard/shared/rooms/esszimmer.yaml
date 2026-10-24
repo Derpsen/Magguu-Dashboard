@@ -10,6 +10,8 @@ sections:
     column_span: 2
     cards:
       - type: custom:button-card
+        grid_options:
+          columns: full
         template: room_detail_header_v7
         name: Esszimmer
         icon: mdi:table-furniture

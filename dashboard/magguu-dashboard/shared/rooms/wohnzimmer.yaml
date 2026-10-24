@@ -10,6 +10,8 @@ sections:
     column_span: 2
     cards:
       - type: custom:button-card
+        grid_options:
+          columns: full
         template: room_detail_header_v7
         name: Wohnzimmer
         icon: mdi:sofa-outline
@@ -32,7 +34,7 @@ sections:
         heading_style: subtitle
       - type: tile
         entity: light.wohnzimmer_wohnzimmer
-        name: Wohnzimmer gesamt
+        name: Gesamt
         icon: mdi:lightbulb-group-outline
         color: amber
         features:
@@ -80,7 +82,7 @@ sections:
         card_mod: *detail_card
       - type: tile
         entity: light.computerbereich
-        name: Computerbereich
+        name: PC-Bereich
         icon: mdi:monitor-dashboard
         color: amber
         features:
@@ -88,6 +90,10 @@ sections:
         card_mod: *detail_card
       - type: tile
         entity: light.sonstiges_festavia_string_lights
+        visibility:
+          - condition: state
+            entity: light.sonstiges_festavia_string_lights
+            state_not: [unknown, unavailable]
         name: Festavia
         icon: mdi:string-lights
         color: amber

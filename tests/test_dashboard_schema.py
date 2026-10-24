@@ -180,6 +180,8 @@ class DashboardSchemaTest(unittest.TestCase):
             hero = view["sections"][0]
             self.assertEqual(hero["column_span"], 2, path.name)
             self.assertEqual(hero["cards"][0]["template"], "room_detail_header_v7", path.name)
+            # button-card has its own default width in sections; without `full` the hero fills only one column.
+            self.assertEqual(hero["cards"][0]["grid_options"], {"columns": "full"}, path.name)
             self.assertNotIn("view_layout", path.read_text(encoding="utf-8"), path.name)
             for section in view["sections"][1:]:
                 self.assertEqual(section["cards"][0]["type"], "heading", path.name)
@@ -232,6 +234,37 @@ class DashboardSchemaTest(unittest.TestCase):
         with_missing = [c for c in variants if "calendar.erinnerungen" in c["card"]["entities"]]
         self.assertEqual(len(with_missing), 1)
         self.assertIn("state_not", with_missing[0]["conditions"][0])
+
+    def test_missing_entities_of_the_live_check_are_hidden_not_removed(self) -> None:
+        """These entities were absent in the real HA (v6.6.0 check); they stay in the repo but are guarded."""
+        dead = {
+            "light.badezimmer_licht_bad", "light.sonstiges_festavia_string_lights", "button.vordereingang_tur_offnen",
+        }
+        found: dict[str, int] = {}
+
+        def guarded_by(conditions) -> set[str]:
+            return {c.get("entity") for c in _flatten(conditions) if isinstance(c, dict) and c.get("entity")}
+
+        def visit(node, guard: set[str]) -> None:
+            if isinstance(node, dict):
+                here = set(guard)
+                if node.get("type") == "conditional":
+                    here |= guarded_by(node.get("conditions"))
+                if "visibility" in node:
+                    here |= guarded_by(node["visibility"])
+                entity = node.get("entity")
+                if node.get("type") in {"tile", "custom:button-card", "custom:mushroom-template-card"} and entity in dead:
+                    found[entity] = found.get(entity, 0) + 1
+                    self.assertIn(entity, here, f"{entity} ungeschützt")
+                for key, value in node.items():
+                    visit(value, here if key in {"card", "cards"} or node.get("type") != "conditional" else guard)
+            elif isinstance(node, list):
+                for value in node:
+                    visit(value, guard)
+
+        for path in (REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared").rglob("*.yaml"):
+            visit(load_resolved(path, REPO_ROOT), set())
+        self.assertEqual(set(found), dead)
 
 
 def _flatten(node):
