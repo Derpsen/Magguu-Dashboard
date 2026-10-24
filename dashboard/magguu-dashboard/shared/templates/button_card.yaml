@@ -113,18 +113,18 @@ hero_v5:
         const home = S('person.magguu')?.state === 'home';
         const pill=(icon,text,color)=>`<span class="v5-pill"><ha-icon icon="${icon}" style="color:${color}"></ha-icon>${text}</span>`;
         return `<div class="v5-pills">
-          ${pill(home?'mdi:home-account':'mdi:account-arrow-right-outline',home?'Marco zuhause':'Marco unterwegs',home?'#79d98c':'#9aa0b4')}
-          ${pill('mdi:lightbulb-group',`${lights} an`,lights?'#ffd166':'#9aa0b4')}
-          ${pill(windows?'mdi:window-open-variant':'mdi:window-closed-variant',windows?`${windows} offen`:'Alles zu',windows?'#ff9f43':'#79d98c')}
-          ${pill('mdi:thermometer',avg&&!['unknown','unavailable'].includes(avg.state)?`${esc(avg.state)} °C`:'—','#71b7ff')}
-          ${pill('mdi:battery',battery&&!['unknown','unavailable'].includes(battery.state)?`${esc(battery.state)} %`:'—','#b48cff')}
+          ${pill(home?'mdi:home-account':'mdi:account-arrow-right-outline',home?'Marco zuhause':'Marco unterwegs',home?'var(--mag-accent-success, #79d98c)':'var(--mag-text-muted, #9aa0b4)')}
+          ${pill('mdi:lightbulb-group',`${lights} an`,lights?'var(--mag-accent-light, #ffd166)':'var(--mag-text-muted, #9aa0b4)')}
+          ${pill(windows?'mdi:window-open-variant':'mdi:window-closed-variant',windows?`${windows} offen`:'Alles zu',windows?'var(--mag-accent-warning, #ff9f43)':'var(--mag-accent-success, #79d98c)')}
+          ${pill('mdi:thermometer',avg&&!['unknown','unavailable'].includes(avg.state)?`${esc(avg.state)} °C`:'—','var(--mag-accent-cover, #71b7ff)')}
+          ${pill('mdi:battery',battery&&!['unknown','unavailable'].includes(battery.state)?`${esc(battery.state)} %`:'—','var(--mag-accent-media, #b48cff)')}
         </div>`;
       ]]]
   styles:
     card:
       - min-height: 190px
       - padding: 25px
-      - background: linear-gradient(140deg, rgba(90,76,170,.34), rgba(24,25,39,.96) 52%, rgba(24,25,39,.96))
+      - background: linear-gradient(140deg, var(--mag-hero-glow, rgba(90,76,170,.34)), var(--mag-surface-strong, rgba(24,25,39,.96)) 52%, var(--mag-surface-strong, rgba(24,25,39,.96)))
     grid:
       - grid-template-areas: |
           [[[
@@ -158,8 +158,8 @@ hero_v5:
         - justify-self: start
         - padding-top: 28px
   extra_styles: |
-    .v5-pills{display:flex;flex-wrap:wrap;gap:8px}.v5-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.055);font-size:12px;font-weight:650;white-space:nowrap}.v5-pill ha-icon{width:16px;height:16px}
-    .hero-weather{height:100%;min-height:138px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:15px;padding:18px;border-radius:21px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.055)}
+    .v5-pills{display:flex;flex-wrap:wrap;gap:8px}.v5-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:var(--mag-overlay, rgba(255,255,255,.055));font-size:12px;font-weight:650;white-space:nowrap}.v5-pill ha-icon{width:16px;height:16px}
+    .hero-weather{height:100%;min-height:138px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:15px;padding:18px;border-radius:21px;background:var(--mag-overlay-border, rgba(255,255,255,.045));border:1px solid var(--mag-overlay, rgba(255,255,255,.055))}
     .hero-weather-icon{width:48px;height:48px;color:var(--mag-accent-climate,#57cbd3)}
     .hero-weather-copy{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:3px}
     .hero-weather-condition{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--secondary-text-color)}
@@ -239,23 +239,23 @@ room_detail_header_v7:
         const isHeating=climate?.attributes?.hvac_action==='heating';
 
         if(valid(temperature) && Number.isFinite(temperatureValue))
-          items.push(pill('mdi:thermometer',`${temperatureValue.toFixed(1).replace('.',',')} °C`,'#ff9868'));
+          items.push(pill('mdi:thermometer',`${temperatureValue.toFixed(1).replace('.',',')} °C`,'var(--state-climate-heat-color, #ff9868)'));
         if(valid(humidity) && Number.isFinite(humidityValue))
-          items.push(pill('mdi:water-percent',`${Math.round(humidityValue)} %`,'#57cbd3'));
+          items.push(pill('mdi:water-percent',`${Math.round(humidityValue)} %`,'var(--mag-accent-climate, #57cbd3)'));
         if(valid(lights) && Number.isFinite(lightCount))
-          items.push(pill(lightCount?'mdi:lightbulb-group':'mdi:lightbulb-group-off',lightCount?`${lightCount} an`:'Licht aus',lightCount?'#ffd166':'#9aa0b4'));
+          items.push(pill(lightCount?'mdi:lightbulb-group':'mdi:lightbulb-group-off',lightCount?`${lightCount} an`:'Licht aus',lightCount?'var(--mag-accent-light, #ffd166)':'var(--mag-text-muted, #9aa0b4)'));
         if(variables.opening_entity) {
           if(isOpen)
-            items.push(pill('mdi:window-open-variant','Öffnung offen','#ff9f43',true));
+            items.push(pill('mdi:window-open-variant','Öffnung offen','var(--mag-accent-warning, #ff9f43)',true));
           else if(valid(opening))
-            items.push(pill('mdi:window-closed-variant','Alles geschlossen','#79d98c'));
+            items.push(pill('mdi:window-closed-variant','Alles geschlossen','var(--mag-accent-success, #79d98c)'));
           else
-            items.push(pill('mdi:help-circle-outline','Öffnungsstatus fehlt','#ff9f43',true));
+            items.push(pill('mdi:help-circle-outline','Öffnungsstatus fehlt','var(--mag-accent-warning, #ff9f43)',true));
         }
         if(isOpen && isHeating)
-          items.push(pill('mdi:radiator-off','Heizverlust','#ff6b6b',true));
+          items.push(pill('mdi:radiator-off','Heizverlust','var(--mag-accent-error, #ff6b6b)',true));
         else if(isHeating)
-          items.push(pill('mdi:radiator','Heizung aktiv','#ff9868'));
+          items.push(pill('mdi:radiator','Heizung aktiv','var(--state-climate-heat-color, #ff9868)'));
 
         return `<div class="room-detail-stats">${items.join('')}</div>`;
       ]]]
@@ -290,7 +290,7 @@ room_detail_header_v7:
         - width: 100%
   extra_styles: |
     .room-detail-stats{display:flex;flex-wrap:wrap;gap:8px;width:100%}
-    .room-detail-pill{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 11px;border-radius:999px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.045);font-size:12px;font-weight:700;white-space:nowrap}
+    .room-detail-pill{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:0 11px;border-radius:999px;background:var(--mag-overlay, rgba(255,255,255,.055));border:1px solid var(--mag-overlay-border, rgba(255,255,255,.045));font-size:12px;font-weight:700;white-space:nowrap}
     .room-detail-pill ha-icon{width:17px;height:17px}
     .room-detail-alert{background:rgba(255,159,67,.11);border-color:rgba(255,159,67,.28)}
 
@@ -367,8 +367,8 @@ room_visual_v5:
             const open=variables.opening_entity && states[variables.opening_entity]?.state==='on';
             const accent=variables.accent||'#9b8cff';
             if(open) return 'linear-gradient(145deg, color-mix(in srgb, var(--mag-accent-warning, #ff9f43) 22%, var(--mag-surface, #181927)), var(--mag-surface, #181927) 62%)';
-            if(c>0) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 20%, rgba(24,25,39,.96)), rgba(24,25,39,.96) 60%)`;
-            return 'rgba(24,25,39,.92)';
+            if(c>0) return `linear-gradient(145deg, color-mix(in srgb, ${accent} 20%, var(--mag-surface-strong, rgba(24,25,39,.96))), var(--mag-surface-strong, rgba(24,25,39,.96)) 60%)`;
+            return 'var(--mag-surface, rgba(24,25,39,.92))';
           ]]]
       - box-shadow: |
           [[[
@@ -395,7 +395,7 @@ room_visual_v5:
       - margin-left: -16px
       - margin-bottom: -18px
       - border-radius: 0 100% 0 0
-      - background: rgba(255,255,255,.032)
+      - background: var(--mag-surface-soft, rgba(255,255,255,.035))
       - z-index: 2
     icon:
       - width: 52px
@@ -519,7 +519,7 @@ room_action_v5:
       - width: 34px
       - height: 34px
       - border-radius: 12px
-      - background: rgba(255,255,255,.035)
+      - background: var(--mag-surface-soft, rgba(255,255,255,.035))
     icon:
       - color: |
           [[[
