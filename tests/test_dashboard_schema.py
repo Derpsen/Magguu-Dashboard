@@ -348,6 +348,24 @@ class DashboardSchemaTest(unittest.TestCase):
         overview = (REPO_ROOT / "dashboard" / "magguu-dashboard" / "mobile" / "views" / "01-overview.yaml").read_text(encoding="utf-8")
         self.assertIn(".name-state .state", overview)
 
+    def test_nested_grid_cards_in_sections_use_the_full_section_width(self) -> None:
+        """Ein Grid-Card hat Standardbreite 12 und füllt in einer 2-Spalten-Section (24 Spalten) nur die Hälfte."""
+        shared = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared"
+        checked = 0
+        for path in list((shared / "sections").glob("*.yaml")) + [shared / "cards" / "status-shortcuts.yaml", shared / "cards" / "home-quick.yaml"]:
+            for card in _flatten(load_resolved(path, REPO_ROOT)):
+                if card.get("type") == "grid" and "columns" in card:
+                    checked += 1
+                    self.assertEqual(card.get("grid_options"), {"columns": "full", "rows": "auto"}, f"{path.name}: grid columns={card['columns']}")
+        self.assertGreaterEqual(checked, 9)
+
+    def test_security_tile_rows_adapt_to_the_available_width(self) -> None:
+        sections = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "sicherheit.yaml", REPO_ROOT)
+        rows = [c for c in _flatten(sections) if c.get("type") == "grid" and c.get("columns") == 3]
+        self.assertEqual(len(rows), 3)
+        for row in rows:
+            self.assertIn("auto-fit", row["card_mod"]["style"])
+
 
 def _flatten(node):
     if isinstance(node, dict):

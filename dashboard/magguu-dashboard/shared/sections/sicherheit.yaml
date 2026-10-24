@@ -58,8 +58,17 @@
           }
 
     - type: grid
+      grid_options:
+        columns: full
+        rows: auto
       columns: 3
       square: false
+      # Responsiv: so viele Spalten wie Platz ist (min. 140 px), auf dem Handy 2 statt 3 gequetschter Kacheln
+      card_mod:
+        style: |
+          #root {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+          }
       cards:
         - type: custom:mushroom-template-card
           entity: person.magguu
@@ -112,8 +121,17 @@
       heading_style: subtitle
 
     - type: grid
+      grid_options:
+        columns: full
+        rows: auto
       columns: 3
       square: false
+      # Responsiv: so viele Spalten wie Platz ist (min. 140 px), auf dem Handy 2 statt 3 gequetschter Kacheln
+      card_mod:
+        style: |
+          #root {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+          }
       cards:
         - type: custom:mushroom-template-card
           entity: event.vordereingang_klingeln
@@ -236,8 +254,17 @@
       card_mod: *security_card
 
     - type: grid
+      grid_options:
+        columns: full
+        rows: auto
       columns: 3
       square: false
+      # Responsiv: so viele Spalten wie Platz ist (min. 140 px), auf dem Handy 2 statt 3 gequetschter Kacheln
+      card_mod:
+        style: |
+          #root {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+          }
       cards:
         - type: custom:mushroom-template-card
           entity: sensor.kinderzimmer_batterie

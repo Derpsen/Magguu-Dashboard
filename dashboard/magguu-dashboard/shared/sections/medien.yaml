@@ -43,6 +43,9 @@
           }
 
     - type: grid
+      grid_options:
+        columns: full
+        rows: auto
       columns: 2
       square: false
       cards:
@@ -77,6 +80,9 @@
       heading: Szenen mit bestätigten Geräteaktionen
       heading_style: subtitle
     - type: grid
+      grid_options:
+        columns: full
+        rows: auto
       columns: 2
       square: false
       cards:
