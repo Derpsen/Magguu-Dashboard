@@ -90,6 +90,17 @@ class UpdateScriptAdminGateTest(unittest.TestCase):
         self.assertEqual(script["sequence"][0], {"action": "homeassistant.reload_custom_templates"})
 
 
+class UnseenReportGateTest(unittest.TestCase):
+    def test_report_script_is_admin_gated_and_only_toggles_the_boolean(self) -> None:
+        script = load_yaml(PACKAGE)["script"]["magguu_ungesehen_bericht_anzeigen"]
+        self.assertEqual(script["sequence"][0], {"action": "homeassistant.reload_custom_templates"})
+        actions = [step.get("action") for step in script["sequence"] if "action" in step]
+        self.assertEqual(actions, ["homeassistant.reload_custom_templates", "input_boolean.turn_on", "input_boolean.turn_off"])
+        self.assertEqual(script["mode"], "restart")
+        self.assertIn("magguu_ungesehen_bericht_offen", load_yaml(PACKAGE)["input_boolean"])
+        self.assertIs(load_yaml(PACKAGE)["input_boolean"]["magguu_ungesehen_bericht_offen"]["initial"], False)
+
+
 class ShellCommandLockdownTest(unittest.TestCase):
     """shell_command is callable by any HA user: fixed command, no templates, updater reads no args/env."""
 

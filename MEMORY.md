@@ -2,6 +2,12 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Ungesehene Medien (Bericht) auf der Dienste-Seite (2026-10-25, 6.10.3-dev)
+
+- Auftrag (Marco Go via Buddy, Schritt C): reiner Bericht, kein Löschpfad, nur für Admin. Rollback `rollback/pre-unseen-card-4c7fe5f`, kein Tag. Daten: Bot rechnet (Tautulli lesend, 24 h Cache) und liefert das neue Feld `unseen` über den bestehenden Bearer-`/api/status`; HA übernimmt es als Attribut von `sensor.magguu_bot_status`.
+- Admin-Gate: HA-Karten kennen kein `is_admin`, Marcos User-ID steht nicht im Repo. Deshalb Muster des Update-Scripts: admin-only Core-Service als erster Script-Schritt schaltet `input_boolean.magguu_ungesehen_bericht_offen` für 5 Minuten, eine `conditional`-Karte zeigt erst dann die Liste. Restrisiko: Währenddessen sehen auch andere HA-User die Karte, und das Attribut ist per HA-API für jeden User lesbar (nur Titel/Größe, keine Nutzerdaten). Stärker: `visibility: condition: user` mit Marcos ID (nicht geraten).
+- Fallstrick: im Jinja `u['items']` verwenden, `u.items` ist die dict-Methode. Templates in `tests/test_unseen_card.py` offline mit jinja2 gerendert (kein Attribut, leer, Daten, Sonderzeichen, partial); im echten HA nicht gesehen.
+
 ## FAQ-Nutzung auf der Dienste-Seite (2026-10-25, 6.10.2-dev)
 
 - Auftrag (Marco via Buddy): Bot-FAQ-Statistik im Dashboard sichtbar. Rollback `rollback/pre-faqstats-6a105d4`, kein Tag. Weg: bestehender REST-Sensor `sensor.magguu_bot_status` (Bearer), neues Attribut `faq`, keine neue Angriffsfläche, nur lesend.

@@ -13,6 +13,15 @@
 - CI-Fehleralarm, Redaction verschärft: Log-Zeilen werden vor dem Versand auch von nackten Tokens (`ghp_`/`gho_`/`ghs_`/`github_pat_`), JWTs, URLs, Bearer-Werten und langen Hex/Base64-Strings bereinigt (nicht nur per Keyword-Zeile); Test `tests/test_ci_alarm_redact.py` führt die echte Funktion mit Fake-Werten aus.
 - CI-Fehleralarm (nur Actions, kein Dashboard-Code): wiederverwendbarer Workflow `.github/workflows/ci-alarm.yml`, aufgerufen von `validate` und `quality` (nur Push auf main, nur bei `failure()`). Sendet Repo, Workflow, SHA, Run-URL und die letzten ~20 geschwärzten Logzeilen als JSON an das Repo-Secret `ESCALATION_WEBHOOK_URL` (`Authorization: Bearer` aus `ESCALATION_BEARER`, nur per env, nie ausgegeben). Leeres Secret oder kein https = stilles Überspringen, `continue-on-error`, 10 s Timeout, kein Alarm bei Re-Runs, `Idempotency-Key` = sha256(repo|workflow|sha).
 
+## 6.10.3-dev – 2026-10-25
+
+Bericht über ungesehene Plex-Medien (Rollback-Branch `rollback/pre-unseen-card-4c7fe5f`, kein Tag). Nur offline validiert und gerendert, nicht im echten HA gesehen:
+
+- Dienste-Seite: neue Admin-Karte „Ungesehene Medien (Bericht)“ mit dem deutlichen Hinweis „Nur Bericht – nichts wird gelöscht“: Top 25 nach Größe mit Bibliothek und letzter Sicht („nie“ = nicht im Tautulli-Verlauf). Rein lesend, kein Löschpfad.
+- Admin-Gate wie beim Update-Script: Die Liste öffnet sich nur über `script.magguu_ungesehen_bericht_anzeigen` (erster Schritt admin-only `homeassistant.reload_custom_templates`, Nicht-Admins bekommen Unauthorized) für 5 Minuten über `input_boolean.magguu_ungesehen_bericht_offen` (nach HA-Neustart zu).
+- `docs/optional/magguu_dienste.yaml`: `sensor.magguu_bot_status` übernimmt das neue Attribut `unseen` aus `GET /api/status` (gleicher Bearer-Weg, kein neuer Endpoint). Fehlt es (älterer Bot, Bericht aus), zeigt die Karte „Keine Daten“.
+- Version `6.10.3-dev` (`VERSION` + `magguu_dashboard_version`).
+
 ## 6.10.2-dev – 2026-10-25
 
 FAQ-Nutzung vom MagguuBot (Rollback-Branch `rollback/pre-faqstats-6a105d4`, kein Tag). Nur offline validiert, nicht im echten HA gesehen:

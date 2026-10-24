@@ -24,6 +24,7 @@ rest:
           - staleHours
           - webhooks
           - faq
+          - unseen
           - generatedAt
 
   - resource: !secret magguu_website_status_url

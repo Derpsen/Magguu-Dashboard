@@ -25,6 +25,14 @@ input_text:
     icon: mdi:update
     max: 80
 
+input_boolean:
+  # Opens the "Ungesehene Medien (Bericht)" card on the Dienste page for a few
+  # minutes; only the admin-gated script below switches it. Reset on restart.
+  magguu_ungesehen_bericht_offen:
+    name: Magguu Ungesehene Medien Bericht offen
+    icon: mdi:shield-lock-outline
+    initial: false
+
 input_datetime:
   magguu_dashboard_letzte_aktualisierung:
     name: Magguu Dashboard letzte Aktualisierung
@@ -64,6 +72,24 @@ group:
       - switch.schlafzimmer_schlafzimmer_licht
 
 script:
+  magguu_ungesehen_bericht_anzeigen:
+    alias: Magguu Ungesehene Medien Bericht anzeigen
+    icon: mdi:shield-lock-outline
+    # restart: pressing again extends the window instead of stacking runs.
+    mode: restart
+    sequence:
+      # Admin gate (same pattern as magguu_dashboard_aktualisieren): the first
+      # step is an admin-only core service; a non-admin caller gets Unauthorized
+      # and the report stays closed. Read-only report, nothing is deleted.
+      - action: homeassistant.reload_custom_templates
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.magguu_ungesehen_bericht_offen
+      - delay: "00:05:00"
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.magguu_ungesehen_bericht_offen
+
   magguu_dashboard_aktualisieren:
     alias: Magguu Dashboard aktualisieren
     icon: mdi:cloud-download-outline
@@ -394,7 +420,7 @@ template:
       - name: Magguu Dashboard Version
         unique_id: magguu_dashboard_version
         icon: mdi:view-dashboard-variant-outline
-        state: "6.10.2-dev"
+        state: "6.10.3-dev"
 
       # Commit SHA of the installed sources; the installer (update-ha.sh /
       # install.sh) stamps the real 40-char SHA here, "unbekannt" if unknown.

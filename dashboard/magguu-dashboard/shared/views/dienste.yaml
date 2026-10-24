@@ -170,3 +170,55 @@ sections:
           {% endfor -%}
           {% endif %}
         card_mod: *service_card
+
+      - type: heading
+        heading: Ungesehene Medien (Bericht)
+        heading_style: subtitle
+      - type: custom:mushroom-template-card
+        grid_options:
+          columns: full
+          rows: auto
+        entity: script.magguu_ungesehen_bericht_anzeigen
+        primary: Bericht anzeigen (nur Admin)
+        secondary: >-
+          Nur Bericht – nichts wird gelöscht. Öffnet die Liste für 5 Minuten.
+          {% if is_state('input_boolean.magguu_ungesehen_bericht_offen', 'on') %}Gerade geöffnet.{% endif %}
+        multiline_secondary: true
+        icon: mdi:shield-lock-outline
+        icon_color: >-
+          {{ 'green' if is_state('input_boolean.magguu_ungesehen_bericht_offen', 'on') else 'purple' }}
+        tap_action:
+          action: call-service
+          service: script.turn_on
+          target:
+            entity_id: script.magguu_ungesehen_bericht_anzeigen
+        hold_action: {action: none}
+        card_mod: *service_card
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: input_boolean.magguu_ungesehen_bericht_offen
+            state: 'on'
+        card:
+          type: markdown
+          entity_id: sensor.magguu_bot_status
+          content: |-
+            {% set u = state_attr('sensor.magguu_bot_status', 'unseen') %}
+            **Nur Bericht – nichts wird gelöscht.** Es gibt keine Löschfunktion, weder im Bot noch hier.
+            {% if not u %}
+
+            Keine Daten – Bot ohne Bericht (Tautulli nicht angebunden, Bericht abgeschaltet, noch nicht berechnet oder älterer Bot) oder Paket nicht eingerichtet.
+            {% elif not u['items'] %}
+
+            Stand {{ as_timestamp(u['generatedAt']) | timestamp_custom('%d.%m.%Y · %H:%M', true) }}: keine Titel gefunden, die die Kriterien erfüllen.
+            {% else %}
+
+            Stand {{ as_timestamp(u['generatedAt']) | timestamp_custom('%d.%m.%Y · %H:%M', true) }} · die {{ u['items'] | length }} größten Titel, die nie oder seit mindestens {{ u['staleDays'] }} Tagen nicht gesehen wurden und seit mindestens {{ u['minAgeDays'] }} Tagen in der Bibliothek sind.
+
+            {% for i in u['items'] -%}
+            {{ loop.index }}. {{ i['title'] | string | replace('*', '') | replace('_', ' ') | replace('`', '') | replace('[', '(') | replace(']', ')') | replace('<', '') | replace('>', '') | replace('|', ' ') | truncate(70) }} · {{ (((i['sizeBytes'] | float(0)) / 1000000000000) | round(2) | string | replace('.', ',') ~ ' TB') if (i['sizeBytes'] | float(0)) >= 1000000000000 else (((i['sizeBytes'] | float(0)) / 1000000000) | round(1) | string | replace('.', ',') ~ ' GB') }} · {{ i['library'] | string | replace('*', '') | replace('_', ' ') | replace('`', '') | truncate(30) }} · letzte Sicht: {{ (as_timestamp(i['lastPlayedAt']) | timestamp_custom('%d.%m.%Y', true)) if i['lastPlayedAt'] else 'nie' }}
+            {% endfor %}
+
+            „nie“ heißt: nicht im Tautulli-Verlauf (Wiedergaben von vor Tautulli sind unbekannt).{% if u['partial'] %} Sehr große Bibliothek: nur die größten Einträge wurden geprüft, die Liste kann unvollständig sein.{% endif %}
+            {% endif %}
+          card_mod: *service_card
