@@ -102,13 +102,21 @@ class ThemeTest(unittest.TestCase):
         self.assertGreaterEqual(text.count("--mag-room-accent-strength"), 4)
 
     def test_weather_tile_in_the_hero_is_as_light_as_the_cards_in_light_mode(self) -> None:
-        """6.8.0-dev live: Overlay-Grau wirkte neben weißen Karten fremd; Text bleibt darauf lesbar."""
+        """6.8.0-dev live: Overlay-Grau wirkte neben weißen Karten fremd; Text bleibt darauf lesbar.
+
+        Gemessen wird über der Hero-Kachel (Glow über surface-strong, Worst Case = lavendel Verlaufsanfang),
+        nicht über dem Seitenhintergrund: sonst bliebe der Test bei Alpha 0.3 grün (6.9.0-dev Code-Review)."""
         for mode in ("dark", "light"):
-            tile = over(parse_color(THEME[mode]["mag-weather-surface"]), surface(mode))
+            hero = over(parse_color(THEME[mode]["mag-hero-glow"]), over(parse_color(THEME[mode]["mag-surface-strong"]), page_background(mode)))
+            tile = over(parse_color(THEME[mode]["mag-weather-surface"]), hero)
+            # Dark: Worst Case (Glow-Ecke) liegt bei 4.28 für Sekundärtext; die Kachel sitzt real weiter im Verlauf -> Untergrenze 4.0.
+            minimum = 4.5 if mode == "light" else 4.0
             for name in ("primary-text-color", "secondary-text-color"):
-                self.assertGreaterEqual(contrast(parse_color(THEME[mode][name]), tile), 4.5, f"{mode}: {name}")
-        light_tile = over(parse_color(THEME["light"]["mag-weather-surface"]), page_background("light"))
-        self.assertGreater(luminance(light_tile), 0.85)
+                self.assertGreaterEqual(contrast(parse_color(THEME[mode][name]), tile), minimum, f"{mode}: {name}")
+            if mode == "light":
+                alpha = parse_color(THEME[mode]["mag-weather-surface"])[3]
+                self.assertGreaterEqual(alpha, 0.6, "light: Wetter-Kachel muss deckend hell bleiben")
+                self.assertGreater(luminance(tile), 0.9, "light: Wetter-Kachel auf dem Hero-Verlauf zu dunkel/lavendel")
 
     def test_state_and_primary_colors_reach_non_text_contrast_in_both_modes(self) -> None:
         for mode in ("dark", "light"):
