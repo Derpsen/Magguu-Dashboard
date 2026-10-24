@@ -1,6 +1,8 @@
 type: custom:navbar-card
-view_layout:
-  grid-column: 1 / -1
+# Sections-View: fixed positioniert, belegt nur eine Zeile im ersten Abschnitt; Auto-Padding der Karte hält Platz frei.
+grid_options:
+  columns: full
+  rows: auto
 layout:
   auto_padding:
     enabled: true

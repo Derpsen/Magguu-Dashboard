@@ -84,7 +84,18 @@ class DashboardSchemaTest(unittest.TestCase):
             "- title: A\n  path: a\n  type: sections\n  max_columns: 2\n  sections:\n"
             "    - column_span: 3\n      cards: [{type: heading, heading: X}]\n"
         )
-        self.assertError("column_span 3 größer als max_columns 2")
+        # HA begrenzt column_span auf die sichtbare Spaltenzahl (hui-sections-view): kein Fehler.
+        self.assertEqual(self.errors(), [])
+
+    def test_mushroom_in_section_needs_rows_auto(self) -> None:
+        self.view(
+            "- title: A\n  path: a\n  type: sections\n  sections:\n"
+            "    - cards:\n"
+            "        - {type: custom:mushroom-template-card, primary: X}\n"
+            "        - {type: conditional, conditions: [{condition: state, entity: sensor.a, state: 'on'}], card: {type: custom:mushroom-template-card, primary: Y}}\n"
+            "        - {type: custom:mushroom-template-card, primary: Z, grid_options: {columns: 12, rows: auto}}\n"
+        )
+        self.assertEqual(sum("rows: auto" in e for e in self.errors()), 2, self.errors())
 
     def test_grid_layout_view_must_not_define_sections(self) -> None:
         self.view("- title: A\n  path: a\n  type: custom:grid-layout\n  sections: []\n")
@@ -216,7 +227,7 @@ class DashboardSchemaTest(unittest.TestCase):
 
     def test_optional_package_entities_are_only_used_behind_conditions(self) -> None:
         """calendar.erinnerungen and the Dienste sensors may be missing in a real HA (console errors)."""
-        cards = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "cards"
+        cards = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections"
         system = load_resolved(cards / "system.yaml", REPO_ROOT)
         link = [c for c in _flatten(system) if c.get("navigation_path") == "dienste"]
         self.assertEqual(len(link), 1)
@@ -225,7 +236,7 @@ class DashboardSchemaTest(unittest.TestCase):
             if c.get("type") == "conditional" and c.get("card", {}).get("tap_action", {}).get("navigation_path") == "dienste"
         ]
         self.assertEqual(len(guarded), 1)
-        calendar = load_resolved(cards / "calendar.yaml", REPO_ROOT)
+        calendar = [c for s in load_resolved(cards / "kalender.yaml", REPO_ROOT) for c in s.get("cards", [])]
         for card in calendar:
             if card.get("type") == "calendar":
                 self.fail("Kalenderkarte außerhalb einer Bedingung")
@@ -265,6 +276,34 @@ class DashboardSchemaTest(unittest.TestCase):
         for path in (REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared").rglob("*.yaml"):
             visit(load_resolved(path, REPO_ROOT), set())
         self.assertEqual(set(found), dead)
+
+    def test_every_real_view_is_native_sections_with_one_navbar_in_the_first_section(self) -> None:
+        from validate import _dashboard_views
+        for device in ("mobile", "tablet"):
+            views, errors = _dashboard_views(REPO_ROOT, device)
+            self.assertEqual(errors, [])
+            self.assertGreaterEqual(len(views), 15)
+            for view in views:
+                where = f"{device}/{view['path']}"
+                self.assertEqual(view.get("type"), "sections", where)
+                sections = view["sections"]
+                navbars = [(i, c) for i, s in enumerate(sections) for c in s.get("cards", []) if c.get("type") == "custom:navbar-card"]
+                if view["path"] in {"overview", "raeume", "klima", "system", "kalender", "sicherheit", "medien", "energie", "dienste"}:
+                    self.assertEqual([i for i, _ in navbars], [0], where)
+                    self.assertEqual(navbars[0][1]["grid_options"], {"columns": "full", "rows": "auto"}, where)
+                for card in _flatten(view):
+                    self.assertNotIn("view_layout", card, where)
+                    self.assertNotEqual(card.get("type"), "custom:layout-card", where)
+
+    def test_entity_card_titles_use_the_heading_card_font(self) -> None:
+        sections = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections"
+        seen = 0
+        for path in sections.glob("*.yaml"):
+            for card in _flatten(load_resolved(path, REPO_ROOT)):
+                if card.get("type") == "entities" and card.get("title"):
+                    seen += 1
+                    self.assertIn("--ha-heading-card-title-font-size", str(card.get("card_mod")), f"{path.name}: {card['title']}")
+        self.assertGreaterEqual(seen, 4)
 
 
 def _flatten(node):

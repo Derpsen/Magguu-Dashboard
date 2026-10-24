@@ -1,14 +1,19 @@
-- type: custom:button-card
-  template: page_header_v6
-  name: Medien
-  icon: mdi:play-box-multiple-outline
-  variables:
-    subtitle: Wiedergabe, Wohnzimmer-Geräte und passende Szenen
-    accent: '#b48cff'
-  view_layout: {grid-area: hero}
+- type: grid
+  column_span: 3
+  cards:
+    - type: custom:button-card
+      grid_options:
+        columns: full
+      template: page_header_v6
+      name: Medien
+      icon: mdi:play-box-multiple-outline
+      variables:
+        subtitle: Wiedergabe, Wohnzimmer-Geräte und passende Szenen
+        accent: '#b48cff'
+    - !include ../navbar.yaml
 
-- type: vertical-stack
-  view_layout: {grid-area: player}
+- type: grid
+  column_span: 2
   cards:
     - type: heading
       heading: Wohnzimmer
@@ -17,6 +22,8 @@
       heading: Soundbar und Geräte zentral steuern
       heading_style: subtitle
     - type: tile
+      grid_options:
+        columns: full
       entity: media_player.av_samsung_soundbar_q90r
       name: Samsung Soundbar
       icon: mdi:soundbar
@@ -60,8 +67,8 @@
             confirmation:
               text: Computer-Steckdose wirklich umschalten?
 
-- type: vertical-stack
-  view_layout: {grid-area: scenes}
+- type: grid
+  column_span: 1
   cards:
     - type: heading
       heading: Schnell starten
@@ -99,7 +106,3 @@
               entity_id: script.magguu_gaming
             confirmation:
               text: Gaming-Modus starten? Die Computer-Steckdose wird eingeschaltet und das Wohnzimmerlicht angepasst.
-
-# Plex/Musik ausgeblendet bis echte Entitäts-IDs in docs/entities.md stehen.
-
-- !include ../navbar.yaml

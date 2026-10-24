@@ -1,4 +1,5 @@
-type: vertical-stack
+type: grid
+column_span: 2
 cards:
   - type: heading
     heading: Szenen & Modi
@@ -23,7 +24,7 @@ cards:
           icon: mdi:weather-sunset-up
           variables:
             accent: '#ffd166'
-            sub: Rollläden öffnen
+            sub: Rollläden auf
           tap_action:
             action: call-service
             service: script.turn_on
@@ -41,7 +42,7 @@ cards:
         icon: mdi:weather-night
         variables:
           accent: '#8d83ff'
-          sub: Licht, Geräte & Rollläden
+          sub: Alles aus & zu
         tap_action:
           action: call-service
           service: script.turn_on
@@ -59,7 +60,7 @@ cards:
         icon: mdi:chef-hat
         variables:
           accent: '#ffd166'
-          sub: Küche & Esszimmer
+          sub: Küche & Essen
         tap_action:
           action: call-service
           service: script.turn_on
@@ -75,7 +76,7 @@ cards:
         icon: mdi:account-group-outline
         variables:
           accent: '#e886ad'
-          sub: Wohnbereiche einladen
+          sub: Wohnbereiche
         tap_action:
           action: call-service
           service: script.turn_on
@@ -91,7 +92,7 @@ cards:
         icon: mdi:home-export-outline
         variables:
           accent: '#79d98c'
-          sub: Ausschalten & prüfen
+          sub: Aus & prüfen
         tap_action:
           action: call-service
           service: script.turn_on

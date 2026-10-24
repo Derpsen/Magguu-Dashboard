@@ -1,4 +1,7 @@
 type: custom:stack-in-card
+grid_options:
+  columns: full
+  rows: auto
 mode: vertical
 cards:
   - type: custom:button-card

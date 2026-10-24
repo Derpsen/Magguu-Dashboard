@@ -15,7 +15,7 @@ except ImportError:  # CI installs PyYAML only; the structural checks live in va
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = load_yaml(ROOT / "packages" / "magguu_dashboard.yaml")
-SYSTEM = load_yaml(ROOT / "dashboard" / "magguu-dashboard" / "shared" / "cards" / "system.yaml")
+SYSTEM = load_yaml(ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml")
 SHA_A = "a" * 40
 SHA_B = "b" * 40
 
@@ -29,11 +29,20 @@ def template_sensor(unique_id: str) -> dict:
 
 
 def version_card() -> dict:
-    for item in SYSTEM:
-        for card in item.get("cards", []):
-            for inner in card.get("cards", []):
-                if inner.get("primary") == "Dashboard-Version":
-                    return inner
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("primary") == "Dashboard-Version":
+                return node
+            node = list(node.values())
+        for child in node if isinstance(node, list) else []:
+            found = walk(child)
+            if found:
+                return found
+        return None
+
+    found = walk(SYSTEM)
+    if found:
+        return found
     raise AssertionError("Dashboard-Version card")
 
 
@@ -72,7 +81,7 @@ class ValidatorEnforcesUpdateHintTest(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
         self.package = (ROOT / "packages" / "magguu_dashboard.yaml").read_text(encoding="utf-8")
-        self.system = (ROOT / "dashboard" / "magguu-dashboard" / "shared" / "cards" / "system.yaml").read_text(encoding="utf-8")
+        self.system = (ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml").read_text(encoding="utf-8")
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
@@ -80,7 +89,7 @@ class ValidatorEnforcesUpdateHintTest(unittest.TestCase):
     def errors(self, package: str | None = None, system: str | None = None) -> list[str]:
         (self.root / "packages").mkdir(exist_ok=True)
         (self.root / "packages" / "magguu_dashboard.yaml").write_text(package or self.package, encoding="utf-8")
-        card = self.root / "dashboard" / "magguu-dashboard" / "shared" / "cards" / "system.yaml"
+        card = self.root / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml"
         card.parent.mkdir(parents=True, exist_ok=True)
         card.write_text(system or self.system, encoding="utf-8")
         return validate_update_hint(self.root)

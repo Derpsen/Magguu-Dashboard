@@ -5,40 +5,25 @@ path: dienste
 icon: mdi:server-network
 subview: true
 theme: Magguu Midnight
-type: custom:grid-layout
-layout:
-  max-width: var(--mag-content-max-width, 1460px)
-  margin: 0 auto
-  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
-  grid-gap: 14px
-  grid-template-columns: repeat(2, minmax(0, 1fr))
-  grid-template-areas: |
-    "hero hero"
-    "services deploy"
-    "webhooks deploy"
-  mediaquery:
-    "(max-width: 860px)":
-      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) var(--mag-space-navbar-clearance, 96px)
-      grid-template-columns: minmax(0, 1fr)
-      grid-template-areas: |
-        "hero"
-        "services"
-        "deploy"
-        "webhooks"
-cards:
-  - type: custom:button-card
-    template: page_header_v6
-    name: Magguu-Dienste
-    icon: mdi:server-network
-    variables:
-      subtitle: Website, Bot und letzter Deploy
-      accent: '#6cf2ff'
-    view_layout:
-      grid-area: hero
+type: sections
+max_columns: 2
+sections:
+  - type: grid
+    column_span: 2
+    cards:
+      - type: custom:button-card
+        grid_options:
+          columns: full
+        template: page_header_v6
+        name: Magguu-Dienste
+        icon: mdi:server-network
+        variables:
+          subtitle: Website, Bot und letzter Deploy
+          accent: '#6cf2ff'
+      - !include ../navbar.yaml
 
-  - type: vertical-stack
-    view_layout:
-      grid-area: services
+  - type: grid
+    column_span: 1
     cards:
       - type: heading
         heading: Dienste
@@ -47,6 +32,9 @@ cards:
         heading: Erreichbarkeit und Laufzeit
         heading_style: subtitle
       - type: custom:mushroom-template-card
+        grid_options:
+          columns: full
+          rows: auto
         entity: sensor.magguu_website_status
         primary: Website
         secondary: >-
@@ -71,6 +59,9 @@ cards:
               box-shadow: var(--mag-shadow-card, none);
             }
       - type: custom:mushroom-template-card
+        grid_options:
+          columns: full
+          rows: auto
         entity: sensor.magguu_bot_status
         primary: MagguuBot
         secondary: >-
@@ -90,9 +81,8 @@ cards:
         tap_action: {action: more-info}
         card_mod: *service_card
 
-  - type: vertical-stack
-    view_layout:
-      grid-area: deploy
+  - type: grid
+    column_span: 1
     cards:
       - type: heading
         heading: Letzter Deploy
@@ -101,6 +91,9 @@ cards:
         heading: Docker-Workflow auf main
         heading_style: subtitle
       - type: custom:mushroom-template-card
+        grid_options:
+          columns: full
+          rows: auto
         entity: sensor.magguu_bot_letzter_deploy
         primary: MagguuBot-Image
         secondary: &deploy_secondary >-
@@ -121,6 +114,9 @@ cards:
         tap_action: {action: more-info}
         card_mod: *service_card
       - type: custom:mushroom-template-card
+        grid_options:
+          columns: full
+          rows: auto
         entity: sensor.magguu_website_letzter_deploy
         primary: Website-Image
         secondary: *deploy_secondary
@@ -130,9 +126,8 @@ cards:
         tap_action: {action: more-info}
         card_mod: *service_card
 
-  - type: vertical-stack
-    view_layout:
-      grid-area: webhooks
+  - type: grid
+    column_span: 2
     cards:
       - type: heading
         heading: Bot-Webhooks
@@ -141,6 +136,9 @@ cards:
         heading: Letzter Empfang je Quelle
         heading_style: subtitle
       - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
         entity_id: sensor.magguu_bot_status
         content: >-
           {% set hooks = state_attr('sensor.magguu_bot_status', 'webhooks') %}
@@ -151,5 +149,3 @@ cards:
           {% endfor %}
           {% endif %}
         card_mod: *service_card
-
-  - !include ../navbar.yaml

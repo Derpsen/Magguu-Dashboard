@@ -22,7 +22,7 @@ Installierte Frontend-Erweiterungen:
 ## Struktur
 
 - `dashboard/magguu-dashboard/` – aktives YAML-Dashboard
-- `dashboard/magguu-dashboard/shared/cards/rooms.yaml` – gemeinsame Raumkarten für Mobile und Tablet
+- `dashboard/magguu-dashboard/shared/sections/` – gemeinsame Sections (Inhalte aller Seiten) für Mobile und Tablet; nur `max_columns` unterscheidet sich
 - `dashboard/magguu-dashboard/shared/cards/` – gemeinsame Inhalte für Home, Räume, Klima, Kalender, Sicherheit, Medien, Energie und System
 - `dashboard/magguu-dashboard/shared/rooms/` – gemeinsame responsive Raumdetailseiten
 - `dashboard/magguu-dashboard/shared/templates/button_card.yaml` – zentrale UI-Templates

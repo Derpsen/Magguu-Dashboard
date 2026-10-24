@@ -1,14 +1,19 @@
-- type: custom:button-card
-  template: page_header_v6
-  name: Energie & Verbrauch
-  icon: mdi:home-lightning-bolt-outline
-  variables:
-    subtitle: Verbrauch öffnen und Messquellen kontrolliert ergänzen
-    accent: '#ffd166'
-  view_layout: {grid-area: hero}
+- type: grid
+  column_span: 3
+  cards:
+    - type: custom:button-card
+      grid_options:
+        columns: full
+      template: page_header_v6
+      name: Energie & Verbrauch
+      icon: mdi:home-lightning-bolt-outline
+      variables:
+        subtitle: Verbrauch öffnen und Messquellen kontrolliert ergänzen
+        accent: '#ffd166'
+    - !include ../navbar.yaml
 
-- type: vertical-stack
-  view_layout: {grid-area: main}
+- type: grid
+  column_span: 1
   cards:
     - type: heading
       heading: Energiezentrale
@@ -17,6 +22,9 @@
       heading: Home Assistants integrierte Auswertung nutzen
       heading_style: subtitle
     - type: custom:mushroom-template-card
+      grid_options:
+        columns: full
+        rows: auto
       primary: Energie-Dashboard öffnen
       secondary: Tages-, Monats- und Langzeitverbrauch anzeigen
       icon: mdi:chart-sankey-variant
@@ -36,8 +44,8 @@
             box-shadow: var(--mag-shadow-card, none);
           }
 
-- type: vertical-stack
-  view_layout: {grid-area: setup}
+- type: grid
+  column_span: 2
   cards:
     - type: heading
       heading: Messquellen
@@ -46,6 +54,9 @@
       heading: Keine Werte erfinden – nur reale Leistungs- und Energieentitäten
       heading_style: subtitle
     - type: custom:mushroom-template-card
+      grid_options:
+        columns: full
+        rows: auto
       primary: Verbrauchsdaten noch nicht verifiziert
       secondary: Stromzähler, Zwischenstecker oder Wechselrichter zuerst in Home Assistant einrichten und anschließend exportieren
       multiline_secondary: true
@@ -56,6 +67,9 @@
         navigation_path: /config/integrations/dashboard
       card_mod: *energy_card
     - type: custom:mushroom-template-card
+      grid_options:
+        columns: full
+        rows: auto
       primary: Geplanter Ausbau
       secondary: Hausverbrauch, Tageskosten, größte Verbraucher und Langzeitvergleich
       multiline_secondary: true
@@ -63,5 +77,3 @@
       icon_color: blue
       tap_action: {action: none}
       card_mod: *energy_card
-
-- !include ../navbar.yaml

@@ -2,11 +2,6 @@
   path: klima
   icon: mdi:home-thermometer-outline
   theme: Magguu Midnight
-  type: custom:grid-layout
-  layout:
-    max-width: var(--mag-content-max-width, 1460px)
-    margin: 0 auto
-    padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
-    grid-gap: 16px
-    grid-template-columns: minmax(0, 1fr)
-  cards: !include ../../shared/cards/climate.yaml
+  type: sections
+  max_columns: 3
+  sections: !include ../../shared/sections/klima.yaml

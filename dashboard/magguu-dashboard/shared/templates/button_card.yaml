@@ -584,6 +584,10 @@ quick_v5:
     label:
       - justify-self: start
       - font-size: 11px
+      # lange Untertitel umbrechen statt mit „…“ abschneiden (Karte hat min-height, wächst mit)
+      - white-space: normal
+      - line-height: 1.25
+      - text-align: left
 
 next_event_v5:
   template: quick_v5

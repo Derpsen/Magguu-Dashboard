@@ -1,0 +1,50 @@
+- type: grid
+  column_span: 3
+  cards:
+    - type: custom:button-card
+      grid_options:
+        columns: full
+      template: page_header_v6
+      name: Räume
+      icon: mdi:floor-plan
+      variables:
+        subtitle: Alle Wohnbereiche, Zustände und direkten Aktionen auf einen Blick
+        accent: '#a891ff'
+    - !include ../navbar.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-wohnzimmer.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-esszimmer.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-kueche.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-badezimmer.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-schlafzimmer.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-kinderzimmer.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+    - !include ../cards/room-flur.yaml
+
+- !include modes.yaml

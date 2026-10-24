@@ -410,12 +410,12 @@ def validate_update_hint(root: Path) -> list[str]:
             if entity not in state:
                 errors.append(f"{rel}: magguu_dashboard_update_hinweis nutzt {entity} nicht")
 
-    system_path = root / "dashboard" / "magguu-dashboard" / "shared" / "cards" / "system.yaml"
+    system_path = root / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml"
     if system_path.is_file():
         system = system_path.read_text(encoding="utf-8")
         for entity in VERSION_CARD_SENSORS:
             if entity not in system:
-                errors.append(f"shared/cards/system.yaml: Versionskarte nutzt {entity} nicht")
+                errors.append(f"shared/sections/system.yaml: Versionskarte nutzt {entity} nicht")
     return errors
 
 
@@ -451,7 +451,7 @@ BUILTIN_CARD_TYPES = {
     "tile", "todo-list", "vertical-stack", "weather-forecast", "webpage",
 }
 ALLOWED_CUSTOM_CARDS = {
-    "custom:button-card", "custom:grid-layout", "custom:layout-card",
+    "custom:button-card", "custom:grid-layout",  # grid-layout = nur noch View-Typ (Legacy), keine Karten-Abhängigkeit mehr genutzt
     "custom:mini-graph-card", "custom:mushroom-template-card",
     "custom:navbar-card", "custom:stack-in-card",
     "custom:auto-entities",
@@ -649,8 +649,11 @@ def validate_dashboards(root: Path) -> list[str]:
                     span = section.get("column_span")
                     if span is not None and (isinstance(span, bool) or not isinstance(span, int) or span < 1):
                         errors.append(f"{swhere}: column_span muss eine ganze Zahl >= 1 sein")
-                    elif isinstance(span, int) and isinstance(maxc, int) and span > maxc:
-                        errors.append(f"{swhere}: column_span {span} größer als max_columns {maxc}")
+                    # column_span > max_columns ist gewollt: HA begrenzt auf die sichtbare Spaltenzahl (hui-sections-view).
+                    if "visibility" in section:
+                        errors.extend(_validate_conditions(section["visibility"], f"{swhere}/visibility"))
+                    for c_index, card in enumerate(section.get("cards") or []):
+                        errors.extend(_validate_section_card_height(card, f"{swhere}/card {c_index}"))
             elif vtype == "custom:grid-layout" and "sections" in view:
                 errors.append(f"{where}: grid-layout-View darf keine sections setzen")
             for card in _iter_cards(view):
@@ -668,6 +671,21 @@ def validate_dashboards(root: Path) -> list[str]:
                     errors.append(f"{device}: navbar-Route {route} zeigt auf keinen View")
     errors.extend(_validate_theme_tokens(root, themes))
     return sorted(set(errors))
+
+
+def _validate_section_card_height(card: Any, where: str) -> list[str]:
+    """Mushroom-Karten melden in Sections `rows: 1` und würden auf 56 px gekappt (hui-grid-section `fit-rows`)."""
+    if not isinstance(card, Mapping):
+        return []
+    inner = card
+    if card.get("type") == "conditional" and isinstance(card.get("card"), Mapping):
+        inner = card["card"]
+    if inner.get("type") != "custom:mushroom-template-card":
+        return []
+    rows = (card.get("grid_options") or {}).get("rows") if isinstance(card.get("grid_options"), Mapping) else None
+    if rows != "auto":
+        return [f"{where}: mushroom-template-card direkt in einer Section braucht grid_options.rows: auto (sonst auf 56 px gekappt)"]
+    return []
 
 
 # Visibility / conditional-card conditions (frontend `validate-condition.ts`; legacy shape = entity + state/state_not).

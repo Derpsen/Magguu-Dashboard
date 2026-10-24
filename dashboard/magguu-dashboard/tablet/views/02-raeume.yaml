@@ -2,16 +2,6 @@
   path: raeume
   icon: mdi:floor-plan
   theme: Magguu Midnight
-  type: custom:grid-layout
-  layout:
-    margin: 0 auto
-    max-width: var(--mag-content-max-width, 1460px)
-    padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 36px
-    grid-gap: 14px
-    grid-template-columns: repeat(3, minmax(0, 1fr))
-    mediaquery:
-      "(max-width: 1050px)":
-        grid-template-columns: repeat(2, minmax(0, 1fr))
-      "(max-width: 680px)":
-        grid-template-columns: minmax(0, 1fr)
-  cards: !include ../../shared/cards/rooms.yaml
+  type: sections
+  max_columns: 3
+  sections: !include ../../shared/sections/raeume.yaml

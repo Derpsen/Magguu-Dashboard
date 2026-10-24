@@ -1,0 +1,392 @@
+- type: grid
+  column_span: 3
+  cards:
+    - type: custom:button-card
+      grid_options:
+        columns: full
+      template: page_header_v6
+      name: System
+      icon: mdi:cog-outline
+      variables:
+        subtitle: Home Assistant, OpenCCU, Geräte und Dashboard-Verwaltung
+        accent: '#a891ff'
+    - !include ../navbar.yaml
+
+- type: grid
+  column_span: 2
+  cards:
+    - type: heading
+      heading: Systemstatus
+      heading_style: title
+    - type: heading
+      heading: Die wichtigsten Werte auf einen Blick
+      heading_style: subtitle
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.openccu_systemzustand
+      primary: OpenCCU
+      secondary: "Systemzustand {{ states(entity) }} %"
+      icon: mdi:home-automation
+      icon_color: "{{ 'green' if states(entity) | float(0) >= 95 else 'orange' }}"
+      tap_action: {action: more-info}
+      card_mod: &status_card
+        style: |
+          ha-card {
+            min-height: 92px;
+            border-radius: var(--mag-radius-card, 24px);
+            background: var(--mag-surface, rgba(24,25,39,.94));
+            border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+            box-shadow: var(--mag-shadow-card, none);
+          }
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.openccu_servicemeldungen
+      primary: Servicemeldungen
+      secondary: "{{ state_attr('sensor.magguu_openccu_meldungstext', 'summary') }}"
+      multiline_secondary: true
+      icon: mdi:alert-circle-outline
+      icon_color: "{{ 'green' if states('sensor.magguu_openccu_meldungstext') | int(0) == 0 else 'red' }}"
+      tap_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.homematic_ip_zentrale_duty_cycle_level
+      primary: Duty Cycle
+      secondary: "{{ states(entity) }} %"
+      icon: mdi:radio-tower
+      icon_color: >-
+        {% set value = states(entity) | float(0) %}
+        {{ 'green' if value < 50 else 'orange' if value < 80 else 'red' }}
+      tap_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.homematic_ip_zentrale_carrier_sense_level
+      primary: Carrier Sense
+      secondary: "{{ states(entity) }} %"
+      icon: mdi:access-point-network
+      icon_color: >-
+        {% set value = states(entity) | float(0) %}
+        {{ 'green' if value < 20 else 'orange' if value < 50 else 'red' }}
+      tap_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.openccu_verbindungslatenz
+      primary: Verbindung
+      secondary: "{{ states(entity) }} ms"
+      icon: mdi:timer-outline
+      icon_color: blue
+      tap_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.iphone_von_marco_battery_level
+      primary: iPhone von Marco
+      secondary: "{{ states(entity) }} % · {{ states('sensor.iphone_von_marco_battery_state') }}"
+      icon: mdi:battery
+      icon_color: >-
+        {% set value = states(entity) | int(0) %}
+        {{ 'green' if value >= 50 else 'orange' if value >= 20 else 'red' }}
+      tap_action: {action: more-info}
+      card_mod: *status_card
+
+- type: grid
+  column_span: 1
+  cards:
+    - type: heading
+      heading: Hinweise
+      heading_style: title
+    - type: heading
+      heading: Nur relevante Systemmeldungen
+      heading_style: subtitle
+
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.magguu_wartung_offen
+      primary: "{{ 'Wartung erforderlich' if states(entity) | int(0) > 0 else 'System gepflegt' }}"
+      secondary: "{{ state_attr(entity, 'summary') }}"
+      multiline_secondary: true
+      icon: "{{ 'mdi:tools' if states(entity) | int(0) > 0 else 'mdi:check-decagram-outline' }}"
+      icon_color: "{{ 'orange' if states(entity) | int(0) > 0 else 'green' }}"
+      tap_action: {action: more-info}
+      card_mod: *status_card
+
+    - type: custom:auto-entities
+      grid_options:
+        columns: 12
+        rows: auto
+      show_empty: false
+      card:
+        type: entities
+        title: Verfügbare Updates
+        state_color: true
+        card_mod: &list_card
+          style: |
+            .card-header {
+              font-size: var(--ha-heading-card-title-font-size, var(--ha-font-size-l, 16px));
+              font-weight: var(--ha-heading-card-title-font-weight, var(--ha-font-weight-normal, 400));
+              line-height: var(--ha-heading-card-title-line-height, var(--ha-line-height-normal, 1.5));
+              padding: 12px 16px 0;
+            }
+            ha-card {
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+            }
+      filter:
+        include:
+          - domain: update
+            state: 'on'
+      sort: {method: friendly_name}
+
+    - type: custom:auto-entities
+      grid_options:
+        columns: 12
+        rows: auto
+      show_empty: false
+      card:
+        type: entities
+        title: Batteriewarnungen
+        state_color: true
+        card_mod: *list_card
+      filter:
+        include:
+          - domain: binary_sensor
+            attributes:
+              device_class: battery
+            state: 'on'
+          - entity_id: binary_sensor.magguu_iphone_akkuwarnung
+            state: 'on'
+          - entity_id: binary_sensor.wohnzimmer_wohnzimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.wohnzimmer_wohnzimmer_fenster_batterie
+            state: 'on'
+          - entity_id: binary_sensor.wohnzimmer_wohnzimmer_fenstertur_batterie
+            state: 'on'
+          - entity_id: binary_sensor.esszimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.esszimmer_esszimmer_wandtaster_batterie
+            state: 'on'
+          - entity_id: binary_sensor.kuche_kuche_fenstertur_batterie
+            state: 'on'
+          - entity_id: binary_sensor.badezimmer_badezimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.schlafzimmer_schlafzimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.schlafzimmer_schlafzimmer_fenstertur_batterie
+            state: 'on'
+          - entity_id: binary_sensor.kinderzimmer_kinderzimmer_thermostat_batterie
+            state: 'on'
+          - entity_id: binary_sensor.kinderzimmer_kinderzimmer_fenster_batterie
+            state: 'on'
+          - entity_id: binary_sensor.fernbedienung_batterie
+            state: 'on'
+      sort: {method: friendly_name}
+
+    - type: custom:auto-entities
+      grid_options:
+        columns: 12
+        rows: auto
+      show_empty: false
+      card:
+        type: entities
+        title: Nicht erreichbar
+        state_color: true
+        card_mod: *list_card
+      filter:
+        include:
+          - state: unavailable
+            domain: light
+          - state: unavailable
+            domain: switch
+          - state: unavailable
+            domain: climate
+          - state: unavailable
+            domain: cover
+          - state: unavailable
+            domain: media_player
+      sort: {method: friendly_name}
+
+- type: grid
+  column_span: 2
+  cards:
+    - type: heading
+      heading: Verwaltung
+      heading_style: title
+    - type: heading
+      heading: Dashboard aktualisieren und Backups kontrollieren
+      heading_style: subtitle
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: script.magguu_dashboard_aktualisieren
+      primary: Dashboard aktualisieren
+      secondary: >-
+        {% set status = states('input_text.magguu_dashboard_update_status') %}
+        {% set last_update = as_timestamp(states('input_datetime.magguu_dashboard_letzte_aktualisierung'), 0) %}
+        {{ 'Noch nicht ausgeführt' if status in ['', 'unknown', 'unavailable'] else status }}
+        {% if last_update > 0 %}
+          · zuletzt {{ last_update | timestamp_custom('%d.%m. · %H:%M', true) }}
+        {% endif %}
+      multiline_secondary: true
+      icon: mdi:cloud-download-outline
+      icon_color: >-
+        {% set status = states('input_text.magguu_dashboard_update_status') %}
+        {{ 'green' if status.startswith('Erfolgreich') else 'red' if status.startswith('Fehlgeschlagen')
+           else 'orange' if is_state('sensor.magguu_dashboard_update_hinweis', 'verfuegbar') else 'purple' }}
+      tap_action:
+        action: call-service
+        service: script.turn_on
+        target:
+          entity_id: script.magguu_dashboard_aktualisieren
+        confirmation:
+          text: Dashboard jetzt aktualisieren und ein Backup anlegen?
+      hold_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.magguu_dashboard_update_hinweis
+      primary: Dashboard-Version
+      secondary: >-
+        {% set sha = states('sensor.magguu_dashboard_commit') %}
+        {% set main = states('sensor.magguu_dashboard_main_commit') %}
+        {% set hint = states(entity) %}
+        {{ states('sensor.magguu_dashboard_version') }}
+        · {{ sha[:7] if sha | regex_match('^[0-9a-f]{40}$') else 'Commit unbekannt' }}
+        {% if hint == 'verfuegbar' %}
+          · Neuer Stand auf main ({{ main[:7] }}) – „Dashboard aktualisieren“
+        {% elif hint == 'aktuell' %}
+          · aktuell mit main
+        {% else %}
+          · Update-Prüfung unbekannt
+        {% endif %}
+      multiline_secondary: true
+      icon: >-
+        {{ 'mdi:update' if is_state(entity, 'verfuegbar')
+           else 'mdi:source-commit' }}
+      icon_color: >-
+        {{ 'orange' if is_state(entity, 'verfuegbar')
+           else 'green' if is_state(entity, 'aktuell')
+           else 'grey' }}
+      tap_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.backup_backup_manager_state
+      primary: Backup-Manager
+      secondary: "{{ states(entity) }}"
+      icon: mdi:backup-restore
+      icon_color: "{{ 'green' if states(entity) == 'idle' else 'blue' }}"
+      tap_action: {action: more-info}
+      card_mod: *status_card
+    - type: custom:mushroom-template-card
+      grid_options:
+        columns: 12
+        rows: auto
+      entity: sensor.backup_last_successful_automatic_backup
+      primary: Letztes Backup
+      secondary: >-
+        {% if states(entity) not in ['unknown', 'unavailable'] %}
+          {{ as_timestamp(states(entity)) | timestamp_custom('%d.%m.%Y · %H:%M', true) }}
+        {% else %}
+          Noch kein Zeitpunkt verfügbar
+        {% endif %}
+      multiline_secondary: true
+      icon: mdi:cloud-check-outline
+      icon_color: "{{ 'green' if states(entity) not in ['unknown', 'unavailable'] else 'orange' }}"
+      tap_action: {action: more-info}
+      card_mod: *status_card
+
+- type: grid
+  column_span: 1
+  cards:
+
+    - type: heading
+      heading: Bereiche & Erweiterungen
+      heading_style: title
+    - type: heading
+      heading: Sicherheit, Medien und Energie
+      heading_style: subtitle
+
+    - type: grid
+      columns: 2
+      square: false
+      cards:
+        - type: custom:mushroom-template-card
+          entity: sensor.magguu_sicherheitsstatus
+          primary: Sicherheit
+          secondary: "{{ state_attr(entity, 'summary') }}"
+          multiline_secondary: true
+          icon: mdi:shield-home-outline
+          icon_color: >-
+            {{ 'red' if states(entity) == 'kritisch'
+               else 'orange' if states(entity) == 'pruefen'
+               else 'green' }}
+          tap_action:
+            action: navigate
+            navigation_path: sicherheit
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: media_player.av_samsung_soundbar_q90r
+          primary: Medien
+          secondary: Soundbar, TV, Computer und Szenen
+          icon: mdi:play-box-multiple-outline
+          icon_color: purple
+          tap_action:
+            action: navigate
+            navigation_path: medien
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          primary: Energie
+          secondary: Energie-Dashboard und vorbereitete Messquellen
+          icon: mdi:home-lightning-bolt-outline
+          icon_color: amber
+          tap_action:
+            action: navigate
+            navigation_path: energie
+          card_mod: *status_card
+        # Nur sichtbar, wenn das optionale Paket docs/optional/magguu_dienste.yaml Entitäten liefert
+        # (fehlende Entität = Zustand `unknown` im Frontend, damit bleibt die Karte sonst verborgen).
+        - type: conditional
+          conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity: sensor.magguu_bot_status
+                  state_not: unknown
+                - condition: state
+                  entity: sensor.magguu_website_status
+                  state_not: unknown
+          card:
+            type: custom:mushroom-template-card
+            entity: sensor.magguu_bot_status
+            primary: Magguu-Dienste
+            secondary: Website, Bot und letzter Deploy
+            icon: mdi:server-network
+            icon_color: cyan
+            tap_action:
+              action: navigate
+              navigation_path: dienste
+            card_mod: *status_card
+        # Unraid/Docker/AdGuard ausgeblendet bis echte Entitäts-IDs in docs/entities.md stehen.

@@ -1,0 +1,121 @@
+- type: grid
+  column_span: 3
+  cards:
+    - type: custom:button-card
+      grid_options:
+        columns: full
+      template: page_header_v6
+      name: Kalender
+      icon: mdi:calendar-month-outline
+      variables:
+        subtitle: Arbeit, Abfuhr, Termine und Erinnerungen in einer ruhigen Übersicht
+        accent: '#b48cff'
+    - !include ../navbar.yaml
+
+- type: grid
+  column_span: 1
+  cards:
+
+    - type: heading
+      heading: Als Nächstes
+      heading_style: title
+    - type: heading
+      heading: Die nächsten Einträge aus allen wichtigen Kalendern
+      heading_style: subtitle
+    - type: custom:button-card
+      grid_options:
+        columns: 6
+      template: next_event_v5
+      entity: calendar.arbeiten
+      name: Arbeit
+      icon: mdi:briefcase-outline
+      variables: {accent: '#b48cff'}
+      tap_action: {action: more-info}
+    - type: custom:button-card
+      grid_options:
+        columns: 6
+      template: waste_event_v6
+      entity: calendar.abfuhr
+      name: Abfuhr
+      icon: mdi:trash-can-outline
+      variables: {accent: '#79d98c'}
+      tap_action: {action: more-info}
+    - type: custom:button-card
+      grid_options:
+        columns: 6
+      template: next_event_v5
+      entity: calendar.privat
+      name: Privat
+      icon: mdi:account-heart-outline
+      variables: {accent: '#e886ad'}
+      tap_action: {action: more-info}
+    - type: custom:button-card
+      grid_options:
+        columns: 6
+      template: next_event_v5
+      entity: calendar.termine
+      name: Termine
+      icon: mdi:calendar-star
+      variables: {accent: '#71b7ff'}
+      tap_action: {action: more-info}
+
+- type: grid
+  column_span: 2
+  cards:
+
+    # calendar.erinnerungen fehlt in manchen HA-Instanzen: ein Kalender-Card-Eintrag mit fehlender Entität löst
+    # einen Konsolenfehler (HTTP 500) aus. Deshalb zwei Varianten, genau eine ist sichtbar (fehlende Entität = `unknown`).
+    - type: conditional
+      grid_options:
+        columns: 12
+        rows: auto
+      conditions:
+        - condition: state
+          entity: calendar.erinnerungen
+          state_not: [unknown, unavailable]
+      card:
+        type: calendar
+        title: Die nächsten 7 Tage
+        initial_view: listWeek
+        entities:
+          - calendar.arbeiten
+          - calendar.abfuhr
+          - calendar.privat
+          - calendar.termine
+          - calendar.erinnerungen
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+              overflow: hidden;
+            }
+
+    - type: conditional
+      grid_options:
+        columns: 12
+        rows: auto
+      conditions:
+        - condition: state
+          entity: calendar.erinnerungen
+          state: [unknown, unavailable]
+      card:
+        type: calendar
+        title: Die nächsten 7 Tage
+        initial_view: listWeek
+        entities:
+          - calendar.arbeiten
+          - calendar.abfuhr
+          - calendar.privat
+          - calendar.termine
+        card_mod:
+          style: |
+            ha-card {
+              border-radius: var(--mag-radius-card, 24px);
+              background: var(--mag-surface, rgba(24,25,39,.94));
+              border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+              box-shadow: var(--mag-shadow-card, none);
+              overflow: hidden;
+            }
