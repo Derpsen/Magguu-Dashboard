@@ -95,7 +95,12 @@
           heading: Die häufigsten Aktionen
           heading_style: subtitle
         - !include ../../shared/cards/home-quick.yaml
-
-    - !include ../../shared/sections/modes-compact.yaml
+        # Gleiche Zeile wie „Wohnbereiche“: HA legt Sections zeilenweise ins Raster (eigene Section landete unter den Räumen),
+        # deshalb liegen Szenen & Modi in der rechten Spalte als Stack in derselben Section.
+        - type: vertical-stack
+          grid_options:
+            columns: full
+            rows: auto
+          cards: !include ../../shared/sections/modes-cards.yaml
 
     - !include ../../shared/sections/active-media.yaml

@@ -383,12 +383,15 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertGreaterEqual(checked, 6)
 
     def test_tablet_overview_puts_scenes_into_the_right_column(self) -> None:
+        """HA platziert Sections zeilenweise: Szenen & Modi stehen in derselben Section wie Schnellzugriff (rechte Spalte)."""
         from validate import _dashboard_views
         views, _ = _dashboard_views(REPO_ROOT, "tablet")
         overview = next(v for v in views if v["path"] == "overview")
-        modes = [s for s in overview["sections"] if any(c.get("heading") == "Szenen & Modi" for c in s.get("cards", []))]
-        self.assertEqual([s.get("column_span") for s in modes], [1])
-        rooms = [v for v in _dashboard_views(REPO_ROOT, "tablet")[0] if v["path"] == "raeume"][0]
+        holders = [s for s in overview["sections"] if any(c.get("heading") == "Szenen & Modi" for c in _flatten(s))]
+        self.assertEqual(len(holders), 1)
+        self.assertEqual(holders[0].get("column_span", 1), 1)
+        self.assertTrue(any(c.get("heading") == "Schnellzugriff" for c in holders[0]["cards"]))
+        rooms = next(v for v in _dashboard_views(REPO_ROOT, "tablet")[0] if v["path"] == "raeume")
         self.assertEqual([s.get("column_span") for s in rooms["sections"] if any(c.get("heading") == "Szenen & Modi" for c in s.get("cards", []))], [2])
 
     def test_navbar_is_centered_at_the_bottom_on_every_page(self) -> None:
@@ -396,6 +399,8 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertEqual(navbar["desktop"]["position"], "bottom")
         self.assertEqual(navbar["desktop"]["mode"], "floating")
         self.assertTrue(navbar["layout"]["auto_padding"]["enabled"])
+        # Live gemessen (6.8.0-dev): 86 px ließen nur ~7 px Abstand zur letzten Kachel
+        self.assertGreaterEqual(navbar["layout"]["auto_padding"]["desktop_px"], 110)
 
     def test_dienste_page_is_an_optional_subview_outside_the_navigation(self) -> None:
         shared = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared"

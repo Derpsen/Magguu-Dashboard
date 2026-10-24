@@ -8,9 +8,9 @@ grid_options:
 layout:
   auto_padding:
     enabled: true
-    desktop_px: 86
+    desktop_px: 112
     mobile_px: 74
-    media_player_px: 90
+    media_player_px: 118
 desktop:
   mode: floating
   position: bottom

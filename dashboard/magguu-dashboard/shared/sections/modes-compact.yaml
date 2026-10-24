@@ -1,4 +1,0 @@
-# Gleiche Szenen/Modi, aber nur eine Spalte breit (rechte Spalte der Tablet-Übersicht).
-type: grid
-column_span: 1
-cards: !include modes-cards.yaml
