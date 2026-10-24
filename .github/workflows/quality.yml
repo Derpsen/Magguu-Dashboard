@@ -1,12 +1,11 @@
+# No paths-ignore (2026-10-24): drift-check must also see doc-only changes (README etc. are scanned).
 # Adopted from magguu-ci-drafts (2026-10-16): drift-check + actionlint + zizmor + shellcheck + osv-scanner.
 name: Quality
 
 on:
   push:
     branches: [main]
-    paths-ignore: ['**/*.md']
   pull_request:
-    paths-ignore: ['**/*.md']
   workflow_dispatch:
 
 permissions:

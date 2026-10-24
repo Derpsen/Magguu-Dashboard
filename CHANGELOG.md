@@ -2,6 +2,8 @@
 
 ## Unreleased – CI
 
+- `quality.yml`: `paths-ignore: ['**/*.md']` entfernt, damit `tools/drift-check.sh` auch bei reinen Doku-Änderungen läuft. `magguu-drift.py` bewusst nicht übernommen (siehe MEMORY).
+
 - Renovate: `helpers:pinGitHubActionDigests` ergänzt; satori-Sperre von `~0.41.0` auf `<0.48` aktualisiert (>=0.48 gesperrt); h3/TS/@types/node-Sperren unverändert.
 
 - `issue-route.yml`: Issues werden bei opened/assigned per Titel-Stichwort gelabelt (bug, security, dependencies, documentation); unklare Issues lösen höchstens einen JSON-Aufruf an den Escalation-Webhook aus (ohne Body, nur https, idempotent, Marker-Label `needs-triage`). Minimale Rechte, keine Drittanbieter-Actions.
