@@ -51,23 +51,55 @@
       variables: {accent: '#71b7ff'}
       tap_action: {action: more-info}
 
-- type: calendar
-  title: Die nächsten 7 Tage
-  initial_view: listWeek
-  entities:
-    - calendar.arbeiten
-    - calendar.abfuhr
-    - calendar.privat
-    - calendar.termine
-    - calendar.erinnerungen
-  card_mod:
-    style: |
-      ha-card {
-        border-radius: var(--mag-radius-card, 24px);
-        background: var(--mag-surface, rgba(24,25,39,.94));
-        border: 1px solid var(--mag-border, rgba(255,255,255,.06));
-        box-shadow: var(--mag-shadow-card, none);
-        overflow: hidden;
-      }
+# calendar.erinnerungen fehlt in manchen HA-Instanzen: ein Kalender-Card-Eintrag mit fehlender Entität löst
+# einen Konsolenfehler (HTTP 500) aus. Deshalb zwei Varianten, genau eine ist sichtbar (fehlende Entität = `unknown`).
+- type: conditional
+  conditions:
+    - condition: state
+      entity: calendar.erinnerungen
+      state_not: [unknown, unavailable]
+  card:
+    type: calendar
+    title: Die nächsten 7 Tage
+    initial_view: listWeek
+    entities:
+      - calendar.arbeiten
+      - calendar.abfuhr
+      - calendar.privat
+      - calendar.termine
+      - calendar.erinnerungen
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: var(--mag-radius-card, 24px);
+          background: var(--mag-surface, rgba(24,25,39,.94));
+          border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+          box-shadow: var(--mag-shadow-card, none);
+          overflow: hidden;
+        }
+
+- type: conditional
+  conditions:
+    - condition: state
+      entity: calendar.erinnerungen
+      state: [unknown, unavailable]
+  card:
+    type: calendar
+    title: Die nächsten 7 Tage
+    initial_view: listWeek
+    entities:
+      - calendar.arbeiten
+      - calendar.abfuhr
+      - calendar.privat
+      - calendar.termine
+    card_mod:
+      style: |
+        ha-card {
+          border-radius: var(--mag-radius-card, 24px);
+          background: var(--mag-surface, rgba(24,25,39,.94));
+          border: 1px solid var(--mag-border, rgba(255,255,255,.06));
+          box-shadow: var(--mag-shadow-card, none);
+          overflow: hidden;
+        }
 
 - !include ../navbar.yaml

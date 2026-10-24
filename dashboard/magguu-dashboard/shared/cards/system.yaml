@@ -337,16 +337,29 @@
             action: navigate
             navigation_path: energie
           card_mod: *status_card
-        - type: custom:mushroom-template-card
-          entity: sensor.magguu_bot_status
-          primary: Magguu-Dienste
-          secondary: Website, Bot und letzter Deploy
-          icon: mdi:server-network
-          icon_color: cyan
-          tap_action:
-            action: navigate
-            navigation_path: dienste
-          card_mod: *status_card
+        # Nur sichtbar, wenn das optionale Paket docs/optional/magguu_dienste.yaml Entitäten liefert
+        # (fehlende Entität = Zustand `unknown` im Frontend, damit bleibt die Karte sonst verborgen).
+        - type: conditional
+          conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity: sensor.magguu_bot_status
+                  state_not: unknown
+                - condition: state
+                  entity: sensor.magguu_website_status
+                  state_not: unknown
+          card:
+            type: custom:mushroom-template-card
+            entity: sensor.magguu_bot_status
+            primary: Magguu-Dienste
+            secondary: Website, Bot und letzter Deploy
+            icon: mdi:server-network
+            icon_color: cyan
+            tap_action:
+              action: navigate
+              navigation_path: dienste
+            card_mod: *status_card
         # Unraid/Docker/AdGuard ausgeblendet bis echte Entitäts-IDs in docs/entities.md stehen.
 
 - !include ../navbar.yaml

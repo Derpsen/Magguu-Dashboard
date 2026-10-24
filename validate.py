@@ -670,9 +670,64 @@ def validate_dashboards(root: Path) -> list[str]:
     return sorted(set(errors))
 
 
+# Visibility / conditional-card conditions (frontend `validate-condition.ts`; legacy shape = entity + state/state_not).
+CONDITION_TYPES = {
+    "state", "numeric_state", "screen", "user", "location", "time", "view_columns",
+    "and", "or", "not", "template", "sun", "zone", "device",
+}
+GRID_OPTION_KEYS = {"columns", "rows", "min_columns", "max_columns", "min_rows", "max_rows"}
+
+
+def _validate_conditions(conditions: Any, where: str) -> list[str]:
+    errors: list[str] = []
+    if isinstance(conditions, Mapping):
+        conditions = [conditions]
+    if not isinstance(conditions, list) or not conditions:
+        return [f"{where}: Bedingungen müssen eine nicht leere Liste sein"]
+    for cond in conditions:
+        if not isinstance(cond, Mapping):
+            errors.append(f"{where}: Bedingung muss eine Map sein")
+            continue
+        kind = cond.get("condition")
+        if kind is None:
+            if not ("entity" in cond and ("state" in cond or "state_not" in cond)):
+                errors.append(f"{where}: Legacy-Bedingung braucht entity und state oder state_not")
+        elif kind not in CONDITION_TYPES:
+            errors.append(f"{where}: unbekannte Bedingung {kind!r}")
+        elif kind == "state":
+            if not ("entity" in cond or "entity_id" in cond) or not ("state" in cond or "state_not" in cond):
+                errors.append(f"{where}: state-Bedingung braucht entity und state oder state_not")
+        elif kind in {"and", "or", "not"}:
+            errors.extend(_validate_conditions(cond.get("conditions"), where))
+    return errors
+
+
+def _validate_grid_options(options: Any, where: str) -> list[str]:
+    if not isinstance(options, Mapping):
+        return [f"{where}: grid_options muss eine Map sein"]
+    errors = [f"{where}: grid_options kennt {key} nicht" for key in sorted(set(options) - GRID_OPTION_KEYS)]
+    columns = options.get("columns")
+    if columns is not None and columns != "full" and (
+        isinstance(columns, bool) or not isinstance(columns, int) or not 1 <= columns <= 12
+    ):
+        errors.append(f"{where}: grid_options.columns muss 1-12 oder full sein")
+    rows = options.get("rows")
+    if rows is not None and rows != "auto" and (isinstance(rows, bool) or not isinstance(rows, int) or rows < 1):
+        errors.append(f"{where}: grid_options.rows muss eine ganze Zahl >= 1 oder auto sein")
+    return errors
+
+
 def _validate_card(card: Mapping[str, Any], where: str) -> list[str]:
     errors: list[str] = []
     ctype = card.get("type")
+    if "visibility" in card:
+        errors.extend(_validate_conditions(card["visibility"], f"{where}: visibility"))
+    if "grid_options" in card:
+        errors.extend(_validate_grid_options(card["grid_options"], where))
+    if ctype == "conditional":
+        errors.extend(_validate_conditions(card.get("conditions"), f"{where}: conditional"))
+        if not isinstance(card.get("card"), Mapping):
+            errors.append(f"{where}: conditional braucht eine card")
     if not isinstance(ctype, str):
         return errors
     if ctype not in BUILTIN_CARD_TYPES and ctype not in ALLOWED_CUSTOM_CARDS:

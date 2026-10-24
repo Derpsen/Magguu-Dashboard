@@ -183,3 +183,62 @@ class DashboardSchemaTest(unittest.TestCase):
             self.assertNotIn("view_layout", path.read_text(encoding="utf-8"), path.name)
             for section in view["sections"][1:]:
                 self.assertEqual(section["cards"][0]["type"], "heading", path.name)
+
+    def test_condition_and_grid_option_rules(self) -> None:
+        self.view(
+            "- title: A\n  path: a\n  type: sections\n  sections:\n    - type: grid\n      cards:\n"
+            "        - type: conditional\n          conditions: []\n          card: {type: heading, heading: X}\n"
+            "        - type: heading\n          heading: Y\n          visibility:\n            - condition: bogus\n"
+            "            - entity: light.x\n"
+            "        - type: tile\n          entity: light.x\n          grid_options: {columns: 13, foo: 1}\n"
+        )
+        for fragment in (
+            "Bedingungen müssen eine nicht leere Liste sein",
+            "unbekannte Bedingung 'bogus'",
+            "Legacy-Bedingung braucht entity und state oder state_not",
+            "grid_options.columns muss 1-12 oder full sein",
+            "grid_options kennt foo nicht",
+        ):
+            self.assertError(fragment)
+
+    def test_valid_conditions_pass(self) -> None:
+        self.view(
+            "- title: A\n  path: a\n  type: sections\n  sections:\n    - type: grid\n      cards:\n"
+            "        - type: conditional\n          conditions:\n            - condition: or\n              conditions:\n"
+            "                - {condition: state, entity: sensor.a, state_not: unknown}\n"
+            "                - {entity: sensor.b, state: [on, off]}\n"
+            "          card: {type: heading, heading: X}\n"
+            "        - {type: tile, entity: light.x, grid_options: {columns: full}, visibility: [{condition: state, entity: light.x, state_not: [unknown, unavailable]}]}\n"
+        )
+        self.assertEqual(self.errors(), [])
+
+    def test_optional_package_entities_are_only_used_behind_conditions(self) -> None:
+        """calendar.erinnerungen and the Dienste sensors may be missing in a real HA (console errors)."""
+        cards = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "cards"
+        system = load_resolved(cards / "system.yaml", REPO_ROOT)
+        link = [c for c in _flatten(system) if c.get("navigation_path") == "dienste"]
+        self.assertEqual(len(link), 1)
+        guarded = [
+            c for c in _flatten(system)
+            if c.get("type") == "conditional" and c.get("card", {}).get("tap_action", {}).get("navigation_path") == "dienste"
+        ]
+        self.assertEqual(len(guarded), 1)
+        calendar = load_resolved(cards / "calendar.yaml", REPO_ROOT)
+        for card in calendar:
+            if card.get("type") == "calendar":
+                self.fail("Kalenderkarte außerhalb einer Bedingung")
+        variants = [c for c in calendar if c.get("type") == "conditional" and c["card"].get("type") == "calendar"]
+        self.assertEqual(len(variants), 2)
+        with_missing = [c for c in variants if "calendar.erinnerungen" in c["card"]["entities"]]
+        self.assertEqual(len(with_missing), 1)
+        self.assertIn("state_not", with_missing[0]["conditions"][0])
+
+
+def _flatten(node):
+    if isinstance(node, dict):
+        yield node
+        for value in node.values():
+            yield from _flatten(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _flatten(value)
