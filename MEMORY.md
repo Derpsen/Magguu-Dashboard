@@ -237,3 +237,5 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 ## 2026-10-24 Issue routing workflow (block 2, step 2)
 - `issue-route.yml` added (see AGENTS.md "Issue routing"). Verified: actionlint + zizmor clean, routing logic tested locally with a stubbed `gh` (keyword, existing-label, needs-triage cases). Escalation call not exercised live (needs a real unclear issue + secrets); no issue was opened to test it.
+
+- 2026-10-24 (block 2, step 3.2): `renovate.json` extends `helpers:pinGitHubActionDigests` (new/updated actions are SHA-pinned automatically). Stale lock rule `satori ~0.41.0` replaced by `<0.48` (satori >=0.48 stays locked; 0.47.x allowed); h3 `<2`, TS `<7`, @types/node `<25` unchanged.

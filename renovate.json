@@ -1,7 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:recommended",
+    "helpers:pinGitHubActionDigests"
   ],
   "timezone": "Europe/Berlin",
   "schedule": [
@@ -139,18 +140,18 @@
       "allowedVersions": "<7"
     },
     {
-      "description": "h3 2 locked",
+      "description": "h3 2 locked (stay on 1.x)",
       "matchPackageNames": [
         "h3"
       ],
       "allowedVersions": "<2"
     },
     {
-      "description": "satori pinned to 0.41",
+      "description": "satori >=0.48 locked (repo family uses 0.47.x); stays below 0.48",
       "matchPackageNames": [
         "satori"
       ],
-      "allowedVersions": "~0.41.0"
+      "allowedVersions": "<0.48"
     }
   ]
 }
