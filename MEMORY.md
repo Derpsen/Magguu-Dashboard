@@ -2,6 +2,17 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Hotfix (2026-10-24, 6.10.1-dev): abgeschnittene button-card-Templates
+
+Rollback: `rollback/pre-hotfix-a25fc4b` (= `a25fc4b`, Endstand Runde 5). Tabelle ergänzt:
+
+| Branch | zeigt auf | Bedeutung |
+| --- | --- | --- |
+| `rollback/pre-hotfix-a25fc4b` | `a25fc4b` | Endstand Runde 5 (6.10.0-dev) = „vor Hotfix“ |
+
+- Lehre: ein `'` innerhalb eines YAML-Single-Quote-Strings beendet ihn; der Rest der Zeile (ab ` #`) wird still Kommentar, das YAML bleibt gültig und der Raw-Text-Regex-Check fand es nicht. In `[[[ ]]]`-Templates in Single-Quotes daher nur Doppelquotes oder Backticks im JS. `validate_button_card_js` prüft jetzt geparste Strings (Klammerpaare, Ende `]]]`).
+- Dark `secondary-text-color` auf `#9da1b4` angehoben, damit der Hero-Worst-Case 4.5:1 erreicht (4.55).
+
 ## Runde 5 (2026-10-24, 6.10.0-dev): Befunde aus der Live-Prüfung von 6.9.0-dev
 
 Rollback: `rollback/pre-round5-29338f2` (= `29338f2`, Endstand Runde 4). Tabelle ergänzt:
@@ -15,7 +26,7 @@ Rollback: `rollback/pre-round5-29338f2` (= `29338f2`, Endstand Runde 4). Tabelle
 - System „Bereiche & Erweiterungen“: derselbe Flex-Umbruch wie in der Sicherheit (min. 150 px), damit Energie auf dem Handy vollbreit ist.
 - button-card: `variables` kann beim Kaltstart kurz `undefined` sein (`reading 'accent'`). Alle JS-Templates nutzen jetzt `variables?.x`, `states?.[…]`, `entity?.…`; `validate.py::validate_button_card_js` verbietet die ungeschützten Formen. Ursache nicht im echten HA nachgestellt.
 - **Kamera-Korrektur zu Runde 4:** `visibility`/conditional-card UNTERSTÜTZEN Attribute (`attribute:` an `state`/`numeric_state`, siehe `validate-condition.ts`; fehlendes Attribut = `unknown`). Für den 500er hilft das nicht: `Camera.entity_picture` (HA-Core `camera/entity.py`) liefert immer `/api/camera_proxy/<id>?token=…`, das Attribut ist also auch bei defektem Proxy gesetzt. Gewählt: Bild nur bei `streaming`/`recording` (dann gibt es einen Live-Feed), sonst kompakte Kachel mit Tipp → more-info (dort läuft die Live-Ansicht). Nachteil: ein funktionierendes Standbild im Zustand `idle` wird nicht mehr gezeigt.
-- Theme-Test Wetter: gemessen über dem Hero-Verlauf; dunkel liegt der Worst Case (Glow-Ecke) für Sekundärtext bei 4.28:1, deshalb dort Untergrenze 4.0.
+- Theme-Test Wetter: gemessen über dem Hero-Verlauf; dunkel lag der Worst Case (Glow-Ecke) für Sekundärtext bei 4.28:1; im Hotfix 6.10.1-dev per hellerem `secondary-text-color` auf 4.55:1 behoben, Latte wieder 4.5.
 
 Untested im echten HA: Flex-Umbruch System (2+1 bzw. 2+2), defensive Templates beim Kaltstart, Kamera-Kachel (Zustände streaming/idle/unavailable), Hell-Wetter-Kachel.
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.10.1-dev – 2026-10-24
+
+Hotfix zu 6.10.0-dev (Rollback-Branch `rollback/pre-hotfix-a25fc4b`, kein Tag). Offline validiert, nicht im echten HA gesehen:
+
+- `quick_v5` (button-card): der Default `|| '#9b8cff'` stand in einem YAML-Single-Quote-String, das innere `'` beendete ihn (Rest wurde stillschweigend Kommentar), das Template war abgeschnitten, Akzent-Hintergrund und Icon-Farbe der 19 quick_v5-Kacheln fielen weg. Jetzt Doppelquotes. Es gab genau 2 betroffene Stellen (`img_cell` background, `icon` color); alle YAML-Dateien wurden geparst, weitere kaputte Templates gibt es nicht
+- `validate.py` prüft jetzt die GEPARSTEN Template-Strings: `[[[`/`]]]` müssen paarweise vorkommen, ein Template muss mit `]]]` enden; zusätzlich Meldung für `variables["x"]` und `hass?.states[…]`. Tests mit gutem/schlechtem Fall
+- Dark-Theme: `secondary-text-color` `#989caf` → `#9da1b4` (4.55:1 auf dem Hero-Worst-Case); WCAG-Latte im Wetter-Test wieder 4.5 für beide Modi
+
 ## 6.10.0-dev – 2026-10-24
 
 Fünfte Runde nach Marcos Live-Prüfung von 6.9.0-dev (Rollback-Branch `rollback/pre-round5-29338f2`, kein Tag). Alles nur offline validiert, nicht im echten HA gesehen:
