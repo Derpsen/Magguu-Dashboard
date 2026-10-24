@@ -216,8 +216,7 @@
           secondary: >-
             {% set status = states('input_text.magguu_dashboard_update_status') %}
             {% set last_update = as_timestamp(states('input_datetime.magguu_dashboard_letzte_aktualisierung'), 0) %}
-            Version {{ states('sensor.magguu_dashboard_version') }}
-            · {{ 'Noch nicht ausgeführt' if status in ['', 'unknown', 'unavailable'] else status }}
+            {{ 'Noch nicht ausgeführt' if status in ['', 'unknown', 'unavailable'] else status }}
             {% if last_update > 0 %}
               · zuletzt {{ last_update | timestamp_custom('%d.%m. · %H:%M', true) }}
             {% endif %}
@@ -225,7 +224,8 @@
           icon: mdi:cloud-download-outline
           icon_color: >-
             {% set status = states('input_text.magguu_dashboard_update_status') %}
-            {{ 'green' if status.startswith('Erfolgreich') else 'red' if status.startswith('Fehlgeschlagen') else 'purple' }}
+            {{ 'green' if status.startswith('Erfolgreich') else 'red' if status.startswith('Fehlgeschlagen')
+               else 'orange' if is_state('sensor.magguu_dashboard_update_hinweis', 'verfuegbar') else 'purple' }}
           tap_action:
             action: call-service
             service: script.turn_on
@@ -234,6 +234,32 @@
             confirmation:
               text: Dashboard jetzt aktualisieren und ein Backup anlegen?
           hold_action: {action: more-info}
+          card_mod: *status_card
+        - type: custom:mushroom-template-card
+          entity: sensor.magguu_dashboard_update_hinweis
+          primary: Dashboard-Version
+          secondary: >-
+            {% set sha = states('sensor.magguu_dashboard_commit') %}
+            {% set main = states('sensor.magguu_dashboard_main_commit') %}
+            {% set hint = states(entity) %}
+            {{ states('sensor.magguu_dashboard_version') }}
+            · {{ sha[:7] if sha | regex_match('^[0-9a-f]{40}$') else 'Commit unbekannt' }}
+            {% if hint == 'verfuegbar' %}
+              · Neuer Stand auf main ({{ main[:7] }}) – „Dashboard aktualisieren“
+            {% elif hint == 'aktuell' %}
+              · aktuell mit main
+            {% else %}
+              · Update-Prüfung unbekannt
+            {% endif %}
+          multiline_secondary: true
+          icon: >-
+            {{ 'mdi:update' if is_state(entity, 'verfuegbar')
+               else 'mdi:source-commit' }}
+          icon_color: >-
+            {{ 'orange' if is_state(entity, 'verfuegbar')
+               else 'green' if is_state(entity, 'aktuell')
+               else 'grey' }}
+          tap_action: {action: more-info}
           card_mod: *status_card
         - type: custom:mushroom-template-card
           entity: sensor.backup_backup_manager_state

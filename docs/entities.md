@@ -151,6 +151,9 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.magguu_updates_verfuegbar`
 - `sensor.magguu_nicht_verfuegbar`
 - `sensor.magguu_dashboard_version`
+- `sensor.magguu_dashboard_commit` (installierter Commit, vom Installer gestempelt)
+- `sensor.magguu_dashboard_main_commit` (REST, öffentliche GitHub-API, stündlich, ohne Token)
+- `sensor.magguu_dashboard_update_hinweis` (`aktuell` / `verfuegbar` / `unbekannt`)
 - `sensor.magguu_wohnzimmer_temperatur_c`
 - `sensor.magguu_esszimmer_temperatur_c`
 - `sensor.magguu_badezimmer_temperatur_c`

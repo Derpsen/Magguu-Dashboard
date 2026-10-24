@@ -1,6 +1,24 @@
 shell_command:
   magguu_dashboard_update: "sh /config/magguu-dashboard-update.sh"
 
+# Newest commit on main, for the update hint on the System page. Public GitHub
+# API, unauthenticated (no token, no secret), polled at most once per hour; on
+# any failure the sensor is unavailable/"unbekannt" and the hint says so.
+rest:
+  - resource: https://api.github.com/repos/Derpsen/Magguu-Dashboard/commits/main
+    scan_interval: 3600
+    timeout: 15
+    headers:
+      Accept: application/vnd.github+json
+      User-Agent: magguu-dashboard
+    sensor:
+      - name: Magguu Dashboard Main-Commit
+        unique_id: magguu_dashboard_main_commit
+        icon: mdi:source-branch
+        value_template: >-
+          {{ value_json.sha | string | truncate(40, true, '')
+             if value_json is mapping and value_json.sha is defined else 'unbekannt' }}
+
 input_text:
   magguu_dashboard_update_status:
     name: Magguu Dashboard Update-Status
@@ -77,6 +95,15 @@ script:
               entity_id: input_datetime.magguu_dashboard_letzte_aktualisierung
             data:
               timestamp: "{{ now().timestamp() }}"
+          # Show the new version/commit right away (template sensors are
+          # stamped by the installer) and refresh the cached main commit so
+          # the update hint does not flag the commit just installed.
+          - action: template.reload
+            continue_on_error: true
+          - action: homeassistant.update_entity
+            continue_on_error: true
+            target:
+              entity_id: sensor.magguu_dashboard_main_commit
           - action: persistent_notification.create
             data:
               title: Magguu Dashboard aktualisiert
@@ -367,7 +394,30 @@ template:
       - name: Magguu Dashboard Version
         unique_id: magguu_dashboard_version
         icon: mdi:view-dashboard-variant-outline
-        state: "6.4.0-dev"
+        state: "6.5.0-dev"
+
+      # Commit SHA of the installed sources; the installer (update-ha.sh /
+      # install.sh) stamps the real 40-char SHA here, "unbekannt" if unknown.
+      - name: Magguu Dashboard Commit
+        unique_id: magguu_dashboard_commit
+        icon: mdi:source-commit
+        state: "unbekannt"
+
+      # aktuell = installed commit is main, verfuegbar = main is newer/different,
+      # unbekannt = SHA of installed or main not (yet) known (e.g. GitHub unreachable).
+      - name: Magguu Dashboard Update-Hinweis
+        unique_id: magguu_dashboard_update_hinweis
+        icon: mdi:update
+        state: >-
+          {% set installed = states('sensor.magguu_dashboard_commit') %}
+          {% set main = states('sensor.magguu_dashboard_main_commit') %}
+          {% if not (installed | regex_match('^[0-9a-f]{40}$')) or not (main | regex_match('^[0-9a-f]{40}$')) -%}
+            unbekannt
+          {%- elif installed == main -%}
+            aktuell
+          {%- else -%}
+            verfuegbar
+          {%- endif %}
 
       - name: Magguu Lichter an
         unique_id: magguu_lichter_an

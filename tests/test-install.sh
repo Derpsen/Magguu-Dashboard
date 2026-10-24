@@ -17,6 +17,14 @@ assert_file() {
   fi
 }
 
+# Literal state of the template sensor with the given unique_id in a package file.
+stamped_state() {
+  awk -v id="$2" '
+    $0 ~ ("unique_id:[ ]+" id "[ ]*$") { hit=1 }
+    hit && /state:/ { sub(/^.*state: "/, ""); sub(/".*$/, ""); print; exit }
+  ' "$1"
+}
+
 mkdir -p "$CONFIG_DIR/dashboard/magguu-flux" "$CONFIG_DIR/packages"
 printf 'legacy\n' > "$CONFIG_DIR/dashboard/magguu-flux/legacy.yaml"
 printf 'legacy\n' > "$CONFIG_DIR/packages/magguu_flux.yaml"
@@ -38,6 +46,15 @@ assert_file "$CONFIG_DIR/magguu-dashboard-update.sh"
 test -x "$CONFIG_DIR/magguu-dashboard-update.sh"
 test ! -e "$CONFIG_DIR/dashboard/magguu-flux"
 test ! -e "$CONFIG_DIR/packages/magguu_flux.yaml"
+PACKAGE_FILE="$CONFIG_DIR/packages/magguu_dashboard.yaml"
+VERSION_TEXT="$(tr -d '\r\n' < "$ROOT_DIR/VERSION")"
+test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_version)" = "$VERSION_TEXT"
+# Clone install (install.sh): commit comes from git, or "unbekannt" without a clone.
+if [ -e "$ROOT_DIR/.git" ] && command -v git >/dev/null 2>&1 && git -C "$ROOT_DIR" rev-parse HEAD >/dev/null 2>&1; then
+  test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_commit)" = "$(git -C "$ROOT_DIR" rev-parse HEAD)"
+else
+  test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_commit)" = "unbekannt"
+fi
 grep -q '/config/dashboard/magguu-dashboard/mobile/dashboard.yaml' "$CONFIG_DIR/configuration.yaml"
 grep -q '/config/dashboard/magguu-dashboard/tablet/dashboard.yaml' "$CONFIG_DIR/configuration.yaml"
 if grep -q 'magguu-flux\|magguu_flux' "$CONFIG_DIR/configuration.yaml"; then
@@ -55,11 +72,63 @@ tar -czf "$TEST_DIR/main.tar.gz" -C "$TEST_DIR/archive" Magguu-Dashboard-main
 UPDATER="$TEST_DIR/update-ha.sh"
 sed -e "s#^CONFIG_DIR=/config\$#CONFIG_DIR=$CONFIG_DIR#" \
   -e "s#^ARCHIVE_URL=https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz\$#ARCHIVE_URL=file://$TEST_DIR/main.tar.gz#" \
+  -e "s#^CURL_PROTO='=https'\$#CURL_PROTO='=file'#" \
   "$ROOT_DIR/update-ha.sh" > "$UPDATER"
 grep -q "^CONFIG_DIR=$CONFIG_DIR\$" "$UPDATER"
 grep -q "^ARCHIVE_URL=file://" "$UPDATER"
+grep -q "^CURL_PROTO='=file'\$" "$UPDATER"
+# The shipped updater only allows https downloads (a file:// archive must fail).
+sed -e "s#^CONFIG_DIR=/config\$#CONFIG_DIR=$CONFIG_DIR#" \
+  -e "s#^ARCHIVE_URL=https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz\$#ARCHIVE_URL=file://$TEST_DIR/main.tar.gz#" \
+  "$ROOT_DIR/update-ha.sh" > "$TEST_DIR/update-ha-https.sh"
+if sh "$TEST_DIR/update-ha-https.sh" >/dev/null 2>&1; then
+  echo "Updater hat ein file://-Archiv trotz --proto =https akzeptiert." >&2
+  exit 1
+fi
+test -f "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
 sh "$UPDATER"
 test ! -e "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
+# Archive without GitHub pax header: commit stays "unbekannt"; env cannot inject one.
+test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_commit)" = "unbekannt"
+MAGGUU_COMMIT_SHA=ffffffffffffffffffffffffffffffffffffffff sh "$UPDATER" >/dev/null
+test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_commit)" = "unbekannt"
+test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_version)" = "$VERSION_TEXT"
+
+# Archive in GitHub format (git archive writes the commit into the pax header).
+if command -v git >/dev/null 2>&1; then
+  GIT_SRC="$TEST_DIR/gitsrc"
+  mkdir -p "$GIT_SRC"
+  (cd "$ROOT_DIR" && tar --exclude=.git -cf - .) | (cd "$GIT_SRC" && tar -xf -)
+  (
+    cd "$GIT_SRC"
+    git init -q
+    git add -A
+    git -c user.name=test -c user.email=test@example.invalid -c commit.gpgsign=false commit -q -m test
+    git archive --format=tar.gz --prefix=Magguu-Dashboard-main/ -o "$TEST_DIR/main.tar.gz" HEAD
+  )
+  EXPECTED_SHA="$(git -C "$GIT_SRC" rev-parse HEAD)"
+  sleep 1
+  sh "$UPDATER" >/dev/null
+  test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_commit)" = "$EXPECTED_SHA"
+  test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_version)" = "$VERSION_TEXT"
+  grep -q 'unique_id: magguu_dashboard_update_hinweis' "$PACKAGE_FILE"
+fi
+
+# Commit detection accepts only a full lowercase 40-char hex SHA.
+(
+  # shellcheck source=scripts/install-dashboard.sh
+  . "$ROOT_DIR/scripts/install-dashboard.sh"
+  good=0123456789abcdef0123456789abcdef01234567
+  NOGIT="$TEST_DIR/nogit"
+  mkdir -p "$NOGIT"
+  MAGGUU_COMMIT_SHA=$good
+  test "$(magguu_detect_commit "$NOGIT")" = "$good"
+  for bad in "" 0123456789ABCDEF0123456789ABCDEF01234567 0123456789abcdef '0123456789abcdef0123456789abcdef0123456"; x' \
+    0123456789abcdef0123456789abcdef012345678; do
+    MAGGUU_COMMIT_SHA=$bad
+    test "$(magguu_detect_commit "$NOGIT")" = "unbekannt"
+  done
+)
 
 backup_count="$(find "$CONFIG_DIR/backups" -type f -name outdated.marker | wc -l | tr -d ' ')"
 test "$backup_count" -eq 1
@@ -148,7 +217,7 @@ test -L "$CONFIG_DIR/backups/magguu-dashboard-20180101-000000"
 
 grep -q 'packages: !include_dir_named packages' "$CONFIG_DIR/configuration.yaml"
 grep -q 'themes: !include_dir_merge_named themes' "$CONFIG_DIR/configuration.yaml"
-grep -q 'state: "6.4.0-dev"' "$CONFIG_DIR/packages/magguu_dashboard.yaml"
+grep -q "state: \"$VERSION_TEXT\"" "$CONFIG_DIR/packages/magguu_dashboard.yaml"
 mobile_count="$(grep -c 'magguu-mobile:' "$CONFIG_DIR/configuration.yaml" | tr -d ' ')"
 test "$mobile_count" -eq 1
 packages_count="$(grep -c 'packages: !include_dir_named packages' "$CONFIG_DIR/configuration.yaml" | tr -d ' ')"

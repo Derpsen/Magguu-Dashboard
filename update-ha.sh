@@ -8,16 +8,21 @@
 # process dies) if available, otherwise an mkdir lock; an mkdir lock older
 # than LOCK_STALE_SECONDS (10 min) is treated as stale and taken over.
 # A second concurrent run logs one line and exits 0 without changing anything.
+# Version marker: the commit SHA of the downloaded archive (GitHub writes it
+# into the tar pax header) is stamped next to VERSION into the installed
+# package, so the dashboard can show version + commit. Never read from outside.
 set -eu
 
 CONFIG_DIR=/config
 ARCHIVE_URL=https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz
+CURL_PROTO='=https'
 LOCK_MODE=auto
 LOCK_STALE_SECONDS=600
 LOCK_FILE="$CONFIG_DIR/.magguu-dashboard-update.lock"
 LOCK_DIR="$CONFIG_DIR/.magguu-dashboard-update.lockdir"
 LOCK_HELD=""
 WORK_DIR=""
+MAGGUU_COMMIT_SHA=""
 
 # shellcheck disable=SC2317,SC2329 # invoked via trap (false positive with exiting functions)
 cleanup() {
@@ -83,7 +88,11 @@ main() {
 
   WORK_DIR="$(mktemp -d "$CONFIG_DIR/.magguu-dashboard-update.XXXXXX")"
   ARCHIVE="$WORK_DIR/dashboard.tar.gz"
-  curl -fL --retry 3 --connect-timeout 15 "$ARCHIVE_URL" -o "$ARCHIVE"
+  curl -fsSL --proto "$CURL_PROTO" --proto-redir "$CURL_PROTO" --retry 3 --retry-max-time 300 \
+    --connect-timeout 15 --max-time 120 "$ARCHIVE_URL" -o "$ARCHIVE"
+  # Commit SHA from the tar pax header ("comment=<40 hex>"); empty if absent.
+  MAGGUU_COMMIT_SHA="$(gzip -dc "$ARCHIVE" 2>/dev/null | head -c 1024 | tr -d '\000' \
+    | grep -o 'comment=[0-9a-f]\{40\}' | head -n 1 | cut -c9- || true)"
   tar -xzf "$ARCHIVE" -C "$WORK_DIR"
   SOURCE_DIR="$(find "$WORK_DIR" -mindepth 1 -maxdepth 1 -type d -name 'Magguu-Dashboard-*' | head -n 1)"
 

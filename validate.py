@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
+import json
 from pathlib import Path
 import re
 import sys
@@ -162,6 +163,9 @@ VERSION_SENSOR_PATTERN = re.compile(
 )
 
 
+VERSION_FORMAT_PATTERN = re.compile(r"\d+\.\d+\.\d+(?:-dev)?")
+
+
 def validate_version(root: Path) -> list[str]:
     package_path = root / "packages" / "magguu_dashboard.yaml"
     if not package_path.is_file():
@@ -177,6 +181,8 @@ def validate_version(root: Path) -> list[str]:
         return [
             "packages/magguu_dashboard.yaml: Sensor magguu_dashboard_version ohne state"
         ]
+    if not VERSION_FORMAT_PATTERN.fullmatch(version):
+        return [f"VERSION hat kein gültiges Format (X.Y.Z oder X.Y.Z-dev): {version}"]
     if match.group(1) != version:
         return [
             "Version drift: VERSION="
@@ -232,6 +238,14 @@ TEMPLATE_MARKERS = ("{{", "{%", "{#")
 UPDATER_FIXED_LINES = (
     "CONFIG_DIR=/config",
     "ARCHIVE_URL=https://github.com/Derpsen/Magguu-Dashboard/archive/refs/heads/main.tar.gz",
+    "CURL_PROTO='=https'",
+    'MAGGUU_COMMIT_SHA=""',
+)
+# The download must stay https-only (also after redirects) and time-boxed.
+UPDATER_REQUIRED_SNIPPETS = (
+    '--proto "$CURL_PROTO"',
+    '--proto-redir "$CURL_PROTO"',
+    "--max-time",
 )
 # Set by the sourced installer (scripts/install-dashboard.sh), not by the caller.
 UPDATER_SOURCED_VARS = {"MAGGUU_BACKUP_DIR"}
@@ -276,12 +290,117 @@ def validate_updater(root: Path) -> list[str]:
     for fixed in UPDATER_FIXED_LINES:
         if fixed not in lines:
             errors.append(f"update-ha.sh: feste Zeile fehlt: {fixed}")
+    for snippet in UPDATER_REQUIRED_SNIPPETS:
+        if snippet not in code:
+            errors.append(f"update-ha.sh: erforderlicher Teil fehlt: {snippet}")
     assigned = set(SHELL_ASSIGN_PATTERN.findall(code)) | UPDATER_SOURCED_VARS
     for name in sorted(set(SHELL_VAR_PATTERN.findall(code))):
         if name[0].isdigit() or name in {"@", "*", "#"}:
             errors.append(f"update-ha.sh: liest Argumente (${name})")
         elif name not in assigned:
             errors.append(f"update-ha.sh: liest Umgebungsvariable ${name}")
+    return errors
+
+
+# Installed version + commit and update hint (System page). The installed
+# commit is stamped by the installer; the newest main commit comes from one
+# unauthenticated REST call to the public GitHub API, polled at most hourly.
+MAIN_COMMIT_URL = "https://api.github.com/repos/Derpsen/Magguu-Dashboard/commits/main"
+MAIN_COMMIT_REST_KEYS = {"resource", "scan_interval", "timeout", "headers", "sensor"}
+MAIN_COMMIT_HEADERS = {"Accept", "User-Agent"}
+MIN_SCAN_INTERVAL_SECONDS = 3600
+FULL_SHA_PATTERN = re.compile(r"[0-9a-f]{40}")
+VALUE_JSON_PATTERN = re.compile(r"value_json\.(\w+)")
+HINT_STATES = ("aktuell", "verfuegbar", "unbekannt")
+VERSION_CARD_SENSORS = (
+    "sensor.magguu_dashboard_version",
+    "sensor.magguu_dashboard_commit",
+    "sensor.magguu_dashboard_main_commit",
+    "sensor.magguu_dashboard_update_hinweis",
+)
+
+
+def _template_sensors(document: Any) -> dict[str, Mapping[str, Any]]:
+    sensors: dict[str, Mapping[str, Any]] = {}
+    templates = document.get("template") if isinstance(document, Mapping) else None
+    for block in templates if isinstance(templates, list) else []:
+        entries = block.get("sensor") if isinstance(block, Mapping) else None
+        for sensor in entries if isinstance(entries, list) else []:
+            if isinstance(sensor, Mapping) and isinstance(sensor.get("unique_id"), str):
+                sensors[sensor["unique_id"]] = sensor
+    return sensors
+
+
+def validate_update_hint(root: Path) -> list[str]:
+    package_path = root / "packages" / "magguu_dashboard.yaml"
+    if not package_path.is_file():
+        return []
+    rel = "packages/magguu_dashboard.yaml"
+    text = package_path.read_text(encoding="utf-8")
+    try:
+        document = load_yaml(package_path)
+    except Exception:  # reported by validate_yaml
+        return []
+    errors: list[str] = []
+
+    rest = document.get("rest") if isinstance(document, Mapping) else None
+    entries = [e for e in rest if isinstance(e, Mapping)] if isinstance(rest, list) else []
+    if "!secret" in text or re.search(
+        r"(?i)authorization|authentication|bearer|token|password|username", json.dumps(entries, default=str)
+    ):
+        errors.append(f"{rel}: Update-Hinweis muss ohne Secrets/Token/Authorization auskommen")
+    if len(entries) != 1 or entries[0].get("resource") != MAIN_COMMIT_URL:
+        errors.append(f"{rel}: rest muss genau die öffentliche GitHub-main-Commit-URL abfragen ({MAIN_COMMIT_URL})")
+    else:
+        entry = entries[0]
+        for key in sorted(set(entry) - MAIN_COMMIT_REST_KEYS):
+            errors.append(f"{rel}: rest-Eintrag darf {key} nicht setzen")
+        interval = entry.get("scan_interval")
+        if not isinstance(interval, int) or interval < MIN_SCAN_INTERVAL_SECONDS:
+            errors.append(f"{rel}: rest scan_interval muss mindestens {MIN_SCAN_INTERVAL_SECONDS} s sein")
+        headers = entry.get("headers")
+        if not isinstance(headers, Mapping) or set(headers) - MAIN_COMMIT_HEADERS:
+            errors.append(f"{rel}: rest headers nur {sorted(MAIN_COMMIT_HEADERS)} erlaubt")
+        sensors = entry.get("sensor")
+        sensors = sensors if isinstance(sensors, list) else []
+        main = [x for x in sensors if isinstance(x, Mapping) and x.get("unique_id") == "magguu_dashboard_main_commit"]
+        if len(sensors) != 1 or len(main) != 1:
+            errors.append(f"{rel}: rest braucht genau den Sensor magguu_dashboard_main_commit")
+        else:
+            template = str(main[0].get("value_template", ""))
+            if set(VALUE_JSON_PATTERN.findall(template)) != {"sha"}:
+                errors.append(f"{rel}: magguu_dashboard_main_commit liest nur value_json.sha")
+            if "unbekannt" not in template or "mapping" not in template:
+                errors.append(f"{rel}: magguu_dashboard_main_commit braucht Fallback 'unbekannt' bei fehlerhafter Antwort")
+
+    template_sensors = _template_sensors(document)
+    commit = template_sensors.get("magguu_dashboard_commit")
+    if commit is None:
+        errors.append(f"{rel}: Sensor magguu_dashboard_commit fehlt")
+    else:
+        state = str(commit.get("state", ""))
+        if state != "unbekannt" and not FULL_SHA_PATTERN.fullmatch(state):
+            errors.append(f"{rel}: magguu_dashboard_commit state muss 'unbekannt' oder eine 40-stellige SHA sein")
+    hint = template_sensors.get("magguu_dashboard_update_hinweis")
+    if hint is None:
+        errors.append(f"{rel}: Sensor magguu_dashboard_update_hinweis fehlt")
+    else:
+        state = str(hint.get("state", ""))
+        if state.count("regex_match") < 2 or not all(w in state for w in HINT_STATES):
+            errors.append(
+                f"{rel}: magguu_dashboard_update_hinweis muss beide SHAs per regex_match prüfen "
+                f"und {'/'.join(HINT_STATES)} liefern"
+            )
+        for entity in ("sensor.magguu_dashboard_commit", "sensor.magguu_dashboard_main_commit"):
+            if entity not in state:
+                errors.append(f"{rel}: magguu_dashboard_update_hinweis nutzt {entity} nicht")
+
+    system_path = root / "dashboard" / "magguu-dashboard" / "shared" / "cards" / "system.yaml"
+    if system_path.is_file():
+        system = system_path.read_text(encoding="utf-8")
+        for entity in VERSION_CARD_SENSORS:
+            if entity not in system:
+                errors.append(f"shared/cards/system.yaml: Versionskarte nutzt {entity} nicht")
     return errors
 
 
@@ -300,6 +419,7 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     errors.extend(validate_view_shell_tokens(root))
     errors.extend(validate_shell_commands(documents, root))
     errors.extend(validate_updater(root))
+    errors.extend(validate_update_hint(root))
     return len(paths), errors
 
 

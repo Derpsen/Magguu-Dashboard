@@ -174,23 +174,54 @@ magguu_merge_ha_configuration() {
   fi
 }
 
-magguu_stamp_package_version() {
-  magguu_version_file=$1
-  magguu_package=$2
-  magguu_version=$(tr -d '\r\n' < "$magguu_version_file")
-  magguu_tmp="$magguu_package.magguu-new"
-  awk -v ver="$magguu_version" '
+# Replace the literal `state: "..."` of the template sensor with the given
+# unique_id. Value is written into YAML, so callers pass validated values only.
+magguu_stamp_sensor_state() {
+  magguu_stamp_package=$1
+  magguu_stamp_id=$2
+  magguu_stamp_value=$3
+  magguu_tmp="$magguu_stamp_package.magguu-new"
+  awk -v id="$magguu_stamp_id" -v val="$magguu_stamp_value" '
     BEGIN { hit=0 }
-    /unique_id: magguu_dashboard_version/ { hit=1 }
+    $0 ~ ("unique_id:[ ]+" id "[ ]*$") { hit=1 }
     {
       if (hit && $0 ~ /state:/) {
-        sub(/state: ".*"/, "state: \"" ver "\"")
+        sub(/state: ".*"/, "state: \"" val "\"")
         hit=0
       }
       print
     }
-  ' "$magguu_package" > "$magguu_tmp"
-  mv "$magguu_tmp" "$magguu_package"
+  ' "$magguu_stamp_package" > "$magguu_tmp"
+  mv "$magguu_tmp" "$magguu_stamp_package"
+}
+
+magguu_stamp_package_version() {
+  magguu_version_file=$1
+  magguu_package=$2
+  magguu_version=$(tr -d '\r\n' < "$magguu_version_file")
+  magguu_stamp_sensor_state "$magguu_package" magguu_dashboard_version "$magguu_version"
+}
+
+# Commit of the installed sources: MAGGUU_COMMIT_SHA (set by update-ha.sh from
+# the tarball header) or `git rev-parse HEAD` of a clone. Only a full 40-char
+# lowercase hex SHA is accepted, anything else becomes "unbekannt".
+magguu_detect_commit() {
+  magguu_commit_src=$1
+  magguu_commit=${MAGGUU_COMMIT_SHA:-}
+  if [ -z "$magguu_commit" ] && [ -e "$magguu_commit_src/.git" ] && command -v git >/dev/null 2>&1; then
+    magguu_commit=$(git -C "$magguu_commit_src" rev-parse HEAD 2>/dev/null || true)
+  fi
+  case $magguu_commit in
+    *[!0-9a-f]*) magguu_commit="" ;;
+  esac
+  if [ "${#magguu_commit}" -ne 40 ]; then
+    magguu_commit=unbekannt
+  fi
+  printf '%s\n' "$magguu_commit"
+}
+
+magguu_stamp_package_commit() {
+  magguu_stamp_sensor_state "$2" magguu_dashboard_commit "$(magguu_detect_commit "$1")"
 }
 
 magguu_is_backup_dir() {
@@ -271,6 +302,7 @@ magguu_install_dashboard() {
   cp -a "$magguu_source_dir/update-ha.sh" "$magguu_updater_target"
   chmod 755 "$magguu_updater_target"
   magguu_stamp_package_version "$magguu_source_dir/VERSION" "$magguu_package_target"
+  magguu_stamp_package_commit "$magguu_source_dir" "$magguu_package_target"
 
   if [ -f "$magguu_config_file" ] && magguu_configuration_needs_merge "$magguu_config_file"; then
     if [ "$magguu_config_backed_up" -eq 0 ]; then
