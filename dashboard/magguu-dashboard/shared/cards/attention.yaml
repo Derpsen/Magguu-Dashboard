@@ -5,9 +5,12 @@ conditions:
 card:
   type: vertical-stack
   cards:
-    - type: custom:mushroom-title-card
-      title: Jetzt wichtig
-      subtitle: Der aktuell wichtigste Hinweis
+    - type: heading
+      heading: Jetzt wichtig
+      heading_style: title
+    - type: heading
+      heading: Der aktuell wichtigste Hinweis
+      heading_style: subtitle
 
     - type: conditional
       conditions:

@@ -5,9 +5,14 @@ cards:
       - entity: sensor.magguu_offene_fenster
         state_not: '0'
     card:
-      type: custom:mushroom-title-card
-      title: Offene Fenster & Türen
-      subtitle: Antippen öffnet die jeweilige Detailansicht
+      type: vertical-stack
+      cards:
+        - type: heading
+          heading: Offene Fenster & Türen
+          heading_style: title
+        - type: heading
+          heading: Antippen öffnet die jeweilige Detailansicht
+          heading_style: subtitle
 
   - type: conditional
     conditions:

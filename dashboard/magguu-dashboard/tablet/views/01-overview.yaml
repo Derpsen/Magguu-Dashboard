@@ -39,9 +39,12 @@
       view_layout:
         grid-area: agenda
       cards:
-        - type: custom:mushroom-title-card
-          title: Als Nächstes
-          subtitle: Arbeit, Abfuhr und Termine auf einen Blick
+        - type: heading
+          heading: Als Nächstes
+          heading_style: title
+        - type: heading
+          heading: Arbeit, Abfuhr und Termine auf einen Blick
+          heading_style: subtitle
         - type: grid
           columns: 4
           square: false
@@ -79,9 +82,12 @@
       view_layout:
         grid-area: rooms
       cards:
-        - type: custom:mushroom-title-card
-          title: Wohnbereiche
-          subtitle: Direkte Steuerung – alle Räume auf der Raumseite
+        - type: heading
+          heading: Wohnbereiche
+          heading_style: title
+        - type: heading
+          heading: Direkte Steuerung – alle Räume auf der Raumseite
+          heading_style: subtitle
         - !include ../../shared/cards/room-wohnzimmer.yaml
         - !include ../../shared/cards/room-esszimmer.yaml
         - !include ../../shared/cards/room-kueche.yaml
@@ -107,9 +113,12 @@
       cards:
         - !include ../../shared/cards/attention.yaml
         - !include ../../shared/cards/status-shortcuts.yaml
-        - type: custom:mushroom-title-card
-          title: Schnellzugriff
-          subtitle: Die häufigsten Aktionen
+        - type: heading
+          heading: Schnellzugriff
+          heading_style: title
+        - type: heading
+          heading: Die häufigsten Aktionen
+          heading_style: subtitle
         - !include ../../shared/cards/home-quick.yaml
         - !include ../../shared/cards/active-media.yaml
         - !include ../../shared/cards/modes.yaml

@@ -12,9 +12,12 @@
   view_layout:
     grid-area: status
   cards:
-    - type: custom:mushroom-title-card
-      title: Systemstatus
-      subtitle: Die wichtigsten Werte auf einen Blick
+    - type: heading
+      heading: Systemstatus
+      heading_style: title
+    - type: heading
+      heading: Die wichtigsten Werte auf einen Blick
+      heading_style: subtitle
 
     - type: custom:layout-card
       layout_type: custom:grid-layout
@@ -95,9 +98,12 @@
   view_layout:
     grid-area: side
   cards:
-    - type: custom:mushroom-title-card
-      title: Hinweise
-      subtitle: Nur relevante Systemmeldungen
+    - type: heading
+      heading: Hinweise
+      heading_style: title
+    - type: heading
+      heading: Nur relevante Systemmeldungen
+      heading_style: subtitle
 
     - type: custom:mushroom-template-card
       entity: sensor.magguu_wartung_offen
@@ -195,9 +201,12 @@
   view_layout:
     grid-area: manage
   cards:
-    - type: custom:mushroom-title-card
-      title: Verwaltung
-      subtitle: Dashboard aktualisieren und Backups kontrollieren
+    - type: heading
+      heading: Verwaltung
+      heading_style: title
+    - type: heading
+      heading: Dashboard aktualisieren und Backups kontrollieren
+      heading_style: subtitle
 
     - type: custom:layout-card
       layout_type: custom:grid-layout
@@ -284,9 +293,12 @@
           tap_action: {action: more-info}
           card_mod: *status_card
 
-    - type: custom:mushroom-title-card
-      title: Bereiche & Erweiterungen
-      subtitle: Sicherheit, Medien und Energie
+    - type: heading
+      heading: Bereiche & Erweiterungen
+      heading_style: title
+    - type: heading
+      heading: Sicherheit, Medien und Energie
+      heading_style: subtitle
 
     - type: grid
       columns: 2

@@ -10,9 +10,12 @@
 - type: vertical-stack
   view_layout: {grid-area: status}
   cards:
-    - type: custom:mushroom-title-card
-      title: Hausstatus
-      subtitle: Die wichtigsten Sicherheitszustände ohne Umwege
+    - type: heading
+      heading: Hausstatus
+      heading_style: title
+    - type: heading
+      heading: Die wichtigsten Sicherheitszustände ohne Umwege
+      heading_style: subtitle
 
     - type: custom:mushroom-template-card
       entity: sensor.magguu_sicherheitsstatus
@@ -85,9 +88,12 @@
 - type: vertical-stack
   view_layout: {grid-area: ring}
   cards:
-    - type: custom:mushroom-title-card
-      title: Vordereingang
-      subtitle: Klingelereignisse und Türöffnung mit Bestätigung
+    - type: heading
+      heading: Vordereingang
+      heading_style: title
+    - type: heading
+      heading: Klingelereignisse und Türöffnung mit Bestätigung
+      heading_style: subtitle
 
     - type: grid
       columns: 3
@@ -175,9 +181,12 @@
           name: Sprache
       card_mod: *security_card
 
-    - type: custom:mushroom-title-card
-      title: Kinderzimmer
-      subtitle: Live-Ansicht der Ring-Kamera
+    - type: heading
+      heading: Kinderzimmer
+      heading_style: title
+    - type: heading
+      heading: Live-Ansicht der Ring-Kamera
+      heading_style: subtitle
 
     - type: picture-entity
       entity: camera.kinderzimmer_live_ansicht

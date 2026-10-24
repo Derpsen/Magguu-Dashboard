@@ -1,8 +1,11 @@
 type: vertical-stack
 cards:
-  - type: custom:mushroom-title-card
-    title: Szenen & Modi
-    subtitle: Mehrere Geräte sicher mit einer Aktion steuern
+  - type: heading
+    heading: Szenen & Modi
+    heading_style: title
+  - type: heading
+    heading: Mehrere Geräte sicher mit einer Aktion steuern
+    heading_style: subtitle
 
   - type: grid
     columns: 2

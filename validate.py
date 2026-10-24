@@ -438,7 +438,7 @@ BUILTIN_CARD_TYPES = {
 ALLOWED_CUSTOM_CARDS = {
     "custom:button-card", "custom:grid-layout", "custom:layout-card",
     "custom:mini-graph-card", "custom:mushroom-template-card",
-    "custom:mushroom-title-card", "custom:navbar-card", "custom:stack-in-card",
+    "custom:navbar-card", "custom:stack-in-card",
     "custom:auto-entities",
 }
 # Tile features listed on home-assistant.io/dashboards/features.

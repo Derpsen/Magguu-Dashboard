@@ -54,9 +54,12 @@
             box-shadow: none;
           }
     - !include ../../shared/cards/active-media.yaml
-    - type: custom:mushroom-title-card
-      title: Räume
-      subtitle: Direkt steuern oder Raum öffnen
+    - type: heading
+      heading: Räume
+      heading_style: title
+    - type: heading
+      heading: Direkt steuern oder Raum öffnen
+      heading_style: subtitle
     - !include ../../shared/cards/room-wohnzimmer.yaml
     - !include ../../shared/cards/room-esszimmer.yaml
     - !include ../../shared/cards/room-kueche.yaml

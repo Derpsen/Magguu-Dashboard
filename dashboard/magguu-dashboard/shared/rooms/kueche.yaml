@@ -36,9 +36,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: light}
     cards:
-      - type: custom:mushroom-title-card
-        title: Beleuchtung
-        subtitle: Küchenlicht direkt schalten
+      - type: heading
+        heading: Beleuchtung
+        heading_style: title
+      - type: heading
+        heading: Küchenlicht direkt schalten
+        heading_style: subtitle
       - type: tile
         entity: switch.kuche_kuche_licht
         name: Küchenlicht
@@ -58,9 +61,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: cover}
     cards:
-      - type: custom:mushroom-title-card
-        title: Rollladen
-        subtitle: Position gezielt einstellen
+      - type: heading
+        heading: Rollladen
+        heading_style: title
+      - type: heading
+        heading: Position gezielt einstellen
+        heading_style: subtitle
       - type: tile
         entity: cover.kuche_kuche_rollade
         name: Rollladen Küche

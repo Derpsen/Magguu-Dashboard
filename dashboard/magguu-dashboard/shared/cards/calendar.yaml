@@ -6,9 +6,12 @@
     subtitle: Arbeit, Abfuhr, Termine und Erinnerungen in einer ruhigen Übersicht
     accent: '#b48cff'
 
-- type: custom:mushroom-title-card
-  title: Als Nächstes
-  subtitle: Die nächsten Einträge aus allen wichtigen Kalendern
+- type: heading
+  heading: Als Nächstes
+  heading_style: title
+- type: heading
+  heading: Die nächsten Einträge aus allen wichtigen Kalendern
+  heading_style: subtitle
 
 - type: custom:layout-card
   layout_type: custom:grid-layout

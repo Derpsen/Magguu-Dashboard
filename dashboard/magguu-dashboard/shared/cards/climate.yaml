@@ -45,9 +45,12 @@
 
 - !include openings.yaml
 
-- type: custom:mushroom-title-card
-  title: Heizungen
-  subtitle: Zieltemperatur direkt einstellen
+- type: heading
+  heading: Heizungen
+  heading_style: title
+- type: heading
+  heading: Zieltemperatur direkt einstellen
+  heading_style: subtitle
 
 - type: custom:layout-card
   layout_type: custom:grid-layout
@@ -100,9 +103,12 @@
         - type: target-temperature
       card_mod: *climate_card
 
-- type: custom:mushroom-title-card
-  title: Verlauf
-  subtitle: Temperatur und Luftfeuchtigkeit der letzten 48 Stunden
+- type: heading
+  heading: Verlauf
+  heading_style: title
+- type: heading
+  heading: Temperatur und Luftfeuchtigkeit der letzten 48 Stunden
+  heading_style: subtitle
 
 - type: custom:layout-card
   layout_type: custom:grid-layout

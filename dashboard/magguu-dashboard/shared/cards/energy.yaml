@@ -10,9 +10,12 @@
 - type: vertical-stack
   view_layout: {grid-area: main}
   cards:
-    - type: custom:mushroom-title-card
-      title: Energiezentrale
-      subtitle: Home Assistants integrierte Auswertung nutzen
+    - type: heading
+      heading: Energiezentrale
+      heading_style: title
+    - type: heading
+      heading: Home Assistants integrierte Auswertung nutzen
+      heading_style: subtitle
     - type: custom:mushroom-template-card
       primary: Energie-Dashboard öffnen
       secondary: Tages-, Monats- und Langzeitverbrauch anzeigen
@@ -36,9 +39,12 @@
 - type: vertical-stack
   view_layout: {grid-area: setup}
   cards:
-    - type: custom:mushroom-title-card
-      title: Messquellen
-      subtitle: Keine Werte erfinden – nur reale Leistungs- und Energieentitäten
+    - type: heading
+      heading: Messquellen
+      heading_style: title
+    - type: heading
+      heading: Keine Werte erfinden – nur reale Leistungs- und Energieentitäten
+      heading_style: subtitle
     - type: custom:mushroom-template-card
       primary: Verbrauchsdaten noch nicht verifiziert
       secondary: Stromzähler, Zwischenstecker oder Wechselrichter zuerst in Home Assistant einrichten und anschließend exportieren

@@ -40,9 +40,12 @@ cards:
     view_layout:
       grid-area: services
     cards:
-      - type: custom:mushroom-title-card
-        title: Dienste
-        subtitle: Erreichbarkeit und Laufzeit
+      - type: heading
+        heading: Dienste
+        heading_style: title
+      - type: heading
+        heading: Erreichbarkeit und Laufzeit
+        heading_style: subtitle
       - type: custom:mushroom-template-card
         entity: sensor.magguu_website_status
         primary: Website
@@ -91,9 +94,12 @@ cards:
     view_layout:
       grid-area: deploy
     cards:
-      - type: custom:mushroom-title-card
-        title: Letzter Deploy
-        subtitle: Docker-Workflow auf main
+      - type: heading
+        heading: Letzter Deploy
+        heading_style: title
+      - type: heading
+        heading: Docker-Workflow auf main
+        heading_style: subtitle
       - type: custom:mushroom-template-card
         entity: sensor.magguu_bot_letzter_deploy
         primary: MagguuBot-Image
@@ -128,9 +134,12 @@ cards:
     view_layout:
       grid-area: webhooks
     cards:
-      - type: custom:mushroom-title-card
-        title: Bot-Webhooks
-        subtitle: Letzter Empfang je Quelle
+      - type: heading
+        heading: Bot-Webhooks
+        heading_style: title
+      - type: heading
+        heading: Letzter Empfang je Quelle
+        heading_style: subtitle
       - type: markdown
         entity_id: sensor.magguu_bot_status
         content: >-

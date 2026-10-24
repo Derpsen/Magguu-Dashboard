@@ -38,9 +38,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: light}
     cards:
-      - type: custom:mushroom-title-card
-        title: Beleuchtung
-        subtitle: Gruppen und Farblicht dimmen
+      - type: heading
+        heading: Beleuchtung
+        heading_style: title
+      - type: heading
+        heading: Gruppen und Farblicht dimmen
+        heading_style: subtitle
       - type: tile
         entity: light.badezimmer_badezimmer
         name: Badezimmer gesamt
@@ -92,9 +95,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: climate}
     cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und 48-Stunden-Verlauf
+      - type: heading
+        heading: Klima
+        heading_style: title
+      - type: heading
+        heading: Heizung und 48-Stunden-Verlauf
+        heading_style: subtitle
       - type: tile
         entity: climate.badezimmer_badezimmer_thermostat
         name: Badezimmer

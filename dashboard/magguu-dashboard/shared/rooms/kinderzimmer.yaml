@@ -41,9 +41,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: light}
     cards:
-      - type: custom:mushroom-title-card
-        title: Beleuchtung
-        subtitle: Haupt- und Schranklicht dimmen
+      - type: heading
+        heading: Beleuchtung
+        heading_style: title
+      - type: heading
+        heading: Haupt- und Schranklicht dimmen
+        heading_style: subtitle
       - type: tile
         entity: light.kinderzimmer_kinderzimmer
         name: Kinderzimmer gesamt
@@ -71,9 +74,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: climate}
     cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und Verlauf
+      - type: heading
+        heading: Klima
+        heading_style: title
+      - type: heading
+        heading: Heizung und Verlauf
+        heading_style: subtitle
       - type: tile
         entity: climate.kinderzimmer_kinderzimmer_thermostat
         name: Kinderzimmer
@@ -93,9 +99,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: cover}
     cards:
-      - type: custom:mushroom-title-card
-        title: Rollladen
-        subtitle: Position gezielt einstellen
+      - type: heading
+        heading: Rollladen
+        heading_style: title
+      - type: heading
+        heading: Position gezielt einstellen
+        heading_style: subtitle
       - type: tile
         entity: cover.kinderzimmer_kinderzimmer_rollade
         name: Rollladen Kinderzimmer

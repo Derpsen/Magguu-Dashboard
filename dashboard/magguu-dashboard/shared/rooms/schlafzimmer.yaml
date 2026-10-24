@@ -41,9 +41,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: light}
     cards:
-      - type: custom:mushroom-title-card
-        title: Beleuchtung
-        subtitle: Raum- und Bettlichter dimmen
+      - type: heading
+        heading: Beleuchtung
+        heading_style: title
+      - type: heading
+        heading: Raum- und Bettlichter dimmen
+        heading_style: subtitle
       - type: tile
         entity: light.schlafzimmer_schlafzimmer
         name: Schlafzimmer gesamt
@@ -79,9 +82,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: climate}
     cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und Verlauf
+      - type: heading
+        heading: Klima
+        heading_style: title
+      - type: heading
+        heading: Heizung und Verlauf
+        heading_style: subtitle
       - type: tile
         entity: climate.schlafzimmer_schlafzimmer_thermostat
         name: Schlafzimmer
@@ -101,9 +107,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: cover}
     cards:
-      - type: custom:mushroom-title-card
-        title: Rollläden
-        subtitle: Beide Seiten gezielt positionieren
+      - type: heading
+        heading: Rollläden
+        heading_style: title
+      - type: heading
+        heading: Beide Seiten gezielt positionieren
+        heading_style: subtitle
       - type: tile
         entity: cover.schlafzimmer_schlafzimmer_rollade_links
         name: Rollladen links

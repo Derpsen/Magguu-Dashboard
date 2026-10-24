@@ -10,9 +10,12 @@
 - type: vertical-stack
   view_layout: {grid-area: player}
   cards:
-    - type: custom:mushroom-title-card
-      title: Wohnzimmer
-      subtitle: Soundbar und Geräte zentral steuern
+    - type: heading
+      heading: Wohnzimmer
+      heading_style: title
+    - type: heading
+      heading: Soundbar und Geräte zentral steuern
+      heading_style: subtitle
     - type: tile
       entity: media_player.av_samsung_soundbar_q90r
       name: Samsung Soundbar
@@ -60,9 +63,12 @@
 - type: vertical-stack
   view_layout: {grid-area: scenes}
   cards:
-    - type: custom:mushroom-title-card
-      title: Schnell starten
-      subtitle: Szenen mit bestätigten Geräteaktionen
+    - type: heading
+      heading: Schnell starten
+      heading_style: title
+    - type: heading
+      heading: Szenen mit bestätigten Geräteaktionen
+      heading_style: subtitle
     - type: grid
       columns: 2
       square: false

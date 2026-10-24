@@ -38,9 +38,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: light}
     cards:
-      - type: custom:mushroom-title-card
-        title: Beleuchtung
-        subtitle: Helligkeit direkt anpassen
+      - type: heading
+        heading: Beleuchtung
+        heading_style: title
+      - type: heading
+        heading: Helligkeit direkt anpassen
+        heading_style: subtitle
       - type: tile
         entity: light.esszimmer_esszimmer
         name: Esszimmer gesamt
@@ -68,9 +71,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: climate}
     cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und 48-Stunden-Verlauf
+      - type: heading
+        heading: Klima
+        heading_style: title
+      - type: heading
+        heading: Heizung und 48-Stunden-Verlauf
+        heading_style: subtitle
       - type: tile
         entity: climate.esszimmer_thermostat
         name: Esszimmer

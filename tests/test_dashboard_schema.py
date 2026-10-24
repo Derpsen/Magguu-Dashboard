@@ -160,3 +160,10 @@ class DashboardSchemaTest(unittest.TestCase):
         for token in ("primary-color", "primary-background-color", "ha-card-background", "lovelace-background",
                       "mag-surface", "mag-accent-media", "mag-accent-danger"):
             self.assertIn(token, dark)
+
+    def test_mushroom_title_card_is_no_longer_allowed(self) -> None:
+        from validate import ALLOWED_CUSTOM_CARDS
+
+        self.assertNotIn("custom:mushroom-title-card", ALLOWED_CUSTOM_CARDS)
+        for path in (REPO_ROOT / "dashboard").rglob("*.yaml"):
+            self.assertNotIn("mushroom-title-card", path.read_text(encoding="utf-8"), str(path))

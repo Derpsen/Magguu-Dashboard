@@ -5,9 +5,12 @@ conditions:
 card:
   type: vertical-stack
   cards:
-    - type: custom:mushroom-title-card
-      title: Jetzt läuft
-      subtitle: Mediensteuerung nur bei aktiver Wiedergabe
+    - type: heading
+      heading: Jetzt läuft
+      heading_style: title
+    - type: heading
+      heading: Mediensteuerung nur bei aktiver Wiedergabe
+      heading_style: subtitle
 
     - type: tile
       entity: media_player.av_samsung_soundbar_q90r

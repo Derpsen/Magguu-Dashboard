@@ -50,9 +50,13 @@ cards:
         "(max-width: 520px)":
           grid-template-columns: minmax(0, 1fr)
     cards:
-      - type: custom:mushroom-title-card
-        title: Beleuchtung
-        subtitle: Gruppen und Akzentlichter dimmen
+      - type: heading
+        heading: Beleuchtung
+        heading_style: title
+        view_layout: {grid-column: 1 / -1}
+      - type: heading
+        heading: Gruppen und Akzentlichter dimmen
+        heading_style: subtitle
         view_layout: {grid-column: 1 / -1}
       - type: tile
         entity: light.wohnzimmer_wohnzimmer
@@ -122,9 +126,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: climate}
     cards:
-      - type: custom:mushroom-title-card
-        title: Klima
-        subtitle: Heizung und 48-Stunden-Verlauf
+      - type: heading
+        heading: Klima
+        heading_style: title
+      - type: heading
+        heading: Heizung und 48-Stunden-Verlauf
+        heading_style: subtitle
       - type: tile
         entity: climate.wohnzimmer_wohnzimmer_thermostat
         name: Wohnzimmer
@@ -144,9 +151,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: cover}
     cards:
-      - type: custom:mushroom-title-card
-        title: Rollläden
-        subtitle: Drei Positionen gezielt einstellen
+      - type: heading
+        heading: Rollläden
+        heading_style: title
+      - type: heading
+        heading: Drei Positionen gezielt einstellen
+        heading_style: subtitle
       - type: tile
         entity: cover.wohnzimmer_wohnzimmer_rollade_links
         name: Rollladen links
@@ -172,9 +182,12 @@ cards:
   - type: vertical-stack
     view_layout: {grid-area: media}
     cards:
-      - type: custom:mushroom-title-card
-        title: Medien & Geräte
-        subtitle: Steckdosen mit Sicherheitsabfrage
+      - type: heading
+        heading: Medien & Geräte
+        heading_style: title
+      - type: heading
+        heading: Steckdosen mit Sicherheitsabfrage
+        heading_style: subtitle
       - type: tile
         entity: switch.wohnzimmer_wohnzimmer_fernseher
         name: Fernseher
