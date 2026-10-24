@@ -353,7 +353,7 @@ class DashboardSchemaTest(unittest.TestCase):
         shared = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared"
         checked = 0
         for path in list((shared / "sections").glob("*.yaml")) + [shared / "cards" / "status-shortcuts.yaml", shared / "cards" / "home-quick.yaml"]:
-            for card in _flatten(load_resolved(path, REPO_ROOT)):
+            for card in _flatten_outside_stacks(load_resolved(path, REPO_ROOT)):
                 if card.get("type") == "grid" and "columns" in card:
                     checked += 1
                     self.assertEqual(card.get("grid_options"), {"columns": "full", "rows": "auto"}, f"{path.name}: grid columns={card['columns']}")
@@ -365,6 +365,19 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertEqual(len(rows), 3)
         for row in rows:
             self.assertIn("auto-fit", row["card_mod"]["style"])
+
+
+def _flatten_outside_stacks(node):
+    """Wie _flatten, steigt aber nicht in stack-in-card ein (dort bestimmt der Stack die Breite)."""
+    if isinstance(node, dict):
+        yield node
+        if node.get("type") == "custom:stack-in-card":
+            return
+        for value in node.values():
+            yield from _flatten_outside_stacks(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _flatten_outside_stacks(value)
 
 
 def _flatten(node):
