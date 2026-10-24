@@ -161,12 +161,12 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertEqual(validate_dashboards(REPO_ROOT), [])
         self.assertEqual(validate_themes(REPO_ROOT), [])
 
-    def test_real_theme_is_based_on_dark_mode(self) -> None:
+    def test_real_theme_has_dark_and_light_mode(self) -> None:
         from validate import theme_definitions
 
         theme = theme_definitions(REPO_ROOT)["Magguu Midnight"]
         self.assertEqual(set(theme), {"modes"})
-        self.assertEqual(set(theme["modes"]), {"dark"})
+        self.assertEqual(set(theme["modes"]), {"dark", "light"})
         dark = theme["modes"]["dark"]
         for token in ("primary-color", "primary-background-color", "ha-card-background", "lovelace-background",
                       "mag-surface", "mag-accent-media", "mag-accent-danger"):
@@ -304,6 +304,22 @@ class DashboardSchemaTest(unittest.TestCase):
                     seen += 1
                     self.assertIn("--ha-heading-card-title-font-size", str(card.get("card_mod")), f"{path.name}: {card['title']}")
         self.assertGreaterEqual(seen, 4)
+
+    def test_tiles_carry_the_matching_feature(self) -> None:
+        """Dimmer, Rollladen-Position und Zieltemperatur direkt auf der Kachel (Tile-Features)."""
+        wanted = {"light.": "light-brightness", "climate.": "target-temperature", "cover.": "cover-position"}
+        shared = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared"
+        checked = 0
+        for path in list((shared / "rooms").glob("*.yaml")) + list((shared / "sections").glob("*.yaml")):
+            for card in _flatten(load_resolved(path, REPO_ROOT)):
+                if card.get("type") != "tile":
+                    continue
+                for prefix, feature in wanted.items():
+                    if str(card.get("entity", "")).startswith(prefix):
+                        checked += 1
+                        types = [f.get("type") for f in card.get("features", [])]
+                        self.assertIn(feature, types, f"{path.name}: {card['entity']}")
+        self.assertGreater(checked, 20)
 
 
 def _flatten(node):
