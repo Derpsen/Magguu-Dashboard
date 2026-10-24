@@ -109,10 +109,8 @@ class ThemeTest(unittest.TestCase):
         for mode in ("dark", "light"):
             hero = over(parse_color(THEME[mode]["mag-hero-glow"]), over(parse_color(THEME[mode]["mag-surface-strong"]), page_background(mode)))
             tile = over(parse_color(THEME[mode]["mag-weather-surface"]), hero)
-            # Dark: Worst Case (Glow-Ecke) liegt bei 4.28 für Sekundärtext; die Kachel sitzt real weiter im Verlauf -> Untergrenze 4.0.
-            minimum = 4.5 if mode == "light" else 4.0
             for name in ("primary-text-color", "secondary-text-color"):
-                self.assertGreaterEqual(contrast(parse_color(THEME[mode][name]), tile), minimum, f"{mode}: {name}")
+                self.assertGreaterEqual(contrast(parse_color(THEME[mode][name]), tile), 4.5, f"{mode}: {name}")
             if mode == "light":
                 alpha = parse_color(THEME[mode]["mag-weather-surface"])[3]
                 self.assertGreaterEqual(alpha, 0.6, "light: Wetter-Kachel muss deckend hell bleiben")
