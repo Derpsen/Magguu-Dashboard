@@ -1,7 +1,11 @@
 # Changelog
 
-## Unveröffentlicht
+## 6.5.0-dev – 2026-10-24
 
+- Neu: Die System-Seite zeigt unter „Dashboard-Version“ die installierte Version samt Commit-SHA (7 Zeichen) und einen Update-Hinweis (aktuell / neuer Stand auf main / unbekannt). Der Installer (`update-ha.sh`, `install.sh`) stempelt die SHA in `sensor.magguu_dashboard_commit`; `sensor.magguu_dashboard_main_commit` fragt höchstens stündlich die öffentliche GitHub-API ab (ohne Token/Secret, bei Fehlern „unbekannt“ statt Fehlermeldungen). Nach einem erfolgreichen Update lädt das Script die Template-Sensoren neu und aktualisiert den main-Commit. `validate.py` erzwingt den Aufbau (feste URL, keine Secrets, mindestens 3600 s Intervall, SHA-Format, Fallbacks)
+- Version auf `6.5.0-dev` angehoben (`VERSION`, Package-Sensor, Test); `validate.py` prüft das Format `X.Y.Z[-dev]`
+- Updater: Download nur per HTTPS (`--proto`/`--proto-redir =https`) und mit Zeitlimit (`--max-time 120`, `--retry-max-time 300`), damit ein Lauf die 10-min-Sperrgrenze nicht erreicht; `validate.py` erzwingt das
+- Sicherheit (seit 6.4.0-dev, siehe unten): HTML-Escaping in button-card-Templates, Admin-Gate für „Dashboard aktualisieren“, gehärteter `shell_command` + Updater, Update-Sperre + Backup-Rotation, zizmor-Workflow, shellcheck-Fixes (SC1007, SC2317)
 - Updater: Sperre gegen Parallelläufe (`flock`, sonst `mkdir`-Lock mit 10-min-Stale-Übernahme; zweiter Lauf endet mit Exit 0 ohne Wirkung) und Backup-Rotation (nur die 5 neuesten `magguu-dashboard-YYYYMMDD-HHMMSS`-Backups in `/config/backups/`, andere Dateien bleiben unberührt)
 - Sicherheit: `shell_command.magguu_dashboard_update` bleibt ein fester Befehl ohne Templates; `update-ha.sh` liest keine Argumente/Umgebungsvariablen mehr (feste Pfade, festes Repo-Archiv). `validate.py` prüft beides
 - Sicherheit: Kalendertitel, nicht parsebare Startzeiten und Wetter-/Sensor-States in button-card-Templates werden HTML-escaped (kein Markup aus Kalendern/Entities mehr; Darstellung für normalen Text unverändert)
