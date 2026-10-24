@@ -23,6 +23,7 @@ rest:
           - build
           - staleHours
           - webhooks
+          - faq
           - generatedAt
 
   - resource: !secret magguu_website_status_url

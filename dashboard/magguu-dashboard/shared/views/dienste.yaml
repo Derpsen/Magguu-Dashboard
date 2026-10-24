@@ -149,3 +149,24 @@ sections:
           {% endfor %}
           {% endif %}
         card_mod: *service_card
+
+      - type: heading
+        heading: FAQ-Nutzung
+        heading_style: subtitle
+      - type: markdown
+        grid_options:
+          columns: full
+          rows: auto
+        entity_id: sensor.magguu_bot_status
+        content: |-
+          {% set f = state_attr('sensor.magguu_bot_status', 'faq') %}
+          {% if not f %}Keine Daten – Bot noch ohne FAQ-Statistik oder Paket nicht eingerichtet.
+          {% elif f.total == 0 %}Letzte {{ f.windowDays }} Tage: noch keine FAQ-Nutzung.
+          {% else %}
+          Letzte {{ f.windowDays }} Tage: **{{ f.total }}** Abrufe · /faq-Suche {{ f.bySource.command }} · Auswahl {{ f.bySource.autocomplete }} · Auto-Antwort {{ f.bySource.autoanswer }}
+
+          {% for t in f.top -%}
+          {{ loop.index }}. {{ (t.title if t.title else 'Eintrag ' ~ t.id) | string | replace('*', '') | replace('_', ' ') | replace('`', '') | replace('[', '(') | replace(']', ')') | replace('<', '') | replace('>', '') | replace('|', ' ') | truncate(80) }} · {{ t.count }}×
+          {% endfor -%}
+          {% endif %}
+        card_mod: *service_card

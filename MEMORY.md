@@ -2,6 +2,11 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## FAQ-Nutzung auf der Dienste-Seite (2026-10-25, 6.10.2-dev)
+
+- Auftrag (Marco via Buddy): Bot-FAQ-Statistik im Dashboard sichtbar. Rollback `rollback/pre-faqstats-6a105d4`, kein Tag. Weg: bestehender REST-Sensor `sensor.magguu_bot_status` (Bearer), neues Attribut `faq`, keine neue Angriffsfläche, nur lesend.
+- Karte rendert die Templates offline (jinja2 geprüft: kein Attribut, 0 Nutzung, Daten mit Sonderzeichen im Titel); im echten HA nicht gesehen. Das Attribut erscheint erst, wenn der Bot-Container mit der Statistik läuft und HA das Paket neu geladen hat.
+
 ## Hotfix (2026-10-24, 6.10.1-dev): abgeschnittene button-card-Templates
 
 Rollback: `rollback/pre-hotfix-a25fc4b` (= `a25fc4b`, Endstand Runde 5). Tabelle ergänzt:

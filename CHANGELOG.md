@@ -13,6 +13,14 @@
 - CI-Fehleralarm, Redaction verschärft: Log-Zeilen werden vor dem Versand auch von nackten Tokens (`ghp_`/`gho_`/`ghs_`/`github_pat_`), JWTs, URLs, Bearer-Werten und langen Hex/Base64-Strings bereinigt (nicht nur per Keyword-Zeile); Test `tests/test_ci_alarm_redact.py` führt die echte Funktion mit Fake-Werten aus.
 - CI-Fehleralarm (nur Actions, kein Dashboard-Code): wiederverwendbarer Workflow `.github/workflows/ci-alarm.yml`, aufgerufen von `validate` und `quality` (nur Push auf main, nur bei `failure()`). Sendet Repo, Workflow, SHA, Run-URL und die letzten ~20 geschwärzten Logzeilen als JSON an das Repo-Secret `ESCALATION_WEBHOOK_URL` (`Authorization: Bearer` aus `ESCALATION_BEARER`, nur per env, nie ausgegeben). Leeres Secret oder kein https = stilles Überspringen, `continue-on-error`, 10 s Timeout, kein Alarm bei Re-Runs, `Idempotency-Key` = sha256(repo|workflow|sha).
 
+## 6.10.2-dev – 2026-10-25
+
+FAQ-Nutzung vom MagguuBot (Rollback-Branch `rollback/pre-faqstats-6a105d4`, kein Tag). Nur offline validiert, nicht im echten HA gesehen:
+
+- Dienste-Seite: neue Karte „FAQ-Nutzung“ (Bot-Webhooks-Abschnitt) zeigt die letzten 7 Tage: Abrufe gesamt, aufgeteilt nach /faq-Suche, Auswahl und Auto-Antwort, plus Top-5-Fragen. Rein lesend, Titel werden von Markdown-Zeichen bereinigt.
+- `docs/optional/magguu_dienste.yaml`: `sensor.magguu_bot_status` übernimmt das neue Attribut `faq` aus `GET /api/status` (gleicher Bearer-Weg, kein neuer Endpoint). Der Bot liefert dort nur Zähler, keine Nutzer-/Kanaldaten. Fehlt das Feld (älterer Bot), zeigt die Karte „Keine Daten“.
+- Version `6.10.2-dev` (`VERSION` + `magguu_dashboard_version`).
+
 ## 6.10.1-dev – 2026-10-24
 
 Hotfix zu 6.10.0-dev (Rollback-Branch `rollback/pre-hotfix-a25fc4b`, kein Tag). Offline validiert, nicht im echten HA gesehen:
