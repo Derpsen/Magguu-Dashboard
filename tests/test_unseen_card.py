@@ -44,10 +44,15 @@ def reveal_card() -> dict:
 
 
 def render(unseen, now_iso: str = "2026-10-25T10:00:00+00:00") -> str:
-    def as_timestamp(value, default=None):
+    sentinel = object()
+
+    def as_timestamp(value, default=sentinel):
+        # like Home Assistant: without a default an unparsable value is a template error
         try:
             return datetime.fromisoformat(str(value).replace("Z", "+00:00")).timestamp()
         except ValueError:
+            if default is sentinel:
+                raise RuntimeError(f"as_timestamp: invalid value {value!r} and no default") from None
             return default
 
     env = jinja2.Environment()
@@ -130,6 +135,45 @@ class RenderTest(unittest.TestCase):
         for bad in ("*", "`", "[", "]", "<", ">", "|", "_"):
             title_part = line.split(" · ")[0]
             self.assertNotIn(bad, title_part, (bad, title_part))
+
+    def test_missing_or_invalid_timestamps_do_not_raise_a_template_error(self) -> None:
+        for bad in (None, "", "garbage", 12345, {"x": 1}):
+            out = render(block([item()], generatedAt=bad))
+            self.assertIn("Stand unbekannt", out, bad)
+            self.assertIn("1. Big Movie (2019)", out)
+        no_key = block([item()])
+        del no_key["generatedAt"]
+        self.assertIn("Stand unbekannt", render(no_key))
+        self.assertIn("Stand unbekannt: keine Titel", render(block([], generatedAt="nope")))
+        out = render(block([item("Played", 5_000_000_000, "Filme", "not-a-date"), item("Never", 4_000_000_000)]))
+        self.assertIn("1. Played · 5,0 GB · Filme · letzte Sicht: unbekannt", out)
+        self.assertIn("2. Never · 4,0 GB · Filme · letzte Sicht: nie", out)
+
+    def test_library_name_is_as_strictly_cleaned_as_the_title(self) -> None:
+        evil = "**Lib** _x_ `c` [l](http://e) <b>h</b> | z"
+        out = render(block([item("Title", 5_000_000_000, evil)]))
+        line = next(l for l in out.splitlines() if l.startswith("1."))
+        library_part = line.split(" · ")[2]
+        for bad in ("*", "_", "`", "[", "]", "<", ">", "|"):
+            self.assertNotIn(bad, library_part, (bad, library_part))
+        self.assertIn("Lib", library_part)
+
+    def test_missing_wrong_or_oversized_attribute_is_handled(self) -> None:
+        for weird in ("text", 5, [], {}, {"items": "abc"}, {"items": {"a": 1}}, {"items": None}, {"items": [None, "x", 7]}):
+            out = render(weird)
+            self.assertIn("Nur Bericht – nichts wird gelöscht", out, weird)
+        self.assertIn("Keine Daten", render("text"))
+        self.assertIn("keine Titel gefunden", render({"items": "abc", "generatedAt": "2026-10-25T08:00:00Z"}))
+        garbage = render({"generatedAt": "2026-10-25T08:00:00Z", "items": [None, "x", 7, ["a"]]})
+        self.assertIn("die 4 größten Titel", garbage)
+        # more items than the card ever shows (attribute far too large): capped at 25
+        many = render(block([item(f"T{i}", 1_000_000_000 + i) for i in range(80)]))
+        self.assertIn("die 25 größten Titel", many)
+        self.assertEqual(len([l for l in many.splitlines() if l[:1].isdigit()]), 25)
+
+    def test_clipped_hint(self) -> None:
+        self.assertIn("gekürzt", render(block([item()], clipped=True)))
+        self.assertNotIn("gekürzt", render(block([item()])))
 
     def test_garbage_values_do_not_crash(self) -> None:
         out = render(block([{"title": "T", "library": "L", "sizeBytes": "abc", "lastPlayedAt": None}]))

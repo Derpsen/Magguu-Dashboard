@@ -204,21 +204,27 @@ sections:
           entity_id: sensor.magguu_bot_status
           content: |-
             {% set u = state_attr('sensor.magguu_bot_status', 'unseen') %}
+            {% set items = (u['items'] if (u is mapping and u['items'] is iterable and u['items'] is not string and u['items'] is not mapping) else [])[:25] %}
+            {% set at = as_timestamp(u['generatedAt'], 0) if u is mapping else 0 %}
+            {% set stand = (at | timestamp_custom('%d.%m.%Y · %H:%M', true)) if at else 'unbekannt' %}
             **Nur Bericht – nichts wird gelöscht.** Es gibt keine Löschfunktion, weder im Bot noch hier.
-            {% if not u %}
+            {% if not u or u is not mapping %}
 
             Keine Daten – Bot ohne Bericht (Tautulli nicht angebunden, Bericht abgeschaltet, noch nicht berechnet oder älterer Bot) oder Paket nicht eingerichtet.
-            {% elif not u['items'] %}
+            {% elif not items %}
 
-            Stand {{ as_timestamp(u['generatedAt']) | timestamp_custom('%d.%m.%Y · %H:%M', true) }}: keine Titel gefunden, die die Kriterien erfüllen.
+            Stand {{ stand }}: keine Titel gefunden, die die Kriterien erfüllen.
             {% else %}
 
-            Stand {{ as_timestamp(u['generatedAt']) | timestamp_custom('%d.%m.%Y · %H:%M', true) }} · die {{ u['items'] | length }} größten Titel, die nie oder seit mindestens {{ u['staleDays'] }} Tagen nicht gesehen wurden und seit mindestens {{ u['minAgeDays'] }} Tagen in der Bibliothek sind.
+            Stand {{ stand }} · die {{ items | length }} größten Titel, die nie oder seit mindestens {{ (u['staleDays'] if u['staleDays'] is number else 0) | int(0) }} Tagen nicht gesehen wurden und seit mindestens {{ (u['minAgeDays'] if u['minAgeDays'] is number else 0) | int(0) }} Tagen in der Bibliothek sind.
 
-            {% for i in u['items'] -%}
-            {{ loop.index }}. {{ i['title'] | string | replace('*', '') | replace('_', ' ') | replace('`', '') | replace('[', '(') | replace(']', ')') | replace('<', '') | replace('>', '') | replace('|', ' ') | truncate(70) }} · {{ (((i['sizeBytes'] | float(0)) / 1000000000000) | round(2) | string | replace('.', ',') ~ ' TB') if (i['sizeBytes'] | float(0)) >= 1000000000000 else (((i['sizeBytes'] | float(0)) / 1000000000) | round(1) | string | replace('.', ',') ~ ' GB') }} · {{ i['library'] | string | replace('*', '') | replace('_', ' ') | replace('`', '') | truncate(30) }} · letzte Sicht: {{ (as_timestamp(i['lastPlayedAt']) | timestamp_custom('%d.%m.%Y', true)) if i['lastPlayedAt'] else 'nie' }}
+            {% for i in items -%}
+            {% set it = i if i is mapping else {} -%}
+            {% set size = (it['sizeBytes'] | float(0)) if (it['sizeBytes'] is defined and it['sizeBytes'] is not none) else 0 -%}
+            {% set last = as_timestamp(it['lastPlayedAt'], 0) if it['lastPlayedAt'] else 0 -%}
+            {{ loop.index }}. {{ it['title'] | string | replace('*', '') | replace('_', ' ') | replace('`', '') | replace('[', '(') | replace(']', ')') | replace('<', '') | replace('>', '') | replace('|', ' ') | truncate(70) }} · {{ (((size / 1000000000000) | round(2) | string | replace('.', ',') ~ ' TB') if size >= 1000000000000 else ((size / 1000000000) | round(1) | string | replace('.', ',') ~ ' GB')) }} · {{ it['library'] | string | replace('*', '') | replace('_', ' ') | replace('`', '') | replace('[', '(') | replace(']', ')') | replace('<', '') | replace('>', '') | replace('|', ' ') | truncate(30) }} · letzte Sicht: {{ (last | timestamp_custom('%d.%m.%Y', true)) if last else ('unbekannt' if it['lastPlayedAt'] else 'nie') }}
             {% endfor %}
 
-            „nie“ heißt: nicht im Tautulli-Verlauf (Wiedergaben von vor Tautulli sind unbekannt).{% if u['partial'] %} Sehr große Bibliothek: nur die größten Einträge wurden geprüft, die Liste kann unvollständig sein.{% endif %}
+            „nie“ heißt: nicht im Tautulli-Verlauf (Wiedergaben von vor Tautulli sind unbekannt).{% if u['partial'] %} Sehr große Bibliothek: nur die größten Einträge wurden geprüft, die Liste kann unvollständig sein.{% endif %}{% if u['clipped'] %} Liste wegen der Größenbegrenzung des Sensor-Attributs gekürzt (nur die größten Titel).{% endif %}
             {% endif %}
           card_mod: *service_card

@@ -78,7 +78,7 @@ lovelace:
 
 Danach Home Assistant neu starten und die App vollständig neu laden.
 
-Auf der System-Seite zeigt die Karte **Dashboard-Version** die installierte Version mit Commit (z. B. `6.10.3-dev · 40e8820`) und ob `main` auf GitHub weiter ist („Neuer Stand auf main“). Der Vergleich nutzt die öffentliche GitHub-API (ohne Token, höchstens stündlich); ist sie nicht erreichbar, steht dort „Update-Prüfung unbekannt“. Ein Update gilt als eingespielt, wenn dort `aktuell mit main` steht.
+Auf der System-Seite zeigt die Karte **Dashboard-Version** die installierte Version mit Commit (z. B. `6.10.4-dev · 40e8820`) und ob `main` auf GitHub weiter ist („Neuer Stand auf main“). Der Vergleich nutzt die öffentliche GitHub-API (ohne Token, höchstens stündlich); ist sie nicht erreichbar, steht dort „Update-Prüfung unbekannt“. Ein Update gilt als eingespielt, wenn dort `aktuell mit main` steht.
 
 **Optional (nur mit Git-Klon):** Im geklonten Repository `sh update.sh` (Fast-Forward, danach Backup und Neuinstallation). Auf Home Assistant OS ohne Klon ist dieser Weg nicht verfügbar.
 

@@ -13,6 +13,16 @@
 - CI-Fehleralarm, Redaction verschärft: Log-Zeilen werden vor dem Versand auch von nackten Tokens (`ghp_`/`gho_`/`ghs_`/`github_pat_`), JWTs, URLs, Bearer-Werten und langen Hex/Base64-Strings bereinigt (nicht nur per Keyword-Zeile); Test `tests/test_ci_alarm_redact.py` führt die echte Funktion mit Fake-Werten aus.
 - CI-Fehleralarm (nur Actions, kein Dashboard-Code): wiederverwendbarer Workflow `.github/workflows/ci-alarm.yml`, aufgerufen von `validate` und `quality` (nur Push auf main, nur bei `failure()`). Sendet Repo, Workflow, SHA, Run-URL und die letzten ~20 geschwärzten Logzeilen als JSON an das Repo-Secret `ESCALATION_WEBHOOK_URL` (`Authorization: Bearer` aus `ESCALATION_BEARER`, nur per env, nie ausgegeben). Leeres Secret oder kein https = stilles Überspringen, `continue-on-error`, 10 s Timeout, kein Alarm bei Re-Runs, `Idempotency-Key` = sha256(repo|workflow|sha).
 
+## 6.10.4-dev – 2026-10-25
+
+Code-Review-Nachbesserung zur Ungesehene-Medien-Karte (Rollback-Branch `rollback/pre-reviewfix-fe40542`, kein Tag). Nur offline validiert und gerendert, nicht im echten HA gesehen:
+
+- CI: `jinja2` (3.1.6) und `markupsafe` (3.0.4) stehen jetzt gehasht in `requirements-dev.in`/`.txt`; der bestehende `pip install --require-hashes --no-deps`-Schritt in `validate.yml` installiert sie, die Render-Tests laufen damit in der CI statt übersprungen zu werden (Workflow und Actions-Pins unverändert).
+- Karte: `as_timestamp` immer mit Default (fehlendes/ungültiges `generatedAt` oder `lastPlayedAt` → „Stand unbekannt“/„letzte Sicht: unbekannt“ statt Template-Fehler); Bibliotheksname wird wie der Titel von Markdown-/HTML-Zeichen bereinigt; falsches/fehlendes Attribut oder Items → „Keine Daten“/leere Liste, höchstens 25 Zeilen; neuer Hinweis, wenn der Bot die Liste wegen der Attribut-Größe gekürzt hat (`clipped`).
+- Der Bot begrenzt den Bericht auf 6000 Byte, damit der HA-Recorder die Sensor-Attribute (Grenze 16 KB gesamt) weiter speichert.
+- Tests: neue Render-Tests (ungültige/fehlende Zeitstempel, Bibliotheksname, kaputtes Attribut, Obergrenze 25, `clipped`); der Test-`as_timestamp` verhält sich wie HA (ohne Default → Fehler), damit ein fehlender Default rot wird.
+- Version `6.10.4-dev` (`VERSION` + `magguu_dashboard_version`).
+
 ## 6.10.3-dev – 2026-10-25
 
 Bericht über ungesehene Plex-Medien (Rollback-Branch `rollback/pre-unseen-card-4c7fe5f`, kein Tag). Nur offline validiert und gerendert, nicht im echten HA gesehen:

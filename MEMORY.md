@@ -2,6 +2,12 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Code-Review-Nachbesserung Ungesehene Medien (2026-10-25, 6.10.4-dev)
+
+- Auftrag (Marco Go): Review-Lows zu fe40542. (2026-10-25: Rollback-Branch `rollback/pre-reviewfix-fe40542`), kein Tag. jinja2 + markupsafe gehasht in `requirements-dev.txt` (CI installiert mit `--require-hashes --no-deps`, deshalb markupsafe explizit; PyPI-Hashes aller Dateien gegengeprüft, cp315-Wheels vorhanden), Workflow unverändert. Karte: `as_timestamp(…, 0)`, Bibliotheksname streng bereinigt, robust gegen kaputtes Attribut, max. 25 Zeilen, `clipped`-Hinweis. Bot kürzt den Bericht auf 6000 Byte (HA-Recorder: Attribute > 16 KB werden nicht gespeichert, State bleibt nutzbar).
+- Gegenproben (je eine Änderung, Test wird rot): Default bei `as_timestamp` entfernt, Bibliotheks-Bereinigung entfernt, 25er-Grenze entfernt, `clipped`-Hinweis entfernt.
+- Fallstrick: Jinjas `float(0)`/`int(0)` fangen `Undefined` nicht ab (UndefinedError), deshalb vorher mit `is defined`/`is number`/`is mapping` abgesichert.
+
 ## Ungesehene Medien (Bericht) auf der Dienste-Seite (2026-10-25, 6.10.3-dev)
 
 - Auftrag (Marco Go via Buddy, Schritt C): reiner Bericht, kein Löschpfad, nur für Admin. Rollback `rollback/pre-unseen-card-4c7fe5f`, kein Tag. Daten: Bot rechnet (Tautulli lesend, 24 h Cache) und liefert das neue Feld `unseen` über den bestehenden Bearer-`/api/status`; HA übernimmt es als Attribut von `sensor.magguu_bot_status`.

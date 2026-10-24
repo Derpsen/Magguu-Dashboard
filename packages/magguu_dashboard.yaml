@@ -420,7 +420,7 @@ template:
       - name: Magguu Dashboard Version
         unique_id: magguu_dashboard_version
         icon: mdi:view-dashboard-variant-outline
-        state: "6.10.3-dev"
+        state: "6.10.4-dev"
 
       # Commit SHA of the installed sources; the installer (update-ha.sh /
       # install.sh) stamps the real 40-char SHA here, "unbekannt" if unknown.
