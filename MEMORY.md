@@ -2,9 +2,35 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Runde 3 (2026-10-24, 6.8.0-dev): Layout-Feinschliff nach Live-Prüfung
+
+Rollback: `rollback/pre-round3-ce7de7a` (= ce7de7a, Endstand Runde 2). Reverts nur ab dem neuesten Commit rückwärts.
+
+Rollback-Branches, exakt (geprüft mit `git rev-parse`):
+
+| Branch | zeigt auf | Bedeutung |
+| --- | --- | --- |
+| `rollback/pre-overhaul-fcf36c1` | `fcf36c1` | Stand vor der gesamten Überholung (6.5.x) |
+| `rollback/pre-round2-2b3ae4a` | `2b3ae4a` | Endstand Runde 1 (6.6.0-dev) = strikt „vor Runde 2“ (nachträglich angelegt) |
+| `rollback/pre-round2-3528f6c` | `3528f6c` | erster Commit der Runde 2, Kind von `2b3ae4a`; ändert nur CHANGELOG/MEMORY/README/`validate.py`/Tests (keine Dashboard-Inhalte) |
+| `rollback/pre-round3-ce7de7a` | `ce7de7a` | Endstand Runde 2 (6.7.0-dev) = „vor Runde 3“ |
+
+Für „vor Runde 2“ ist `2b3ae4a` formal korrekt; `3528f6c` ist inhaltlich gleich (Dashboard unverändert), enthält aber schon die README-/`validate.py`-Versionsprüfung und wäre als Rollback-Ziel dieselbe Optik.
+
+Entscheidungen und Gründe:
+
+- Verschachtelte `type: grid`-Karten in Sections: Standard-`grid_options.columns` ist 12 = halbe Breite einer 2-Spalten-Section (24 Spalten). Deshalb überall `columns: full`, `rows: auto` (Test). Die dreispaltigen Sicherheitsreihen bekommen zusätzlich `card_mod` `#root { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important }` (hui-grid-card setzt die Spalten über `--grid-card-column-count` im Inline-Style; Quelle geprüft, Wirkung im echten HA offen).
+- Leere „umrandete Zellen“ waren leerer Rasterplatz bei ungerader Kachelzahl (der Kartenrand der stack-in-card scheint durch). Lösung: letzte Kachel außerhalb des 2-Spalten-Grids als volle Zeile; Flur bleibt (Conditional, dynamisch). Tablet-Übersicht: `modes-compact.yaml` (Span 1) füllt die rechte Spalte, `modes.yaml` (Span 2) bleibt für die Räume-Seite.
+- Navbar-card: laut Karten-Doku zentriert „floating bottom“ mit Auto-Padding unten; bei `position: left` lag sie links neben dem Inhalt. Jetzt unten und auf allen Seiten inkl. Raumseiten (Test).
+- Dienste: Unterseite bleibt (Funktionserhalt), Link bedingt, Hero-Untertitel „Optional“; keine Navigation.
+- Light-Mode: Raumakzente per Theme-Mix statt Hex (Tokens `mag-room-accent-strength`/`-ink`, bewusst ohne Präfix `mag-accent-`, weil der Test diese als Farben liest).
+- Doppelte YAML-Schlüssel: `HomeAssistantLoader.construct_mapping` in `validate.py` bricht ab.
+
+Untested im echten HA: `auto-fit` per card_mod auf dem Sicherheits-Grid, `grid_options` auf verschachtelten Grids, Navbar unten zentriert (Padding/Überdeckung durch Medien-Leiste), vollbreite letzte Raumkachel, Szenen in der rechten Tablet-Spalte, Hell-Modus-Akzente (Abdunkelung auf 40 %), Wetter-Kürzung und Textumbruch auf dem Handy.
+
 ## Runde 2 (2026-10-24, 6.7.0-dev): Sections für alle Seiten, Light-Theme
 
-Rollback: Branch `rollback/pre-round2-3528f6c` (Tags verboten). `git revert` nur ab dem neuesten Commit rückwärts (spätere Commits bauen auf früheren auf, z. B. Sections-Dateien auf den Raum-Conditions); alles auf einmal per `git checkout rollback/pre-round2-3528f6c -- .` plus Commit.
+Rollback: Branch `rollback/pre-round2-3528f6c` (zeigt auf `3528f6c`, den ersten Commit der Runde; strikt „vor Runde 2“ = `rollback/pre-round2-2b3ae4a`, siehe Tabelle in Runde 3; Tags verboten). `git revert` nur ab dem neuesten Commit rückwärts (spätere Commits bauen auf früheren auf, z. B. Sections-Dateien auf den Raum-Conditions); alles auf einmal per `git checkout rollback/pre-round2-3528f6c -- .` plus Commit.
 
 Entscheidungen und Gründe:
 
@@ -18,7 +44,7 @@ Entscheidungen und Gründe:
 - Light-Theme: ohne `modes.light` definiert ein Dark-only-Theme im Hell-Modus nichts, die dunklen `--mag-*`-Fallbacks kollidierten mit dunkler Standardschrift (unlesbare Kacheln). Jetzt eigene Palette, Tokens identisch, Kontrast per Test.
 - `section_mode` der button-card nicht genutzt (ohne Grid-Optionen = 12 Spalten, natürliche Höhe).
 
-Untested im echten HA (nur offline validiert, 70 Tests + `validate.py`): Optik aller Sections (Spaltenumbruch, Lücken), Hero-Breite, Navbar-card in Sections, `visibility`/conditional-Verhalten, Tablet-Spans bei 3 Spalten, `.card-header`-Schrift, kompletter Light-Mode (Raumakzente `accent` bleiben Hex-Werte mit niedrigem Kontrast auf Weiß), `modes.dark` unverändert erwartet.
+Untested im echten HA (nur offline validiert, 70 Tests + `validate.py`): Optik aller Sections (Spaltenumbruch, Lücken), Hero-Breite, Navbar-card in Sections, `visibility`/conditional-Verhalten, Tablet-Spans bei 3 Spalten, `.card-header`-Schrift, kompletter Light-Mode (Raumakzente: seit 6.8.0-dev per Theme-Mix), `modes.dark` unverändert erwartet.
 
 ## Overhaul 2026-10-24: Inventar, Recherche, Plan (6.6.0-dev)
 

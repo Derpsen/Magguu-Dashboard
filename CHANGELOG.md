@@ -1,5 +1,20 @@
 # Changelog
 
+## 6.8.0-dev – 2026-10-24
+
+Dritte Runde nach Buddys Prüfung von 6.7.0-dev im echten HA (Rollback-Branch `rollback/pre-round3-ce7de7a`, kein Tag; Reverts nur ab dem neuesten Commit rückwärts). Alles nur offline validiert (Unit-Tests, `validate.py`), nicht im echten HA gesehen:
+
+- Übersicht: Raumkarten mit ungerader Kachelzahl enden mit einer vollbreiten Kachel statt einer leeren Zelle (Wohnzimmer Soundbar, Esszimmer Heizung, Küche, Schlafzimmer Heizung; Flur hat eine dynamische Anzahl). Auf dem Tablet liegt „Szenen & Modi“ (`shared/sections/modes-compact.yaml`, eine Spalte) in der freien rechten Spalte; die Räume-Seite nutzt weiter die zweispaltige `modes.yaml` als Füller (beide teilen `modes-cards.yaml`)
+- Handy: Wetter-Karte kürzt lange Zustände, Kachel-Texte der button-card brechen um bzw. werden mit `min-width: 0`/Ellipsis begrenzt (Wettertitel, „5km run Decksteiner“), System-Untertitel gekürzt („Wiedergabe und Szenen“, „Verbrauch und Messquellen“)
+- Sicherheit/System: verschachtelte Grid-Karten hatten Standardbreite 12 und füllten in 2-Spalten-Sections nur die Hälfte; jetzt `grid_options.columns: full`, die dreispaltigen Kachelreihen in Sicherheit passen sich per `auto-fit` (min. 140 px) an („Letzte A…“, „Lautstär…“ entfallen). Test sichert alle verschachtelten Grids ab
+- Navbar-card: unten zentriert (`desktop.position: bottom`, floating) statt links neben dem Inhalt, und in der ersten Section aller Seiten inkl. der sechs Raumseiten (einheitlich)
+- Dienste: bleibt optionale Unterseite (nicht in der Navbar, Link nur sichtbar, wenn das Paket `docs/optional/magguu_dienste.yaml` Sensoren liefert); Hero-Untertitel markiert sie als „Optional“. Begründung: ein View lässt sich nicht per Entitätszustand ausblenden, Löschen würde die Funktion verlieren
+- System: „Nicht erreichbar“ ignoriert `light.badezimmer_licht_bad` und `light.sonstiges_festavia_string_lights` (optional/dauerhaft unavailable); Backup-Karte zeigt bei `unknown` „Noch kein Backup“
+- Räume-Seite: Abschnitt „Szenen & Modi“ (`shared/sections/raeume.yaml`, Füller mit den Modi-Kacheln aus Runde 2) ist hier nachgetragen
+- Doppelter `card_mod`-Schlüssel in `shared/rooms/schlafzimmer.yaml` entfernt (der zweite überschrieb den ersten still); `validate.py` lehnt doppelte YAML-Schlüssel jetzt ab (Merge-Keys/Anker erlaubt)
+- Theme: Raumakzente (Hex wie `#ffd166`, ca. 1,5:1 auf Weiß) laufen im Hellmodus über `mag-room-accent-strength`/`-ink` (Mischung zum Text-Ton); Dunkelmodus unverändert (100 %). WCAG-Test prüft alle verwendeten Akzent-Hex in beiden Modi (≥ 4,5:1 auf Karte und Seite)
+- Version `6.8.0-dev`; Tests jetzt 83
+
 ## 6.7.0-dev – 2026-10-24
 
 Zweite Runde nach Marcos Prüfung im echten HA 2026.10.2 (Rollback-Branch `rollback/pre-round2-3528f6c`, kein Tag; Reverts nur ab dem neuesten Commit rückwärts):
