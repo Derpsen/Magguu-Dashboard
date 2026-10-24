@@ -254,16 +254,50 @@
       heading: Live-Ansicht der Ring-Kamera
       heading_style: subtitle
 
-    - type: picture-entity
+    # Ring-Kamera offline (unavailable/unknown) liefert HTTP 500 für das Bild: dann kein kaputtes Bild, sondern ein klarer Hinweis.
+    # (Zustand `idle` ohne Bild ist per Condition nicht erkennbar; dann bleibt die Kamera sichtbar.)
+    - type: conditional
       grid_options:
         columns: full
         rows: auto
-      entity: camera.kinderzimmer_live_ansicht
-      name: Kinderzimmer
-      show_name: true
-      show_state: false
-      tap_action: {action: more-info}
-      card_mod: *security_card
+      conditions:
+        - condition: state
+          entity: camera.kinderzimmer_live_ansicht
+          state_not:
+            - unavailable
+            - unknown
+      card:
+        type: picture-entity
+        entity: camera.kinderzimmer_live_ansicht
+        name: Kinderzimmer
+        show_name: true
+        show_state: false
+        tap_action: {action: more-info}
+        card_mod: *security_card
+    - type: conditional
+      grid_options:
+        columns: full
+        rows: auto
+      conditions:
+        - condition: state
+          entity: camera.kinderzimmer_live_ansicht
+          state:
+            - unavailable
+            - unknown
+      card:
+        type: custom:mushroom-template-card
+        grid_options:
+          columns: full
+          rows: auto
+        primary: Kamera nicht erreichbar
+        secondary: Ring-Kamera Kinderzimmer ist offline
+        icon: mdi:video-off-outline
+        icon_color: grey
+        multiline_secondary: true
+        tap_action:
+          action: more-info
+          entity: camera.kinderzimmer_live_ansicht
+        card_mod: *security_card
 
     - type: grid
       grid_options:
