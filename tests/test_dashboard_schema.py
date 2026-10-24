@@ -149,3 +149,14 @@ class DashboardSchemaTest(unittest.TestCase):
     def test_real_repository_dashboards_are_valid(self) -> None:
         self.assertEqual(validate_dashboards(REPO_ROOT), [])
         self.assertEqual(validate_themes(REPO_ROOT), [])
+
+    def test_real_theme_is_based_on_dark_mode(self) -> None:
+        from validate import theme_definitions
+
+        theme = theme_definitions(REPO_ROOT)["Magguu Midnight"]
+        self.assertEqual(set(theme), {"modes"})
+        self.assertEqual(set(theme["modes"]), {"dark"})
+        dark = theme["modes"]["dark"]
+        for token in ("primary-color", "primary-background-color", "ha-card-background", "lovelace-background",
+                      "mag-surface", "mag-accent-media", "mag-accent-danger"):
+            self.assertIn(token, dark)
