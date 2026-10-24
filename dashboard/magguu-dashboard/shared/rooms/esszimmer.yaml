@@ -3,40 +3,25 @@ path: esszimmer
 icon: mdi:table-furniture
 subview: true
 theme: Magguu Midnight
-type: custom:grid-layout
-layout:
-  max-width: 1180px
-  margin: 0 auto
-  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
-  grid-gap: 14px
-  grid-template-columns: repeat(2, minmax(0, 1fr))
-  grid-template-areas: |
-    "hero hero"
-    "light climate"
-  mediaquery:
-    "(max-width: 760px)":
-      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 28px
-      grid-template-columns: minmax(0, 1fr)
-      grid-template-areas: |
-        "hero"
-        "light"
-        "climate"
-cards:
-  - type: custom:button-card
-    template: room_detail_header_v7
-    name: Esszimmer
-    icon: mdi:table-furniture
-    variables:
-      subtitle: Licht und Raumklima entspannt steuern
-      accent: '#f3a84b'
-      temperature_entity: sensor.magguu_esszimmer_temperatur_c
-      humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
-      light_count_entity: sensor.magguu_esszimmer_lichter_an
-      climate_entity: climate.esszimmer_thermostat
-    view_layout: {grid-area: hero}
+type: sections
+max_columns: 2
+sections:
+  - type: grid
+    column_span: 2
+    cards:
+      - type: custom:button-card
+        template: room_detail_header_v7
+        name: Esszimmer
+        icon: mdi:table-furniture
+        variables:
+          subtitle: Licht und Raumklima entspannt steuern
+          accent: '#f3a84b'
+          temperature_entity: sensor.magguu_esszimmer_temperatur_c
+          humidity_entity: sensor.esszimmer_thermostat_rel_luftfeuchte
+          light_count_entity: sensor.magguu_esszimmer_lichter_an
+          climate_entity: climate.esszimmer_thermostat
 
-  - type: vertical-stack
-    view_layout: {grid-area: light}
+  - type: grid
     cards:
       - type: heading
         heading: Beleuchtung
@@ -45,6 +30,8 @@ cards:
         heading: Helligkeit direkt anpassen
         heading_style: subtitle
       - type: tile
+        grid_options:
+          columns: full
         entity: light.esszimmer_esszimmer
         name: Esszimmer gesamt
         icon: mdi:lightbulb-group-outline
@@ -60,6 +47,8 @@ cards:
               box-shadow: var(--mag-shadow-card, none);
             }
       - type: tile
+        grid_options:
+          columns: full
         entity: light.esszimmer_signe_gradient
         name: Signe Gradient
         icon: mdi:floor-lamp
@@ -68,8 +57,7 @@ cards:
           - type: light-brightness
         card_mod: *detail_card
 
-  - type: vertical-stack
-    view_layout: {grid-area: climate}
+  - type: grid
     cards:
       - type: heading
         heading: Klima
@@ -78,6 +66,8 @@ cards:
         heading: Heizung und 48-Stunden-Verlauf
         heading_style: subtitle
       - type: tile
+        grid_options:
+          columns: full
         entity: climate.esszimmer_thermostat
         name: Esszimmer
         features:

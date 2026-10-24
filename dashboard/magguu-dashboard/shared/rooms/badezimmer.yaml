@@ -3,40 +3,25 @@ path: badezimmer
 icon: mdi:shower
 subview: true
 theme: Magguu Midnight
-type: custom:grid-layout
-layout:
-  max-width: 1180px
-  margin: 0 auto
-  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
-  grid-gap: 14px
-  grid-template-columns: repeat(2, minmax(0, 1fr))
-  grid-template-areas: |
-    "hero hero"
-    "light climate"
-  mediaquery:
-    "(max-width: 760px)":
-      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 28px
-      grid-template-columns: minmax(0, 1fr)
-      grid-template-areas: |
-        "hero"
-        "light"
-        "climate"
-cards:
-  - type: custom:button-card
-    template: room_detail_header_v7
-    name: Badezimmer
-    icon: mdi:shower
-    variables:
-      subtitle: Beleuchtung und Wohlfühltemperatur
-      accent: '#57cbd3'
-      temperature_entity: sensor.magguu_badezimmer_temperatur_c
-      humidity_entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
-      light_count_entity: sensor.magguu_badezimmer_lichter_an
-      climate_entity: climate.badezimmer_badezimmer_thermostat
-    view_layout: {grid-area: hero}
+type: sections
+max_columns: 2
+sections:
+  - type: grid
+    column_span: 2
+    cards:
+      - type: custom:button-card
+        template: room_detail_header_v7
+        name: Badezimmer
+        icon: mdi:shower
+        variables:
+          subtitle: Beleuchtung und Wohlfühltemperatur
+          accent: '#57cbd3'
+          temperature_entity: sensor.magguu_badezimmer_temperatur_c
+          humidity_entity: sensor.badezimmer_badezimmer_thermostat_rel_luftfeuchte
+          light_count_entity: sensor.magguu_badezimmer_lichter_an
+          climate_entity: climate.badezimmer_badezimmer_thermostat
 
-  - type: vertical-stack
-    view_layout: {grid-area: light}
+  - type: grid
     cards:
       - type: heading
         heading: Beleuchtung
@@ -45,6 +30,8 @@ cards:
         heading: Gruppen und Farblicht dimmen
         heading_style: subtitle
       - type: tile
+        grid_options:
+          columns: full
         entity: light.badezimmer_badezimmer
         name: Badezimmer gesamt
         icon: mdi:lightbulb-group-outline
@@ -61,6 +48,8 @@ cards:
               box-shadow: var(--mag-shadow-card, none);
             }
       - type: tile
+        grid_options:
+          columns: full
         entity: light.badezimmer_licht_bad
         name: Hue Licht Bad
         icon: mdi:ceiling-light
@@ -69,6 +58,8 @@ cards:
           - type: light-brightness
         card_mod: *detail_card
       - type: tile
+        grid_options:
+          columns: full
         entity: light.badezimmer_badezimmer_licht_ch8
         name: Farblicht oben
         icon: mdi:led-strip-variant
@@ -77,6 +68,8 @@ cards:
           - type: light-brightness
         card_mod: *detail_card
       - type: tile
+        grid_options:
+          columns: full
         entity: light.badezimmer_badezimmer_licht_ch12
         name: Farblicht unten
         icon: mdi:led-strip-variant
@@ -85,6 +78,8 @@ cards:
           - type: light-brightness
         card_mod: *detail_card
       - type: tile
+        grid_options:
+          columns: full
         entity: switch.badezimmer_badezimmer_licht
         name: Hauptlicht
         icon: mdi:ceiling-light
@@ -92,8 +87,7 @@ cards:
           - type: toggle
         card_mod: *detail_card
 
-  - type: vertical-stack
-    view_layout: {grid-area: climate}
+  - type: grid
     cards:
       - type: heading
         heading: Klima
@@ -102,6 +96,8 @@ cards:
         heading: Heizung und 48-Stunden-Verlauf
         heading_style: subtitle
       - type: tile
+        grid_options:
+          columns: full
         entity: climate.badezimmer_badezimmer_thermostat
         name: Badezimmer
         features:

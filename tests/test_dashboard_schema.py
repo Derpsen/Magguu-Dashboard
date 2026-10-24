@@ -167,3 +167,19 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertNotIn("custom:mushroom-title-card", ALLOWED_CUSTOM_CARDS)
         for path in (REPO_ROOT / "dashboard").rglob("*.yaml"):
             self.assertNotIn("mushroom-title-card", path.read_text(encoding="utf-8"), str(path))
+
+    def test_room_detail_views_use_sections_with_full_width_hero(self) -> None:
+        from validate import load_resolved
+
+        rooms = sorted((REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "rooms").glob("*.yaml"))
+        self.assertEqual(len(rooms), 6)
+        for path in rooms:
+            view = load_resolved(path, REPO_ROOT)
+            self.assertEqual(view["type"], "sections", path.name)
+            self.assertTrue(view["subview"], path.name)
+            hero = view["sections"][0]
+            self.assertEqual(hero["column_span"], 2, path.name)
+            self.assertEqual(hero["cards"][0]["template"], "room_detail_header_v7", path.name)
+            self.assertNotIn("view_layout", path.read_text(encoding="utf-8"), path.name)
+            for section in view["sections"][1:]:
+                self.assertEqual(section["cards"][0]["type"], "heading", path.name)

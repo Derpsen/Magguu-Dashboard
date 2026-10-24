@@ -3,38 +3,23 @@ path: kueche
 icon: mdi:countertop-outline
 subview: true
 theme: Magguu Midnight
-type: custom:grid-layout
-layout:
-  max-width: 1180px
-  margin: 0 auto
-  padding: var(--mag-space-page-wide, 18px) var(--mag-space-page-wide, 18px) 40px
-  grid-gap: 14px
-  grid-template-columns: repeat(2, minmax(0, 1fr))
-  grid-template-areas: |
-    "hero hero"
-    "light cover"
-  mediaquery:
-    "(max-width: 760px)":
-      padding: var(--mag-space-page-mobile, 10px) var(--mag-space-page-mobile, 10px) 28px
-      grid-template-columns: minmax(0, 1fr)
-      grid-template-areas: |
-        "hero"
-        "light"
-        "cover"
-cards:
-  - type: custom:button-card
-    template: room_detail_header_v7
-    name: Küche
-    icon: mdi:countertop-outline
-    variables:
-      subtitle: Licht, Rollladen und Öffnungsstatus
-      accent: '#79d98c'
-      opening_entity: binary_sensor.magguu_kueche_oeffnung
-      light_count_entity: sensor.magguu_kueche_lichter_an
-    view_layout: {grid-area: hero}
+type: sections
+max_columns: 2
+sections:
+  - type: grid
+    column_span: 2
+    cards:
+      - type: custom:button-card
+        template: room_detail_header_v7
+        name: Küche
+        icon: mdi:countertop-outline
+        variables:
+          subtitle: Licht, Rollladen und Öffnungsstatus
+          accent: '#79d98c'
+          opening_entity: binary_sensor.magguu_kueche_oeffnung
+          light_count_entity: sensor.magguu_kueche_lichter_an
 
-  - type: vertical-stack
-    view_layout: {grid-area: light}
+  - type: grid
     cards:
       - type: heading
         heading: Beleuchtung
@@ -43,6 +28,8 @@ cards:
         heading: Küchenlicht direkt schalten
         heading_style: subtitle
       - type: tile
+        grid_options:
+          columns: full
         entity: switch.kuche_kuche_licht
         name: Küchenlicht
         icon: mdi:ceiling-light
@@ -58,8 +45,7 @@ cards:
               box-shadow: var(--mag-shadow-card, none);
             }
 
-  - type: vertical-stack
-    view_layout: {grid-area: cover}
+  - type: grid
     cards:
       - type: heading
         heading: Rollladen
@@ -68,6 +54,8 @@ cards:
         heading: Position gezielt einstellen
         heading_style: subtitle
       - type: tile
+        grid_options:
+          columns: full
         entity: cover.kuche_kuche_rollade
         name: Rollladen Küche
         features:
