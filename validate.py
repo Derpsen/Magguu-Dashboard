@@ -404,6 +404,333 @@ def validate_update_hint(root: Path) -> list[str]:
     return errors
 
 
+# ---------------------------------------------------------------------------
+# Dashboard structure (offline schema checks, resolved through the !include
+# tags). Sources for the allowed keys/values: home-assistant.io/dashboards
+# (sections, views, heading, tile, features, badges) and the frontend types
+# `src/data/lovelace/config/view.ts` / `section.ts`; see MEMORY.md.
+# ---------------------------------------------------------------------------
+DASHBOARD_DIR = ("dashboard", "magguu-dashboard")
+DASHBOARD_URLS = {"mobile": "magguu-mobile", "tablet": "magguu-tablet"}
+VIEW_TYPES = {None, "sections", "masonry", "panel", "sidebar", "custom:grid-layout"}
+VIEW_KEYS = {
+    "title", "path", "icon", "show_icon_and_title", "theme", "panel", "background",
+    "visible", "subview", "back_path", "max_columns", "dense_section_placement",
+    "top_margin", "type", "badges", "cards", "sections", "header", "footer", "sidebar",
+    "layout",  # layout-card view options (custom:grid-layout)
+}
+SECTION_KEYS = {
+    "type", "cards", "badges", "sections", "visibility", "disabled", "column_span",
+    "row_span", "background", "theme", "title",
+}
+VIEW_PATH_PATTERN = re.compile(r"[a-z][a-z0-9_-]*")
+# Built-in card types (home-assistant.io/dashboards/cards) plus the custom cards
+# that are already documented as dependencies in README.md. New custom cards
+# must be added here AND to the README on purpose (no silent new dependency).
+BUILTIN_CARD_TYPES = {
+    "alarm-panel", "area", "button", "calendar", "clock", "conditional", "distribution",
+    "entities", "entity", "entity-filter", "gauge", "glance", "grid", "heading",
+    "history-graph", "horizontal-stack", "humidifier", "light", "map", "markdown",
+    "media-control", "picture", "picture-elements", "picture-entity", "picture-glance",
+    "plant-status", "sensor", "shortcut", "statistic", "statistics-graph", "thermostat",
+    "tile", "todo-list", "vertical-stack", "weather-forecast", "webpage",
+}
+ALLOWED_CUSTOM_CARDS = {
+    "custom:button-card", "custom:grid-layout", "custom:layout-card",
+    "custom:mini-graph-card", "custom:mushroom-template-card",
+    "custom:mushroom-title-card", "custom:navbar-card", "custom:stack-in-card",
+    "custom:auto-entities",
+}
+# Tile features listed on home-assistant.io/dashboards/features.
+TILE_FEATURE_TYPES = {
+    "alarm-modes", "bar-gauge", "button", "climate-fan-modes", "climate-hvac-modes",
+    "climate-preset-modes", "climate-swing-modes", "climate-swing-horizontal-modes",
+    "counter-actions", "cover-open-close", "cover-position", "cover-position-favorite",
+    "cover-tilt", "cover-tilt-favorite", "cover-tilt-position", "date-set",
+    "fan-direction", "fan-oscillate", "fan-preset-modes", "fan-speed",
+    "humidifier-modes", "humidifier-toggle", "lawn-mower-commands", "light-brightness",
+    "light-color-favorites", "light-color-temp", "light-effect", "lock-commands",
+    "lock-open-door", "media-player-playback", "media-player-sound-mode",
+    "media-player-source", "media-player-volume-buttons", "media-player-volume-slider",
+    "numeric-input", "select-options", "target-humidity", "target-temperature",
+    "timer-actions", "timer-presets", "toggle", "trend-graph", "update-actions",
+    "vacuum-commands", "vacuum-fan-speed", "valve-open-close", "valve-position",
+    "valve-position-favorite", "water-heater-operation-modes", "area-controls",
+    "temperature-forecast", "precipitation-forecast",
+}
+HEADING_STYLES = {"title", "subtitle"}
+HEADING_KEYS = {
+    "type", "heading", "heading_style", "icon", "tap_action", "badges", "view_layout",
+    "grid_options", "card_mod", "visibility",
+}
+HEADING_BADGE_TYPES = {"entity", "button"}
+CARD_CONTAINER_KEYS = ("cards", "card")
+THEME_MODES = {"light", "dark"}
+MAG_TOKEN_PATTERN = re.compile(r"var\(--(mag-[a-z0-9-]+)")
+
+
+def _resolve_include_dir(directory: Path, tag: str, root: Path, seen: tuple[Path, ...]) -> Any:
+    files = sorted(
+        p for p in directory.rglob("*")
+        if p.is_file() and p.suffix.lower() in YAML_SUFFIXES
+        and not any(part.startswith(".") for part in p.relative_to(directory).parts)
+    )
+    loaded = [(p, load_resolved(p, root, seen)) for p in files]
+    if tag == "include_dir_list":
+        return [doc for _, doc in loaded]
+    if tag == "include_dir_named":
+        return {p.stem: doc for p, doc in loaded}
+    if tag == "include_dir_merge_list":
+        merged: list[Any] = []
+        for _, doc in loaded:
+            merged.extend(doc if isinstance(doc, list) else [doc])
+        return merged
+    merged_named: dict[Any, Any] = {}
+    for _, doc in loaded:
+        if isinstance(doc, Mapping):
+            merged_named.update(doc)
+    return merged_named
+
+
+def load_resolved(path: Path, root: Path, seen: tuple[Path, ...] = ()) -> Any:
+    """Load YAML and replace `!include*` tags by the included content."""
+    path = path.resolve()
+    if path in seen:
+        raise ValueError(f"zyklisches Include: {path.name}")
+    if root.resolve() not in path.parents and path != root.resolve():
+        raise ValueError(f"Include außerhalb des Repos: {path}")
+    chain = (*seen, path)
+
+    class _Loader(HomeAssistantLoader):
+        pass
+
+    def include(tag: str):
+        def construct(loader: yaml.Loader, node: yaml.Node) -> Any:
+            target = (path.parent / str(loader.construct_scalar(node)).strip()).resolve()
+            if tag == "include":
+                return load_resolved(target, root, chain)
+            return _resolve_include_dir(target, tag, root, chain)
+        return construct
+
+    for tag in INCLUDE_TAGS:
+        _Loader.add_constructor(f"!{tag}", include(tag))
+    with path.open("r", encoding="utf-8") as handle:
+        return yaml.load(handle, Loader=_Loader)
+
+
+def _iter_cards(node: Any) -> Iterable[Mapping[str, Any]]:
+    """Yield every card mapping below `node` (stacks, conditionals, sections, layout-card)."""
+    if isinstance(node, Mapping):
+        if isinstance(node.get("type"), str) and (
+            "entity" in node or "cards" in node or "card" in node or "heading" in node
+            or node["type"] in BUILTIN_CARD_TYPES or node["type"].startswith("custom:")
+        ):
+            yield node
+        for key in CARD_CONTAINER_KEYS + ("sections", "badges", "header", "footer"):
+            if key in node:
+                yield from _iter_cards(node[key])
+    elif isinstance(node, list):
+        for child in node:
+            yield from _iter_cards(child)
+
+
+def _dashboard_views(root: Path, device: str) -> tuple[list[Mapping[str, Any]], list[str]]:
+    path = root.joinpath(*DASHBOARD_DIR, device, "dashboard.yaml")
+    if not path.is_file():
+        return [], []
+    rel = path.relative_to(root)
+    try:
+        document = load_resolved(path, root)
+    except Exception as exc:  # reported with context
+        return [], [f"{rel}: Includes nicht auflösbar: {exc}"]
+    views = document.get("views") if isinstance(document, Mapping) else None
+    if not isinstance(views, list):
+        return [], [f"{rel}: views muss eine Liste sein"]
+    return [v for v in views if isinstance(v, Mapping)], []
+
+
+def theme_definitions(root: Path) -> dict[str, Any]:
+    themes: dict[str, Any] = {}
+    themes_dir = root / "themes"
+    for path in sorted(themes_dir.glob("*.yaml")) if themes_dir.is_dir() else []:
+        document = load_yaml(path)
+        if isinstance(document, Mapping):
+            themes.update(document)
+    return themes
+
+
+def validate_themes(root: Path) -> list[str]:
+    errors: list[str] = []
+    for name, theme in theme_definitions(root).items():
+        if not isinstance(theme, Mapping):
+            errors.append(f"themes: Theme {name} muss eine Map sein")
+            continue
+        modes = theme.get("modes")
+        if modes is None:
+            continue
+        if not isinstance(modes, Mapping) or not modes or set(modes) - THEME_MODES:
+            errors.append(f"themes: {name}.modes darf nur {sorted(THEME_MODES)} enthalten")
+            continue
+        for mode, values in modes.items():
+            if not isinstance(values, Mapping) or not values:
+                errors.append(f"themes: {name}.modes.{mode} muss Variablen enthalten")
+    return errors
+
+
+def _theme_tokens(theme: Mapping[str, Any]) -> set[str]:
+    tokens = {k for k in theme if k != "modes"}
+    modes = theme.get("modes")
+    for values in modes.values() if isinstance(modes, Mapping) else []:
+        if isinstance(values, Mapping):
+            tokens |= set(values)
+    return tokens
+
+
+def validate_dashboards(root: Path) -> list[str]:
+    errors: list[str] = []
+    themes = theme_definitions(root)
+    for device, url in DASHBOARD_URLS.items():
+        views, load_errors = _dashboard_views(root, device)
+        errors.extend(load_errors)
+        paths: dict[str, int] = {}
+        for index, view in enumerate(views):
+            where = f"{device}/view {index} ({view.get('path') or view.get('title')})"
+            vpath = view.get("path")
+            if not isinstance(vpath, str) or not VIEW_PATH_PATTERN.fullmatch(vpath):
+                errors.append(f"{where}: path muss mit Buchstabe beginnen und nur a-z 0-9 _ - enthalten")
+            elif vpath in paths:
+                errors.append(f"{where}: doppelter View-Pfad {vpath}")
+            else:
+                paths[vpath] = index
+            if not isinstance(view.get("title"), str) or not view.get("title"):
+                errors.append(f"{where}: title fehlt")
+            vtype = view.get("type")
+            if vtype not in VIEW_TYPES:
+                errors.append(f"{where}: unbekannter View-Typ {vtype!r}")
+            for key in sorted(set(view) - VIEW_KEYS):
+                errors.append(f"{where}: unbekannter View-Schlüssel {key}")
+            theme = view.get("theme")
+            if theme is not None and theme not in themes:
+                errors.append(f"{where}: Theme {theme!r} existiert nicht in themes/")
+            if vtype == "sections":
+                if not isinstance(view.get("sections"), list) or not view["sections"]:
+                    errors.append(f"{where}: sections-View braucht eine nicht leere sections-Liste")
+                if "cards" in view or "layout" in view:
+                    errors.append(f"{where}: sections-View darf weder cards noch layout (layout-card) setzen")
+                maxc = view.get("max_columns")
+                if maxc is not None and (isinstance(maxc, bool) or not isinstance(maxc, int) or maxc < 1):
+                    errors.append(f"{where}: max_columns muss eine ganze Zahl >= 1 sein")
+                for s_index, section in enumerate(view.get("sections") or []):
+                    swhere = f"{where}/section {s_index}"
+                    if not isinstance(section, Mapping):
+                        errors.append(f"{swhere}: Section muss eine Map sein")
+                        continue
+                    for key in sorted(set(section) - SECTION_KEYS):
+                        errors.append(f"{swhere}: unbekannter Section-Schlüssel {key}")
+                    if section.get("type", "grid") != "grid":
+                        errors.append(f"{swhere}: Section-Typ muss grid sein")
+                    if not isinstance(section.get("cards"), list) or not section["cards"]:
+                        errors.append(f"{swhere}: Section braucht eine nicht leere cards-Liste")
+                    span = section.get("column_span")
+                    if span is not None and (isinstance(span, bool) or not isinstance(span, int) or span < 1):
+                        errors.append(f"{swhere}: column_span muss eine ganze Zahl >= 1 sein")
+                    elif isinstance(span, int) and isinstance(maxc, int) and span > maxc:
+                        errors.append(f"{swhere}: column_span {span} größer als max_columns {maxc}")
+            elif vtype == "custom:grid-layout" and "sections" in view:
+                errors.append(f"{where}: grid-layout-View darf keine sections setzen")
+            for card in _iter_cards(view):
+                errors.extend(_validate_card(card, where))
+        # Navigation targets inside this dashboard must exist.
+        for index, view in enumerate(views):
+            for target in _navigation_targets(view):
+                prefix = f"/{url}/"
+                if target.startswith("/magguu-") and not target.startswith(prefix):
+                    errors.append(f"{device}: navigation_path {target} zeigt auf das andere Dashboard")
+                elif target.startswith(prefix) and target[len(prefix):].split("/")[0] not in paths:
+                    errors.append(f"{device}: navigation_path {target} zeigt auf keinen View")
+            for route in _navbar_routes(view):
+                if route not in paths:
+                    errors.append(f"{device}: navbar-Route {route} zeigt auf keinen View")
+    errors.extend(_validate_theme_tokens(root, themes))
+    return sorted(set(errors))
+
+
+def _validate_card(card: Mapping[str, Any], where: str) -> list[str]:
+    errors: list[str] = []
+    ctype = card.get("type")
+    if not isinstance(ctype, str):
+        return errors
+    if ctype not in BUILTIN_CARD_TYPES and ctype not in ALLOWED_CUSTOM_CARDS:
+        errors.append(
+            f"{where}: Kartentyp {ctype} ist keine dokumentierte Abhängigkeit "
+            "(neue Custom-Cards nur bewusst in validate.py + README ergänzen)"
+        )
+    if ctype == "tile":
+        if not isinstance(card.get("entity"), str):
+            errors.append(f"{where}: tile ohne entity")
+        for feature in card.get("features") or []:
+            ftype = feature.get("type") if isinstance(feature, Mapping) else None
+            if ftype not in TILE_FEATURE_TYPES:
+                errors.append(f"{where}: unbekanntes Tile-Feature {ftype!r}")
+        position = card.get("features_position")
+        if position is not None and position not in {"bottom", "inline"}:
+            errors.append(f"{where}: features_position muss bottom oder inline sein")
+    if ctype == "heading":
+        for key in sorted(set(card) - HEADING_KEYS):
+            errors.append(f"{where}: heading-Karte kennt {key} nicht")
+        if not isinstance(card.get("heading"), str) or not card["heading"].strip():
+            errors.append(f"{where}: heading-Karte braucht einen Text (heading)")
+        style = card.get("heading_style")
+        if style is not None and style not in HEADING_STYLES:
+            errors.append(f"{where}: heading_style muss title oder subtitle sein")
+        for badge in card.get("badges") or []:
+            if not isinstance(badge, Mapping) or badge.get("type") not in HEADING_BADGE_TYPES:
+                errors.append(f"{where}: heading-badges nur vom Typ entity oder button")
+    return errors
+
+
+def _walk(node: Any) -> Iterable[Any]:
+    yield node
+    if isinstance(node, Mapping):
+        for child in node.values():
+            yield from _walk(child)
+    elif isinstance(node, list):
+        for child in node:
+            yield from _walk(child)
+
+
+def _navigation_targets(view: Any) -> Iterable[str]:
+    for node in _walk(view):
+        if isinstance(node, Mapping) and isinstance(node.get("navigation_path"), str):
+            yield node["navigation_path"]
+
+
+def _navbar_routes(view: Any) -> Iterable[str]:
+    for node in _walk(view):
+        if isinstance(node, Mapping) and node.get("type") == "custom:navbar-card":
+            for route in node.get("routes") or []:
+                url = route.get("url") if isinstance(route, Mapping) else None
+                if isinstance(url, str) and not url.startswith(("/", "http")):
+                    yield url
+
+
+def _validate_theme_tokens(root: Path, themes: Mapping[str, Any]) -> list[str]:
+    """Every `var(--mag-*)` used in dashboards/packages must exist in each used theme."""
+    if not themes:
+        return []
+    used: set[str] = set()
+    for path in yaml_files(root / DASHBOARD_DIR[0]) if (root / DASHBOARD_DIR[0]).is_dir() else []:
+        used |= set(MAG_TOKEN_PATTERN.findall(path.read_text(encoding="utf-8")))
+    errors = []
+    for name, theme in themes.items():
+        if not isinstance(theme, Mapping):
+            continue
+        for token in sorted(used - _theme_tokens(theme)):
+            errors.append(f"themes: Theme {name} definiert --{token} nicht (in Dashboards verwendet)")
+    return errors
+
+
+
 def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     paths = yaml_files(root)
     documents, errors = validate_yaml(paths, root)
@@ -420,6 +747,8 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
     errors.extend(validate_shell_commands(documents, root))
     errors.extend(validate_updater(root))
     errors.extend(validate_update_hint(root))
+    errors.extend(validate_themes(root))
+    errors.extend(validate_dashboards(root))
     return len(paths), errors
 
 

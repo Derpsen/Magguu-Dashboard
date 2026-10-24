@@ -33,6 +33,8 @@ Magguu Midnight:
   mag-accent-success: '#79d98c'
   mag-accent-warning: '#ff9f43'
   mag-accent-error: '#ff6b6b'
+  mag-accent-danger: '#ff6b6b'
+  mag-accent-media: '#b48cff'
   mag-radius-card: '24px'
   mag-radius-control: '17px'
   mag-space-page-mobile: '10px'
