@@ -50,13 +50,13 @@ cards:
         name: Rollläden
         icon: mdi:window-shutter
         variables: {accent: '#71b7ff', room_path: wohnzimmer, link_label: 3 Rollläden}
-      - type: custom:button-card
-        template: room_action_v5
-        entity: media_player.av_samsung_soundbar_q90r
-        name: Soundbar
-        icon: mdi:soundbar
-        tap_action: {action: more-info}
-        variables: {accent: '#b48cff', active_label: Aktiv, inactive_label: Bereit}
+  - type: custom:button-card
+    template: room_action_v5
+    entity: media_player.av_samsung_soundbar_q90r
+    name: Soundbar
+    icon: mdi:soundbar
+    tap_action: {action: more-info}
+    variables: {accent: '#b48cff', active_label: Aktiv, inactive_label: Bereit}
 card_mod:
   style: |
     ha-card {

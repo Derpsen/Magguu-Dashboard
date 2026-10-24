@@ -96,6 +96,6 @@
           heading_style: subtitle
         - !include ../../shared/cards/home-quick.yaml
 
-    - !include ../../shared/sections/modes.yaml
+    - !include ../../shared/sections/modes-compact.yaml
 
     - !include ../../shared/sections/active-media.yaml

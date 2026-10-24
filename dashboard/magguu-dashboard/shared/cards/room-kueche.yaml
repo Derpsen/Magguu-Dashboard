@@ -31,13 +31,13 @@ cards:
         icon: mdi:window-shutter
         tap_action: {action: more-info}
         variables: {accent: '#71b7ff'}
-      - type: custom:button-card
-        template: room_action_v5
-        entity: binary_sensor.magguu_kueche_oeffnung
-        name: Fenster / Tür
-        icon: mdi:window-open-variant
-        tap_action: {action: more-info}
-        variables: {accent: '#ff9f43', active_label: Offen, inactive_label: Geschlossen}
+  - type: custom:button-card
+    template: room_action_v5
+    entity: binary_sensor.magguu_kueche_oeffnung
+    name: Fenster / Tür
+    icon: mdi:window-open-variant
+    tap_action: {action: more-info}
+    variables: {accent: '#ff9f43', active_label: Offen, inactive_label: Geschlossen}
 card_mod:
   style: |
     ha-card {

@@ -366,6 +366,30 @@ class DashboardSchemaTest(unittest.TestCase):
         for row in rows:
             self.assertIn("auto-fit", row["card_mod"]["style"])
 
+    def test_room_cards_have_no_half_empty_tile_rows(self) -> None:
+        """Ungerade Kachelzahl: die letzte Kachel liegt als volle Zeile außerhalb des 2-Spalten-Grids."""
+        cards = REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "cards"
+        checked = 0
+        for path in sorted(cards.glob("room-*.yaml")):
+            room = load_resolved(path, REPO_ROOT)
+            grids = [c for c in room["cards"] if c.get("type") == "grid"]
+            self.assertEqual(len(grids), 1, path.name)
+            inner = grids[0]["cards"]
+            if any(c.get("type") == "conditional" for c in inner):
+                continue  # dynamische Anzahl (Flur): nicht statisch prüfbar
+            checked += 1
+            self.assertEqual(len(inner) % 2, 0, f"{path.name}: {len(inner)} Kacheln im 2-Spalten-Grid")
+        self.assertGreaterEqual(checked, 6)
+
+    def test_tablet_overview_puts_scenes_into_the_right_column(self) -> None:
+        from validate import _dashboard_views
+        views, _ = _dashboard_views(REPO_ROOT, "tablet")
+        overview = next(v for v in views if v["path"] == "overview")
+        modes = [s for s in overview["sections"] if any(c.get("heading") == "Szenen & Modi" for c in s.get("cards", []))]
+        self.assertEqual([s.get("column_span") for s in modes], [1])
+        rooms = [v for v in _dashboard_views(REPO_ROOT, "tablet")[0] if v["path"] == "raeume"][0]
+        self.assertEqual([s.get("column_span") for s in rooms["sections"] if any(c.get("heading") == "Szenen & Modi" for c in s.get("cards", []))], [2])
+
 
 def _flatten_outside_stacks(node):
     """Wie _flatten, steigt aber nicht in stack-in-card ein (dort bestimmt der Stack die Breite)."""
