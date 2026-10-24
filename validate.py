@@ -37,7 +37,27 @@ ENTITY_REFERENCE_KEYS = {"entity", "entity_id", "entities"}
 
 
 class HomeAssistantLoader(yaml.SafeLoader):
-    """Safe YAML loader that preserves values of Home Assistant tags."""
+    """Safe YAML loader that preserves values of Home Assistant tags and rejects duplicate mapping keys."""
+
+    def construct_mapping(self, node: yaml.Node, deep: bool = False) -> dict[Any, Any]:
+        if isinstance(node, yaml.MappingNode):
+            seen: set[Any] = set()
+            for key_node, _value_node in node.value:
+                if key_node.tag == "tag:yaml.org,2002:merge":
+                    continue
+                try:
+                    key = self.construct_object(key_node, deep=True)
+                    hash(key)
+                except Exception:  # noqa: BLE001 - unhashable/komplexe Schlüssel prüft PyYAML selbst
+                    continue
+                if key in seen:
+                    raise yaml.constructor.ConstructorError(
+                        "beim Lesen eines Mappings", node.start_mark,
+                        f"doppelter Schlüssel {key!r} (der zweite überschreibt den ersten stillschweigend)",
+                        key_node.start_mark,
+                    )
+                seen.add(key)
+        return super().construct_mapping(node, deep=deep)
 
 
 def construct_unknown(

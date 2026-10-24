@@ -111,6 +111,26 @@ class ValidateRepositoryTest(unittest.TestCase):
 
         self.assertTrue(any("kein gültiges Format" in error for error in errors))
 
+    def test_reports_duplicate_yaml_mapping_keys(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/shared/cards/dup.yaml",
+            "type: tile\nentity: sensor.documented\ncard_mod: {style: a}\ncard_mod: {style: b}\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertTrue(any("doppelter Schlüssel 'card_mod'" in error for error in errors), errors)
+
+    def test_allows_yaml_merge_keys_and_anchors(self) -> None:
+        self.write_yaml(
+            "dashboard/magguu-dashboard/shared/cards/merge.yaml",
+            "base: &b {a: 1}\nmerged:\n  <<: *b\n  a: 2\n",
+        )
+
+        _, errors = validate_repository(self.root)
+
+        self.assertFalse(any("doppelter Schlüssel" in error for error in errors), errors)
+
     def test_reports_missing_mobile_navbar_clearance_token(self) -> None:
         self.write_yaml(
             "dashboard/magguu-dashboard/mobile/views/01-overview.yaml",
