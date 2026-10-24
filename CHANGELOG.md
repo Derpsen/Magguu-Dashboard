@@ -2,6 +2,7 @@
 
 ## Unreleased – CI
 
+- CI-Fehleralarm, Redaction verschärft: Log-Zeilen werden vor dem Versand auch von nackten Tokens (`ghp_`/`gho_`/`ghs_`/`github_pat_`), JWTs, URLs, Bearer-Werten und langen Hex/Base64-Strings bereinigt (nicht nur per Keyword-Zeile); Test `tests/test_ci_alarm_redact.py` führt die echte Funktion mit Fake-Werten aus.
 - CI-Fehleralarm (nur Actions, kein Dashboard-Code): wiederverwendbarer Workflow `.github/workflows/ci-alarm.yml`, aufgerufen von `validate` und `quality` (nur Push auf main, nur bei `failure()`). Sendet Repo, Workflow, SHA, Run-URL und die letzten ~20 geschwärzten Logzeilen als JSON an das Repo-Secret `ESCALATION_WEBHOOK_URL` (`Authorization: Bearer` aus `ESCALATION_BEARER`, nur per env, nie ausgegeben). Leeres Secret oder kein https = stilles Überspringen, `continue-on-error`, 10 s Timeout, kein Alarm bei Re-Runs, `Idempotency-Key` = sha256(repo|workflow|sha).
 
 ## 6.10.1-dev – 2026-10-24

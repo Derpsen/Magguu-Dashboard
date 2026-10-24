@@ -228,3 +228,5 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 ## 2026-10-24 CI failure alarm
 - Same template as MagguuBot: `.github/workflows/ci-alarm.yml` (workflow_call) + `alarm` job in `validate.yml` and `quality.yml` (`if: failure()`, push on main only). Secrets `ESCALATION_WEBHOOK_URL` / `ESCALATION_BEARER` are GitHub repo secrets (never in Git/logs); the step prints only "set yes/no" and the HTTP status. Offline validated (actionlint, zizmor, stubbed gh/curl in the MagguuBot test); the real webhook call is only seen after the first real main failure. Actions-only: no Unraid/HA action needed.
+
+- 2026-10-24 follow-up: `redact_log` in `ci-alarm.yml` (markers `# redact-begin/end`) now also replaces bare tokens/JWTs/URLs/bearer values/32+ char opaque strings inline before the keyword line filter; markers must not contain keywords (`token`, `secret`, `key=`), else the whole line is dropped. Tested by `tests/test_ci_alarm_redact.py` (fake values only).
