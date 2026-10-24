@@ -101,6 +101,15 @@ class ThemeTest(unittest.TestCase):
         self.assertNotRegex(text, r"color: '\[\[\[ return variables\.accent")
         self.assertGreaterEqual(text.count("--mag-room-accent-strength"), 4)
 
+    def test_weather_tile_in_the_hero_is_as_light_as_the_cards_in_light_mode(self) -> None:
+        """6.8.0-dev live: Overlay-Grau wirkte neben weißen Karten fremd; Text bleibt darauf lesbar."""
+        for mode in ("dark", "light"):
+            tile = over(parse_color(THEME[mode]["mag-weather-surface"]), surface(mode))
+            for name in ("primary-text-color", "secondary-text-color"):
+                self.assertGreaterEqual(contrast(parse_color(THEME[mode][name]), tile), 4.5, f"{mode}: {name}")
+        light_tile = over(parse_color(THEME["light"]["mag-weather-surface"]), page_background("light"))
+        self.assertGreater(luminance(light_tile), 0.85)
+
     def test_state_and_primary_colors_reach_non_text_contrast_in_both_modes(self) -> None:
         for mode in ("dark", "light"):
             for name in ("primary-color", "state-light-active-color", "state-cover-active-color", "state-climate-heat-color"):

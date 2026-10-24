@@ -159,7 +159,7 @@ hero_v5:
         - padding-top: 28px
   extra_styles: |
     .v5-pills{display:flex;flex-wrap:wrap;gap:8px}.v5-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:var(--mag-overlay, rgba(255,255,255,.055));font-size:12px;font-weight:650;white-space:nowrap}.v5-pill ha-icon{width:16px;height:16px}
-    .hero-weather{height:100%;min-height:138px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:15px;padding:18px;border-radius:21px;background:var(--mag-overlay-border, rgba(255,255,255,.045));border:1px solid var(--mag-overlay, rgba(255,255,255,.055))}
+    .hero-weather{height:100%;min-height:138px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:15px;padding:18px;border-radius:21px;background:var(--mag-weather-surface, rgba(255,255,255,.045));border:1px solid var(--mag-overlay, rgba(255,255,255,.055))}
     .hero-weather-icon{width:48px;height:48px;color:var(--mag-accent-climate,#57cbd3)}
     .hero-weather-copy{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:3px}
     .hero-weather-condition{max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:var(--secondary-text-color)}

@@ -13,7 +13,6 @@ cards:
       accent: '#79d98c'
       light_count_entity: sensor.magguu_kueche_lichter_an
       opening_entity: binary_sensor.magguu_kueche_oeffnung
-      device_text: Licht, Rollladen und Fenster
   - type: grid
     columns: 2
     square: false
