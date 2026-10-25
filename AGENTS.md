@@ -105,6 +105,7 @@ Nach jeder Änderung:
 - Bei großen Aufgaben phasenweise arbeiten.
 - Rückfragen nur bei wirklich fehlenden Informationen stellen.
 - Offene Punkte in `TASKS.md` dokumentieren.
+- Laufzeitlimits auf der Ubuntu-VM (Marco-Regel 2026-10-25, gilt für ALLE Läufe: Tests, Builds, Skripte, Mutation, Reviews): jeder Lauf mit hartem Limit (`setsid timeout -k 5 -s KILL <sek> …`, eigene Prozessgruppe; bwrap mit `--die-with-parent`), davor `nice -n 19 ionice -c3`; keine Endlos-Schleifen/Watch-Modi; kein Lauf über 15 Min ohne Zwischenmeldung an Marco; danach `pgrep -af 'node|tsx|bwrap'` prüfen, nichts Übriges stehen lassen, Temp-Ordner (`/tmp/mut*`, `~/.cache/tmp/rv-*`) löschen. Der Wächter-Cron `~/bin/kill-stuck-tests.sh` (killt >20 Min und >80 % CPU) ist das Netz, nicht anfassen. `tools/run-limited.sh <sek> <befehl…>` erledigt das für lokale Hilfsläufe (räumt auch übrig gebliebene Kindprozesse per Session ab, Exit 124/137 = Limit erreicht; abgesichert durch `tests/test_run_limited.py`); die Schritte in `.githooks/pre-push` laufen darüber (Unit-Tests 900 s, validate.py/actionlint/shellcheck je 120 s). CI-Workflows unverändert.
 
 ## MagguuUI pack/copy product facts (pointer)
 

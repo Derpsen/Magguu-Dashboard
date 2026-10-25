@@ -4,14 +4,16 @@
 # No package.json here, so no npm lint/typecheck; validate.py is the YAML lint.
 set -eu
 cd "$(git rev-parse --show-toplevel)"
+# Marco rule 2026-10-25: every step runs via tools/run-limited.sh (hard limit, nice 19, idle I/O).
+RL="sh tools/run-limited.sh"
 PY=$(command -v python3 || command -v python)
-echo "[pre-push] unittest"; "$PY" -m unittest discover -s tests
-echo "[pre-push] validate.py"; "$PY" validate.py
+echo "[pre-push] unittest"; $RL 900 "$PY" -m unittest discover -s tests
+echo "[pre-push] validate.py"; $RL 120 "$PY" validate.py
 if command -v actionlint >/dev/null 2>&1; then
-  echo "[pre-push] actionlint"; actionlint .github/workflows/*.yml
+  echo "[pre-push] actionlint"; $RL 120 actionlint .github/workflows/*.yml
 else echo "[pre-push] WARNING: actionlint not installed, skipping" >&2; fi
 if command -v shellcheck >/dev/null 2>&1; then
   files=$(git ls-files '*.sh')
-  if [ -n "$files" ]; then echo "[pre-push] shellcheck"; echo "$files" | xargs shellcheck; fi
+  if [ -n "$files" ]; then echo "[pre-push] shellcheck"; echo "$files" | xargs $RL 120 shellcheck; fi
 else echo "[pre-push] WARNING: shellcheck not installed, skipping" >&2; fi
 echo "[pre-push] all checks passed"

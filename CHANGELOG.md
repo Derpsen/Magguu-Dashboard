@@ -2,6 +2,8 @@
 
 ## Unreleased – CI
 
+- Laufzeitlimits (Marco-Regel 2026-10-25): neues `tools/run-limited.sh <sek> <befehl…>` (hartes Limit per `setsid timeout -k 5 -s KILL`, `nice -n 19`, `ionice -c3`, räumt Kindprozesse per Session ab; Test `tests/test_run_limited.py`); `.githooks/pre-push` läuft darüber.
+
 - `quality.yml`: `paths-ignore: ['**/*.md']` entfernt, damit `tools/drift-check.sh` auch bei reinen Doku-Änderungen läuft. `magguu-drift.py` bewusst nicht übernommen (siehe MEMORY).
 
 - Renovate: `helpers:pinGitHubActionDigests` ergänzt; satori-Sperre von `~0.41.0` auf `<0.48` aktualisiert (>=0.48 gesperrt); h3/TS/@types/node-Sperren unverändert.
