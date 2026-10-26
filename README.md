@@ -86,7 +86,7 @@ Dieses Repository ist **kein HACS-Dashboard**: YAML-Dashboards und Packages lieg
 
 ## Docs drift
 
-Docs dürfen dem Repo nicht widersprechen. `bash tools/docs-drift.sh` meldet veraltete Begriffe (Regeln: `.github/docs-drift-rules.txt`), `python3 tools/docs-sync.py` prüft, dass in README, AGENTS, TASKS und `docs/design.md` genannte Pfade existieren (Konfiguration: `.github/docs-sync.txt`). Version, `docs/entities.md` und Custom-Card-Liste prüft weiter `validate.py`, gesperrte Namen `tools/drift-check.sh`. Der wöchentliche Workflow `docs-drift.yml` führt beide Skripte aus; die Repository-Variable `DOCS_DRIFT_MODE` wählt `issue` (Standard: ein deduplizierter „Docs-Drift“-Issue, wird bei sauberem Lauf geschlossen), `warn` (Annotationen bei jedem Push/PR) oder `fail`. Beide Skripte laufen auch im Pre-push-Hook.
+Docs dürfen dem Repo nicht widersprechen. `bash tools/docs-drift.sh` meldet veraltete Begriffe (Regeln: `.github/docs-drift-rules.txt`), `python3 tools/docs-sync.py` prüft, dass in README, AGENTS, TASKS und `docs/design.md` genannte Pfade existieren (Konfiguration: `.github/docs-sync.txt`). Version, `docs/entities.md` und Custom-Card-Liste prüft weiter `validate.py`, gesperrte Namen `tools/drift-check.sh`. Der wöchentliche Workflow `docs-drift.yml` führt beide Skripte aus; die Repository-Variable `DOCS_DRIFT_MODE` wählt `issue` (Standard, wenn nicht gesetzt: ein deduplizierter „Docs-Drift“-Issue, wird bei sauberem Lauf geschlossen), `warn` (Annotationen bei jedem Push/PR, nie ein roter Lauf oder Issue) oder `fail`. Seit 2026-10-26 ist die Variable auf `warn` gesetzt. Beide Skripte laufen auch im Pre-push-Hook.
 
 ## Git pre-push hook
 

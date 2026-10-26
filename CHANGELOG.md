@@ -2,6 +2,7 @@
 
 ## Unreleased – CI
 
+- Docs-Drift: Repository-Variable `DOCS_DRIFT_MODE=warn` gesetzt (Marco, 2026-10-26); manueller Lauf grün, kein Issue.
 - Docs-Drift: `tools/docs-sync.py` + `.github/docs-sync.txt` (Pfade in README/AGENTS/TASKS/`docs/design.md` müssen existieren), zusätzlich `TASKS.md`/`docs/design.md` und Regel „kein npm“ in `.github/docs-drift-rules.txt`, `docs-drift.yml` mit Modi `issue` (Standard, dedupliziertes Issue mit Label) / `warn` / `fail` über `DOCS_DRIFT_MODE`, beide Skripte im Pre-push-Hook, `tests/test_docs_sync.py`. `validate.py` und `drift-check.sh` bleiben unverändert zuständig (Version, Entitäten, Namen).
 - Renovate: Sperr-Regeln `@types/node <25` und `typescript <7` entfernt (Marco hat die Majors am 2026-10-26 freigegeben; dieses Repo hat kein package.json, die Majors werden im Bot umgesetzt); Docs-Drift-Regeln für TS 7 / @types/node 26 entfernt. Majors werden weiter nie automerged; h3/satori-Regeln (Website) bleiben.
 - Laufzeitlimits (Marco-Regel 2026-10-25): neues `tools/run-limited.sh <sek> <befehl…>` (hartes Limit per `setsid timeout -k 5 -s KILL`, `nice -n 19`, `ionice -c3`, räumt Kindprozesse per Session ab; Test `tests/test_run_limited.py`); `.githooks/pre-push` läuft darüber.
