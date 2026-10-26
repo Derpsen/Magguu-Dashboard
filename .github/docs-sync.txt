@@ -1,0 +1,5 @@
+# docs-sync config for Magguu-Dashboard (read by tools/docs-sync.py). MEMORY.md is history, docs/audit.md and docs/entities.md are snapshots/lists and are not path-checked (validate.py already checks entities and version).
+@docs README.md AGENTS.md TASKS.md docs/design.md
+
+# configuration.yaml is Home Assistant's own file in /config, not part of this repo.
+^configuration\.yaml$
