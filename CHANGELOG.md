@@ -2,6 +2,7 @@
 
 ## Unreleased – CI
 
+- Renovate: Sperr-Regeln `@types/node <25` und `typescript <7` entfernt (Marco hat die Majors am 2026-10-26 freigegeben; dieses Repo hat kein package.json, die Majors werden im Bot umgesetzt); Docs-Drift-Regeln für TS 7 / @types/node 26 entfernt. Majors werden weiter nie automerged; h3/satori-Regeln (Website) bleiben.
 - Laufzeitlimits (Marco-Regel 2026-10-25): neues `tools/run-limited.sh <sek> <befehl…>` (hartes Limit per `setsid timeout -k 5 -s KILL`, `nice -n 19`, `ionice -c3`, räumt Kindprozesse per Session ab; Test `tests/test_run_limited.py`); `.githooks/pre-push` läuft darüber.
 
 - `quality.yml`: `paths-ignore: ['**/*.md']` entfernt, damit `tools/drift-check.sh` auch bei reinen Doku-Änderungen läuft. `magguu-drift.py` bewusst nicht übernommen (siehe MEMORY).
