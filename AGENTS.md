@@ -112,7 +112,7 @@ Nach jeder Änderung:
 Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When "Website" or "Bot & Dashboard" updates WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
 
 - Current state (2026-10-15): MagguuUI addon live **v12.1.8** (tagged 2026-10-14; v12.1.7 superseded). The old whisper addon is fully removed everywhere; WowUp Optional includes **Whisper Messenger** (WhisperMessenger) as the whisper chat. The in-game player button is called **„Apply Magguu profiles“**.
-- Node 26 is live for Bot (engines `>=26`) and Website (`>=26.12.0`) since 2026-10-16; this repo has no `package.json` / npm.
+- Node 26 is live for Bot (engines `>=26`) and Website (`>=26.12.0`) since 2026-10-16; this repo has no `package.json` / npm. Node 26 is LTS ('Lithium'): Active LTS since 2026-10-28 with v26.13.0, maintenance LTS from 2027-10-20, end of life 2029-04-30.
 
 - Current delta (2026-10): WowUp Optional includes **Whisper Messenger** (WhisperMessenger) - not WIM / Ellesmere WIM Skin.
 
@@ -133,7 +133,7 @@ Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
 - Buddy makes small MagguuUI-Website design/text changes directly; bigger work goes to the helpers. Since 2026-10-12 helpers and Buddy push directly to `main` (no PRs, no pre-review); Buddy reviews commits afterwards; after a green Docker publish the no-AI Unraid pull/test script (`magguu-pull`, rollback on failure) pulls the new image.
 - Addon live v12.1.7 (superseded: live **v12.1.8** since 2026-10-14). "Split names" options are becoming "Two-tone unit-frame names" / "Two-tone party and raid names" (MagguuUI PR #30; `SPLIT_NAMES` keys unchanged): half the name in the default color, half in the class color.
 - Website live build: auto-deployed, current SHA at https://ui.magguu.xyz/api/health (history in `MEMORY.md`); legal notice = "free, non-commercial project operated from Switzerland" + `contact@magguu.xyz` (no name, no address).
-- Unchanged: WIM removed, Whisper Messenger used; "Apply Magguu profiles"; Node 26 live (Bot + Website); h3 2 locked (Website only); TS 7 and @types/node 26 released 2026-10-26 (Bot); uid 99 + Cosign; `engines.node >=26` (Website >=26.12.0); no tags without Marco's yes; never remove third-party author names.
+- Unchanged: WIM removed, Whisper Messenger used; "Apply Magguu profiles"; Node 26 live (Bot + Website; LTS 'Lithium' since 2026-10-28); h3 2 locked (Website only); TS 7 and @types/node 26 released 2026-10-26 (Bot); uid 99 + Cosign; `engines.node >=26` (Website >=26.12.0); no tags without Marco's yes; never remove third-party author names.
 
 ## 2026-10-14 "Bot & Dashboard" wave 2
 
