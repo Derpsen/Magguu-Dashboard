@@ -2,6 +2,7 @@
 
 ## Unreleased – CI
 
+- GitHub-Repo-Einstellung „Require actions to be pinned to a full-length commit SHA“ eingeschaltet (2026-11-02); alle externen Actions waren bereits auf volle SHAs gepinnt, Renovate pinnt weiter per `helpers:pinGitHubActionDigests`.
 - `SECURITY.md`: Hinweise zu Erstreaktion (7 Tage) und koordinierter Offenlegung (nach Fix, spätestens 90 Tage) ergänzt, damit Scorecard „Security-Policy“ volle Punktzahl bekommt. Meldeweg unverändert.
 - Docs-Drift: Repository-Variable `DOCS_DRIFT_MODE=warn` gesetzt (Marco, 2026-10-26); manueller Lauf grün, kein Issue.
 - Docs-Drift: `tools/docs-sync.py` + `.github/docs-sync.txt` (Pfade in README/AGENTS/TASKS/`docs/design.md` müssen existieren), zusätzlich `TASKS.md`/`docs/design.md` und Regel „kein npm“ in `.github/docs-drift-rules.txt`, `docs-drift.yml` mit Modi `issue` (Standard, dedupliziertes Issue mit Label) / `warn` / `fail` über `DOCS_DRIFT_MODE`, beide Skripte im Pre-push-Hook, `tests/test_docs_sync.py`. `validate.py` und `drift-check.sh` bleiben unverändert zuständig (Version, Entitäten, Namen).
