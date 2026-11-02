@@ -2,6 +2,7 @@
 
 ## Unreleased – CI
 
+- Action-Pins einzeilig mit verifiziertem Tag (`@<sha> # vX.Y.Z`, 12 von 14 korrigiert); Rulesets für main (kein Force-Push/Löschen; Pflicht-Checks mit Admin-Bypass) und `v*`-Tags nur für Admins; tote h3/satori-Renovate-Regeln entfernt.
 - GitHub-Repo-Einstellung „Require actions to be pinned to a full-length commit SHA“ eingeschaltet (2026-11-02); alle externen Actions waren bereits auf volle SHAs gepinnt, Renovate pinnt weiter per `helpers:pinGitHubActionDigests`.
 - `SECURITY.md`: Hinweise zu Erstreaktion (7 Tage) und koordinierter Offenlegung (nach Fix, spätestens 90 Tage) ergänzt, damit Scorecard „Security-Policy“ volle Punktzahl bekommt. Meldeweg unverändert.
 - Docs-Drift: Repository-Variable `DOCS_DRIFT_MODE=warn` gesetzt (Marco, 2026-10-26); manueller Lauf grün, kein Issue.

@@ -124,20 +124,6 @@
         "major"
       ],
       "automerge": false
-    },
-    {
-      "description": "h3 2 locked (stay on 1.x)",
-      "matchPackageNames": [
-        "h3"
-      ],
-      "allowedVersions": "<2"
-    },
-    {
-      "description": "satori >=0.48 locked (repo family uses 0.47.x); stays below 0.48",
-      "matchPackageNames": [
-        "satori"
-      ],
-      "allowedVersions": "<0.48"
     }
   ]
 }
