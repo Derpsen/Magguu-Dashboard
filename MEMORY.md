@@ -276,3 +276,10 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 - Pin format: every remote action is `uses: owner/action@<40-char sha> # vX.Y.Z` on ONE line; the version comment is the tag that really points to that SHA (checked with `git ls-remote --tags`, e.g. setup-node 949feb… = v7.1.0, setup-buildx f87e59… = v4.4.1, build-push c3c9e2… = v7.4.0, login dbcb81… = v4.6.0). The old separate comment lines (some with stale versions) are gone. zizmor (online, pedantic) has no `ref-version-mismatch` left. Renovate (`helpers:pinGitHubActionDigests`) keeps this format.
 - renovate.json: dead h3 <2 / satori <0.48 rules removed (neither package is in this repo); validated with `renovate-config-validator --strict` (renovate 44.201.1).
 - Rulesets (no classic branch protection existed, no rulesets before): `26363132` "main: no force-push, no deletion" (no bypass); `26363134` "main: required status checks (admin bypass)" = `yaml`, `updater`, `quality`, `Analyze (python)`, `Analyze (actions)` (GitHub Actions app only, not strict; bypass: repository admin, always, so direct pushes by the admin keep working); `26363137` "tags v*: admins only" (create/update/delete of `refs/tags/v*` blocked except repository admin). Renovate PRs need these checks green to merge. Keep the check names in sync when renaming jobs.
+
+## Hard-refactor ROI backlog
+
+Base commit ccfcd8e, 2026-11-04. Hard-refactor pass found no cut with ROI (validate.py well tested, no dead functions; rest is YAML). Next levers:
+
+1. Split `validate.py` (about 940 lines) into modules per check family. Trigger: file grows past about 1200 lines or a new check family arrives. Keep the unittest suite as the characterization net.
+2. Drift-check and test-install shell helpers: merge shared bits only when a third script needs them.
