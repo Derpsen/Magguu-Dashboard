@@ -245,3 +245,6 @@ Zweite Runde nach Marcos Prüfung im echten HA 2026.10.2 (Rollback-Branch `rollb
 - neue Home- und Rooms-Basis
 - Kalenderintegration
 - responsive Mobile- und Tablet-Ansichten
+
+### Changed
+- Docs: MagguuUI v12.1.9 Forever QoL/Pack facts mirrored (Smart Tab, Keybinds, Boost, BigWigsStyle, MapNotes; no Zygor/RXP in public copy).

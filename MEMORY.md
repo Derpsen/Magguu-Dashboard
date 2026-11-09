@@ -283,3 +283,7 @@ Base commit ccfcd8e, 2026-11-04. Hard-refactor pass found no cut with ROI (valid
 
 1. Split `validate.py` (about 940 lines) into modules per check family. Trigger: file grows past about 1200 lines or a new check family arrives. Keep the unittest suite as the characterization net.
 2. Drift-check and test-install shell helpers: merge shared bits only when a third script needs them.
+
+## MagguuUI v12.1.9 Forever QoL parity (2026-11-09)
+
+- Mirror of MagguuBot/MagguuUI product facts: Forever portable QoL (SmartTab, Keybinds, Boost, BigWigsStyle) + MapNotes import with HandyNotes; Forever Optional still without MapNotes. Zygor/RXP never public.

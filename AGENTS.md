@@ -111,7 +111,7 @@ Nach jeder Änderung:
 
 Dashboard stays HA-focused and does not invent MagguuUI Lua rules. When "Website" or "Bot & Dashboard" updates WowUp starter/optional packs, Ellesmere TOC, or related product facts (no KSL/WindTools, etc.), reflect the same delta here in a short note so helpers do not drift across repos. Canonical detail lives in MagguuUI-Website / MagguuBot `AGENTS.md`.
 
-- Current state (2026-11-08): MagguuUI addon live **v12.1.9** (tagged 2026-11-08; v12.1.8 superseded). One package for Retail + Forever. WowUp Optional includes **Whisper Messenger** (WhisperMessenger) as the whisper chat. Player button **Apply Magguu profiles**. EllesmereUI fixture/gate **9.8.2**.
+- Current state (2026-11-09): MagguuUI addon live **v12.1.9** (tagged 2026-11-08; v12.1.8 superseded). One package for Retail + Forever. Retail Optional includes **Whisper Messenger** and HandyNotes MapNotes; Forever Starter (5) / Optional (8) without MapNotes in the Forever collection yet. Forever QoL parity (source MagguuUI AGENTS/README): Smart Tab, class keybinds, Boost, BigWigsStyle, MapNotes import via HandyNotes when installed. Never name Zygor/RXP publicly. Player button **Apply Magguu profiles**. EllesmereUI fixture/gate **9.8.2** (upstream checked through 9.8.3).
 - Node 26 is live for Bot (engines `>=26`) and Website (`>=26.12.0`) since 2026-10-16; this repo has no `package.json` / npm. Node 26 is LTS ('Lithium'): Active LTS since 2026-10-28 with v26.13.0, maintenance LTS from 2027-10-20, end of life 2029-04-30.
 
 - Current delta (2026-10): WowUp Optional includes **Whisper Messenger** (WhisperMessenger) - not WIM / Ellesmere WIM Skin.
