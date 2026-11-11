@@ -4,6 +4,8 @@
 
 ### Changed
 
+- CI `validate.yml`: `timeout-minutes` (yaml 15, updater 10) und `concurrency` pro Ref (nur überholte PR-Läufe werden abgebrochen; Pushes auf main und der Wochenlauf laufen immer zu Ende). Pflicht-Check-Namen `yaml`/`updater` unverändert.
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
