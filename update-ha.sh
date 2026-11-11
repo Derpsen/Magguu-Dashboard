@@ -88,8 +88,11 @@ main() {
 
   WORK_DIR="$(mktemp -d "$CONFIG_DIR/.magguu-dashboard-update.XXXXXX")"
   ARCHIVE="$WORK_DIR/dashboard.tar.gz"
-  curl -fsSL --proto "$CURL_PROTO" --proto-redir "$CURL_PROTO" --retry 3 --retry-max-time 300 \
-    --connect-timeout 15 --max-time 120 "$ARCHIVE_URL" -o "$ARCHIVE"
+  # Time budget: Home Assistant kills a shell_command after 60 s. Worst case
+  # here is 2 attempts x 20 s + 2 s delay = 42 s for the download, which leaves
+  # room for unpacking and installing (validate.py enforces <= 45 s).
+  curl -fsSL --proto "$CURL_PROTO" --proto-redir "$CURL_PROTO" --retry 1 --retry-delay 2 --retry-max-time 25 \
+    --connect-timeout 10 --max-time 20 "$ARCHIVE_URL" -o "$ARCHIVE"
   # Commit SHA from the tar pax header ("comment=<40 hex>"); empty if absent.
   MAGGUU_COMMIT_SHA="$(gzip -dc "$ARCHIVE" 2>/dev/null | head -c 1024 | tr -d '\000' \
     | grep -o 'comment=[0-9a-f]\{40\}' | head -n 1 | cut -c9- || true)"

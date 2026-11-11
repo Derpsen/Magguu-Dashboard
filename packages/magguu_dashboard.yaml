@@ -107,9 +107,13 @@ script:
           entity_id: input_text.magguu_dashboard_update_status
         data:
           value: Aktualisierung läuft
+      # continue_on_error: HA aborts a shell_command after 60 s with an error
+      # (no response). The script must still reach the else branch below, so
+      # the status never stays on "Aktualisierung läuft".
       - action: shell_command.magguu_dashboard_update
         response_variable: update_result
-      - if: "{{ update_result.get('returncode', 1) == 0 }}"
+        continue_on_error: true
+      - if: "{{ update_result is defined and update_result is mapping and update_result.get('returncode', 1) == 0 }}"
         then:
           - action: input_text.set_value
             target:
@@ -134,7 +138,7 @@ script:
             data:
               title: Magguu Dashboard aktualisiert
               message: >-
-                {{ update_result.get('stdout', 'Update abgeschlossen.') }}
+                {{ update_result.get('stdout') or 'Update abgeschlossen.' }}
                 Starte Home Assistant neu und lade die App anschließend vollständig neu.
         else:
           - action: input_text.set_value
@@ -146,7 +150,11 @@ script:
             data:
               title: Dashboard-Update fehlgeschlagen
               message: >-
-                {{ update_result.get('stderr', 'Keine Fehlerbeschreibung verfügbar.') }}
+                {% if update_result is defined and update_result is mapping %}
+                {{ update_result.get('stderr') or 'Keine Fehlerbeschreibung verfügbar.' }}
+                {% else %}
+                Keine Antwort vom Update-Befehl (Zeitlimit von 60 s überschritten oder Aufruf fehlgeschlagen). Das Dashboard ist eventuell nicht vollständig aktualisiert – bitte erneut ausführen.
+                {% endif %}
 
   magguu_alle_lichter_aus:
     alias: Alle Lichter aus

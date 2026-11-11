@@ -284,43 +284,6 @@ def validate_button_card_js(root: Path) -> list[str]:
     return errors
 
 
-def validate_view_shell_tokens(root: Path) -> list[str]:
-    """Ensure mobile/tablet grid-layout shells keep layout spacing on theme tokens."""
-    errors: list[str] = []
-    for device in ("mobile", "tablet"):
-        views_dir = root / "dashboard" / "magguu-dashboard" / device / "views"
-        if not views_dir.is_dir():
-            continue
-        for path in sorted(views_dir.glob("*.yaml")):
-            text = path.read_text(encoding="utf-8")
-            if "type: custom:grid-layout" not in text:
-                continue
-            rel = path.relative_to(root)
-            if "padding:" in text and "var(--mag-space-page-" not in text:
-                errors.append(
-                    f"{rel}: Layout-padding ohne Theme-Token (--mag-space-page-*)"
-                )
-            if device == "mobile" and "padding:" in text and (
-                "var(--mag-space-navbar-clearance" not in text
-            ):
-                errors.append(
-                    f"{rel}: Mobile-Bottom-Padding ohne --mag-space-navbar-clearance"
-                )
-            if device == "tablet" and re.search(
-                r"(?m)^\s*max-width:\s*1460px\s*$", text
-            ):
-                errors.append(
-                    f"{rel}: Tablet max-width hart 1460px statt --mag-content-max-width"
-                )
-            if device == "mobile" and re.search(
-                r"(?m)^\s*max-width:\s*760px\s*$", text
-            ):
-                errors.append(
-                    f"{rel}: Mobile max-width hart 760px statt --mag-content-max-width-narrow"
-                )
-    return errors
-
-
 # shell_command services can be called by any HA user (not admin-gated), so
 # every entry must be a fixed command without templates (no service-data
 # input) and the updater it runs must not read arguments or environment.
@@ -340,6 +303,11 @@ UPDATER_REQUIRED_SNIPPETS = (
     '--proto-redir "$CURL_PROTO"',
     "--max-time",
 )
+# Home Assistant kills a shell_command after 60 s (COMMAND_TIMEOUT). The worst
+# case of the download ((retries + 1) x --max-time + retries x --retry-delay)
+# must stay within this budget, leaving room for unpacking and installing.
+UPDATER_DOWNLOAD_BUDGET_SECONDS = 45
+CURL_INT_OPTION = re.compile(r"--(max-time|retry|retry-delay|retry-max-time|connect-timeout)\s+(\d+)\b")
 # Set by the sourced installer (scripts/install-dashboard.sh), not by the caller.
 UPDATER_SOURCED_VARS = {"MAGGUU_BACKUP_DIR"}
 SHELL_VAR_PATTERN = re.compile(r"\$\{?([A-Za-z_][A-Za-z0-9_]*|[0-9@*#])")
@@ -386,12 +354,52 @@ def validate_updater(root: Path) -> list[str]:
     for snippet in UPDATER_REQUIRED_SNIPPETS:
         if snippet not in code:
             errors.append(f"update-ha.sh: erforderlicher Teil fehlt: {snippet}")
+    errors.extend(_validate_updater_time_budget(code))
     assigned = set(SHELL_ASSIGN_PATTERN.findall(code)) | UPDATER_SOURCED_VARS
     for name in sorted(set(SHELL_VAR_PATTERN.findall(code))):
         if name[0].isdigit() or name in {"@", "*", "#"}:
             errors.append(f"update-ha.sh: liest Argumente (${name})")
         elif name not in assigned:
             errors.append(f"update-ha.sh: liest Umgebungsvariable ${name}")
+    return errors
+
+
+def _validate_updater_time_budget(code: str) -> list[str]:
+    options: dict[str, int] = {}
+    for name, value in CURL_INT_OPTION.findall(code):
+        if name in options:
+            return [f"update-ha.sh: curl-Option --{name} mehrfach gesetzt"]
+        options[name] = int(value)
+    if "max-time" not in options:
+        return ["update-ha.sh: curl braucht ein festes --max-time <sek>"]
+    retries = options.get("retry", 0)
+    if retries and "retry-delay" not in options:
+        return ["update-ha.sh: mit --retry ist ein festes --retry-delay <sek> nötig (Zeitbudget)"]
+    worst = (retries + 1) * options["max-time"] + retries * options.get("retry-delay", 0)
+    if worst > UPDATER_DOWNLOAD_BUDGET_SECONDS:
+        return [
+            f"update-ha.sh: Download kann {worst} s dauern; HA bricht shell_command nach 60 s ab "
+            f"(Budget {UPDATER_DOWNLOAD_BUDGET_SECONDS} s)"
+        ]
+    return []
+
+
+def validate_update_script(documents: Mapping[Path, Any], root: Path) -> list[str]:
+    """The update script must survive a failing/timed-out shell_command (status never stuck)."""
+    errors: list[str] = []
+    for path, document in documents.items():
+        scripts = document.get("script") if isinstance(document, Mapping) else None
+        script = scripts.get("magguu_dashboard_aktualisieren") if isinstance(scripts, Mapping) else None
+        if not isinstance(script, Mapping):
+            continue
+        rel = path.relative_to(root)
+        steps = [x for x in script.get("sequence") or [] if isinstance(x, Mapping)]
+        shell = [x for x in steps if x.get("action") == "shell_command.magguu_dashboard_update"]
+        if len(shell) != 1 or shell[0].get("continue_on_error") is not True:
+            errors.append(f"{rel}: shell_command-Schritt im Update-Script braucht continue_on_error: true")
+        checks = [str(x.get("if", "")) for x in steps if "if" in x]
+        if not any("update_result is defined" in c for c in checks):
+            errors.append(f"{rel}: Update-Script muss fehlendes update_result (Zeitlimit) prüfen")
     return errors
 
 
@@ -505,12 +513,11 @@ def validate_update_hint(root: Path) -> list[str]:
 # ---------------------------------------------------------------------------
 DASHBOARD_DIR = ("dashboard", "magguu-dashboard")
 DASHBOARD_URLS = {"mobile": "magguu-mobile", "tablet": "magguu-tablet"}
-VIEW_TYPES = {None, "sections", "masonry", "panel", "sidebar", "custom:grid-layout"}
+VIEW_TYPES = {None, "sections", "masonry", "panel", "sidebar"}
 VIEW_KEYS = {
     "title", "path", "icon", "show_icon_and_title", "theme", "panel", "background",
     "visible", "subview", "back_path", "max_columns", "dense_section_placement",
     "top_margin", "type", "badges", "cards", "sections", "header", "footer", "sidebar",
-    "layout",  # layout-card view options (custom:grid-layout)
 }
 SECTION_KEYS = {
     "type", "cards", "badges", "sections", "visibility", "disabled", "column_span",
@@ -529,7 +536,7 @@ BUILTIN_CARD_TYPES = {
     "tile", "todo-list", "vertical-stack", "weather-forecast", "webpage",
 }
 ALLOWED_CUSTOM_CARDS = {
-    "custom:button-card", "custom:grid-layout",  # grid-layout = nur noch View-Typ (Legacy), keine Karten-Abhängigkeit mehr genutzt
+    "custom:button-card",
     "custom:mini-graph-card", "custom:mushroom-template-card",
     "custom:navbar-card", "custom:stack-in-card",
     "custom:auto-entities",
@@ -612,7 +619,7 @@ def load_resolved(path: Path, root: Path, seen: tuple[Path, ...] = ()) -> Any:
 
 
 def _iter_cards(node: Any) -> Iterable[Mapping[str, Any]]:
-    """Yield every card mapping below `node` (stacks, conditionals, sections, layout-card)."""
+    """Yield every card mapping below `node` (stacks, conditionals, sections)."""
     if isinstance(node, Mapping):
         if isinstance(node.get("type"), str) and (
             "entity" in node or "cards" in node or "card" in node or "heading" in node
@@ -708,8 +715,8 @@ def validate_dashboards(root: Path) -> list[str]:
             if vtype == "sections":
                 if not isinstance(view.get("sections"), list) or not view["sections"]:
                     errors.append(f"{where}: sections-View braucht eine nicht leere sections-Liste")
-                if "cards" in view or "layout" in view:
-                    errors.append(f"{where}: sections-View darf weder cards noch layout (layout-card) setzen")
+                if "cards" in view:
+                    errors.append(f"{where}: sections-View darf keine cards setzen")
                 maxc = view.get("max_columns")
                 if maxc is not None and (isinstance(maxc, bool) or not isinstance(maxc, int) or maxc < 1):
                     errors.append(f"{where}: max_columns muss eine ganze Zahl >= 1 sein")
@@ -732,8 +739,6 @@ def validate_dashboards(root: Path) -> list[str]:
                         errors.extend(_validate_conditions(section["visibility"], f"{swhere}/visibility"))
                     for c_index, card in enumerate(section.get("cards") or []):
                         errors.extend(_validate_section_card_height(card, f"{swhere}/card {c_index}"))
-            elif vtype == "custom:grid-layout" and "sections" in view:
-                errors.append(f"{where}: grid-layout-View darf keine sections setzen")
             for card in _iter_cards(view):
                 errors.extend(_validate_card(card, where))
         # Navigation targets inside this dashboard must exist.
@@ -909,10 +914,10 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
         errors.append("docs/entities.md fehlt")
 
     errors.extend(validate_version(root))
-    errors.extend(validate_view_shell_tokens(root))
     errors.extend(validate_button_card_js(root))
     errors.extend(validate_shell_commands(documents, root))
     errors.extend(validate_updater(root))
+    errors.extend(validate_update_script(documents, root))
     errors.extend(validate_update_hint(root))
     errors.extend(validate_themes(root))
     errors.extend(validate_dashboards(root))

@@ -212,7 +212,7 @@ Kinderzimmer-Kamera:
 
 ## Magguu-Dienste (TODO: optionales Paket, in HA noch nicht angelegt)
 
-Definiert in `docs/optional/magguu_dienste.yaml` (REST-Sensoren, URLs/Tokens nur per !secret). Erst aktiv, wenn Homebase das Paket nach /config/packages/ kopiert und die Secrets setzt; bis dahin zeigt die Seite „Magguu-Dienste“ „nicht eingerichtet“.
+Definiert in `docs/optional/magguu_dienste.yaml` (REST-Sensoren, URLs/Tokens nur per !secret; die GitHub-Deploy-Abfragen auf die öffentlichen Repos laufen ohne Token). Erst aktiv, wenn Homebase das Paket nach /config/packages/ kopiert und die Secrets setzt; bis dahin zeigt die Seite „Magguu-Dienste“ „nicht eingerichtet“.
 
 - `sensor.magguu_bot_status` – MagguuBot GET /api/status (Bearer-Token STATUS_API_TOKEN); Attribute uptimeSeconds, build, webhooks, faq (anonyme FAQ-Nutzung der letzten 7 Tage: windowDays, total, bySource, top mit id/title/count; nur Zähler, keine Nutzerdaten), unseen (Bericht über große ungesehene Plex-Medien: generatedAt, minAgeDays, staleDays, partial, items mit title/library/type/sizeBytes/lastPlayedAt/addedAt; nur Titel, Größe, Bibliothek, letzte Sicht; keine Nutzerdaten, rein lesend)
 - `sensor.magguu_website_status` – TODO: Website-/api/status existiert noch nicht (Webcraft); vorläufig /api/health (status, timestamp)
