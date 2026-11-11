@@ -1,0 +1,9 @@
+# Home „Als Nächstes“ (Mobile + Tablet): eine Karte je Datei, weil eine Liste nicht in die
+# cards-Liste der View-Hülle eingefügt werden kann (kein Liste-in-Liste).
+type: custom:button-card
+template: next_event_v5
+entity: calendar.privat
+name: Privat
+icon: mdi:account-heart-outline
+variables: { accent: '#e886ad' }
+grid_options: { columns: 6 }

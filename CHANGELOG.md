@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Home „Als Nächstes“: die vier Kalenderkarten (Arbeit, Abfuhr, Privat, Termine) stehen einmal in `dashboard/magguu-dashboard/shared/cards/next-events/` statt doppelt in den Mobile- und Tablet-Hüllen; aufgelöstes Dashboard-YAML byte-identisch (Vergleich vorher/nachher).
+
 - Update-Zeitlimit: Der Download in `update-ha.sh` bleibt sicher unter HAs 60-s-Grenze für `shell_command` (`--max-time 20`, 1 Retry, schlimmster Fall 42 s); das Script „Dashboard aktualisieren“ endet bei Zeitlimit oder fehlender Antwort mit „Fehlgeschlagen“ und einer Benachrichtigung statt dauerhaft „Aktualisierung läuft“. `validate.py` erzwingt Zeitbudget und Fehlerpfad (`validate_update_script`); Tests in `tests/test_update_hint.py` und `tests/test-install.sh`.
 
 - `validate.py`: Altlast layout-card entfernt – `custom:grid-layout` ist weder erlaubter View-Typ noch erlaubte Karte, der View-Schlüssel `layout` und die nur für grid-layout-Hüllen geltende Prüfung `validate_view_shell_tokens` entfallen (kein View nutzt das seit der Sections-Umstellung). Tests angepasst: ein grid-layout-View wird jetzt abgelehnt.

@@ -6,6 +6,10 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
 
+## Home „Als Nächstes“ geteilt (2026-11-11)
+
+- Die vier Kalenderkarten lagen doppelt in `mobile/views/01-overview.yaml` und `tablet/views/01-overview.yaml`. Jetzt je eine Datei in `shared/cards/next-events/` (`arbeit`, `abfuhr`, `privat`, `termine`), per einzelnem `!include` eingebunden. Eine einzige Datei geht nicht: eine Liste lässt sich nicht in die cards-Liste der Hülle einfügen (Liste-in-Liste), und die Section unterscheidet sich je Gerät (Tablet: Untertitel + `column_span: 2`, Mobile: Wetterkarte). Beleg: `load_resolved` beider Dashboards vorher/nachher als JSON byte-identisch.
+
 ## Update-Zeitlimit (2026-11-11)
 
 - Fund aus der Dashboard-Durchsicht: HA bricht `shell_command` nach fest 60 s ab (`COMMAND_TIMEOUT = 60` in `homeassistant/components/shell_command/services.py`, wirft dann `HomeAssistantError` ohne Antwort). curl durfte bis 120 s pro Versuch plus Retries bis 300 s laufen; bei langsamem Download brach das Script ab und der Status blieb auf „Aktualisierung läuft“.
