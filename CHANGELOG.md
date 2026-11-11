@@ -6,6 +6,14 @@
 
 - `validate.py`: Altlast layout-card entfernt – `custom:grid-layout` ist weder erlaubter View-Typ noch erlaubte Karte, der View-Schlüssel `layout` und die nur für grid-layout-Hüllen geltende Prüfung `validate_view_shell_tokens` entfallen (kein View nutzt das seit der Sections-Umstellung). Tests angepasst: ein grid-layout-View wird jetzt abgelehnt.
 
+- `docs/optional/magguu_dienste.yaml`: Die beiden GitHub-Abfragen „letzter Deploy“ (MagguuBot, MagguuUI-Website, beide öffentlich) laufen ohne Token; das Secret `github_status_auth` entfällt (kann aus `secrets.yaml` entfernt und der Token widerrufen werden). Test `tests/test_optional_dienste.py`.
+
+- `renovate.json` aufgeräumt: tote npm-Regeln entfernt (kein package.json im Repo), pip-Regel nur noch für `pip-compile` (`pip_requirements` ist abgeschaltet), Gruppe `npm 0.x minor` → `0.x minor` (gilt für alle Manager, heute nur zizmor-action; weiter ohne Automerge). Geprüft mit `renovate-config-validator --strict` (renovate 44.234.1).
+
+- CI `validate.yml`: `timeout-minutes` (yaml 15, updater 10) und `concurrency` pro Ref (nur überholte PR-Läufe werden abgebrochen; Pushes auf main und der Wochenlauf laufen immer zu Ende). Pflicht-Check-Namen `yaml`/`updater` unverändert.
+
+- Docs-Drift: README nennt keine veraltete „V6.4-Basis“ mehr (Versionsquelle bleibt `VERSION`), Layout Card aus den Voraussetzungen entfernt (seit der Sections-Umstellung nicht mehr genutzt; validate.py lässt `custom:layout-card` ohnehin nicht zu); TASKS: Installations- und Updatetest abgehakt (automatisiert in `tests/test-install.sh` / CI-Job `updater`).
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
