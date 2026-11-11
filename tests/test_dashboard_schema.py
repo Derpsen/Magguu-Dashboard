@@ -38,7 +38,7 @@ class DashboardSchemaTest(unittest.TestCase):
         self.assertTrue(any(fragment in e for e in errors), errors)
 
     def test_valid_masonry_and_sections_views_pass(self) -> None:
-        self.view("- title: A\n  path: a\n  theme: Magguu Midnight\n  type: custom:grid-layout\n  cards: []\n")
+        self.view("- title: A\n  path: a\n  theme: Magguu Midnight\n  cards: []\n")
         self.view(
             "- title: B\n  path: b\n  type: sections\n  max_columns: 2\n  sections:\n"
             "    - type: grid\n      column_span: 2\n      cards:\n"
@@ -71,7 +71,7 @@ class DashboardSchemaTest(unittest.TestCase):
             "    - cards: [{type: tile, entity: light.x}]\n      column_span: 3\n"
         )
         for fragment in (
-            "darf weder cards noch layout",
+            "sections-View darf keine cards setzen",
             "max_columns muss eine ganze Zahl >= 1",
             "Section-Typ muss grid sein",
             "unbekannter Section-Schlüssel bogus",
@@ -97,9 +97,11 @@ class DashboardSchemaTest(unittest.TestCase):
         )
         self.assertEqual(sum("rows: auto" in e for e in self.errors()), 2, self.errors())
 
-    def test_grid_layout_view_must_not_define_sections(self) -> None:
-        self.view("- title: A\n  path: a\n  type: custom:grid-layout\n  sections: []\n")
-        self.assertError("grid-layout-View darf keine sections setzen")
+    def test_legacy_layout_card_view_is_rejected(self) -> None:
+        # layout-card is no dependency any more (all views are sections since 6.7.0-dev).
+        self.view("- title: A\n  path: a\n  type: custom:grid-layout\n  layout: {padding: 0}\n  cards: []\n")
+        self.assertError("unbekannter View-Typ 'custom:grid-layout'")
+        self.assertError("unbekannter View-Schlüssel layout")
 
     def test_new_custom_card_dependency_is_rejected(self) -> None:
         self.view("- title: A\n  path: a\n  cards:\n    - type: custom:shiny-new-card\n")
