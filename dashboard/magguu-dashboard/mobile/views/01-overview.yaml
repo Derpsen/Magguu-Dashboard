@@ -24,34 +24,10 @@
         - type: heading
           heading: Als Nächstes
           heading_style: title
-        - type: custom:button-card
-          template: next_event_v5
-          entity: calendar.arbeiten
-          name: Arbeit
-          icon: mdi:briefcase-outline
-          variables: { accent: '#b48cff' }
-          grid_options: { columns: 6 }
-        - type: custom:button-card
-          template: waste_event_v6
-          entity: calendar.abfuhr
-          name: Abfuhr
-          icon: mdi:trash-can-outline
-          variables: { accent: '#79d98c' }
-          grid_options: { columns: 6 }
-        - type: custom:button-card
-          template: next_event_v5
-          entity: calendar.privat
-          name: Privat
-          icon: mdi:account-heart-outline
-          variables: { accent: '#e886ad' }
-          grid_options: { columns: 6 }
-        - type: custom:button-card
-          template: next_event_v5
-          entity: calendar.termine
-          name: Termine
-          icon: mdi:calendar-star
-          variables: { accent: '#71b7ff' }
-          grid_options: { columns: 6 }
+        - !include ../../shared/cards/next-events/arbeit.yaml
+        - !include ../../shared/cards/next-events/abfuhr.yaml
+        - !include ../../shared/cards/next-events/privat.yaml
+        - !include ../../shared/cards/next-events/termine.yaml
         - type: weather-forecast
           entity: weather.forecast_home
           name: Wetter

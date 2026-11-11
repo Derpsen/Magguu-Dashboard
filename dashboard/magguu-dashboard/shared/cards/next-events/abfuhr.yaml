@@ -1,0 +1,9 @@
+# Home „Als Nächstes“ (Mobile + Tablet): eine Karte je Datei, weil eine Liste nicht in die
+# cards-Liste der View-Hülle eingefügt werden kann (kein Liste-in-Liste).
+type: custom:button-card
+template: waste_event_v6
+entity: calendar.abfuhr
+name: Abfuhr
+icon: mdi:trash-can-outline
+variables: { accent: '#79d98c' }
+grid_options: { columns: 6 }

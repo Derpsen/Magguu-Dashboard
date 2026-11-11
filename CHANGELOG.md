@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Home „Als Nächstes“: die vier Kalenderkarten (Arbeit, Abfuhr, Privat, Termine) stehen einmal in `dashboard/magguu-dashboard/shared/cards/next-events/` statt doppelt in den Mobile- und Tablet-Hüllen; aufgelöstes Dashboard-YAML byte-identisch (Vergleich vorher/nachher).
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
