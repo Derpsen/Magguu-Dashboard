@@ -123,7 +123,7 @@ Dashboard is HA YAML (+ `validate.yml` CI). There is **no** MagguuUI / MagguuBot
 - **Actions-only** (github-actions pins, validate workflow, pip `requirements-dev.txt` for CI, docs) → direct push to `main` (Renovate PRs: merge when CI green; Renovate App installed 2026-10-16); no pre-review; Buddy report: **Actions-only**; "Unraid & Server": none.
 - **App-Image / Major** → normally N/A here (no Docker publish / no Magguu container rebuild). No pre-review step; Buddy reviews commits afterwards.
 
-CI/Security setup (2026-10-12): `validate.yml` runs on push, PR and weekly (`17 4 * * 1`); `codeql.yml` (python + actions, SHA-pinned like MagguuBot) runs on push/PR to `main` and weekly. Since 2026-10-14 Renovate (ex-Dependabot, `renovate.json`) covers github-actions + pip (grouped, Monday Europe/Berlin); see 2026-10-14 "Bot & Dashboard" wave 2 (App installed 2026-10-16). No npm ecosystem unless a `package.json` is added.
+CI/Security setup (2026-10-12): `validate.yml` runs on push, PR and weekly (`17 4 * * 1`; since 2026-11-11 `timeout-minutes` 15/10 for `yaml`/`updater` and `concurrency` per ref, cancelling only superseded PR runs; job ids `yaml`/`updater` are required checks, never rename); `codeql.yml` (python + actions, SHA-pinned like MagguuBot) runs on push/PR to `main` and weekly. Since 2026-10-14 Renovate (ex-Dependabot, `renovate.json`) covers github-actions + pip (grouped, Monday Europe/Berlin); see 2026-10-14 "Bot & Dashboard" wave 2 (App installed 2026-10-16). No npm ecosystem unless a `package.json` is added.
 
 Merge reports must say **Actions-only vs App-Image** (expect **Actions-only**).
 
