@@ -10,6 +10,15 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die vier Kalenderkarten lagen doppelt in `mobile/views/01-overview.yaml` und `tablet/views/01-overview.yaml`. Jetzt je eine Datei in `shared/cards/next-events/` (`arbeit`, `abfuhr`, `privat`, `termine`), per einzelnem `!include` eingebunden. Eine einzige Datei geht nicht: eine Liste lässt sich nicht in die cards-Liste der Hülle einfügen (Liste-in-Liste), und die Section unterscheidet sich je Gerät (Tablet: Untertitel + `column_span: 2`, Mobile: Wetterkarte). Beleg: `load_resolved` beider Dashboards vorher/nachher als JSON byte-identisch.
 
+## Update-Zeitlimit (2026-11-11)
+
+- Fund aus der Dashboard-Durchsicht: HA bricht `shell_command` nach fest 60 s ab (`COMMAND_TIMEOUT = 60` in `homeassistant/components/shell_command/services.py`, wirft dann `HomeAssistantError` ohne Antwort). curl durfte bis 120 s pro Versuch plus Retries bis 300 s laufen; bei langsamem Download brach das Script ab und der Status blieb auf „Aktualisierung läuft“.
+- Fix: curl `--retry 1 --retry-delay 2 --retry-max-time 25 --connect-timeout 10 --max-time 20` (schlimmster Fall 42 s); `continue_on_error: true` am `shell_command`-Schritt, `if` prüft `update_result is defined and update_result is mapping`, Fehlertext nennt das Zeitlimit. Offen: ein HA-Neustart mitten im Lauf lässt den Status weiter stehen (input_text wird wiederhergestellt) – nicht Teil dieses Fixes. Im echten HA ungetestet.
+
+## validate.py ohne layout-card-Altlast (2026-11-11)
+
+- `custom:grid-layout` (View-Typ und erlaubte Karte), View-Schlüssel `layout` und `validate_view_shell_tokens` (prüfte nur grid-layout-Hüllen, griff seit der Sections-Umstellung nie) entfernt; validate.py 937 → 896 Zeilen. Die Theme-Tokens `--mag-space-page-*`, `--mag-content-max-width*`, `--mag-space-navbar-clearance` bleiben im Theme (nicht Teil dieses Schritts).
+
 ## Code-Review-Nachbesserung Ungesehene Medien (2026-10-25, 6.10.4-dev)
 
 - Auftrag (Marco Go): Review-Lows zu fe40542. (2026-10-25: Rollback-Branch `rollback/pre-reviewfix-fe40542`), kein Tag. jinja2 + markupsafe gehasht in `requirements-dev.txt` (CI installiert mit `--require-hashes --no-deps`, deshalb markupsafe explizit; PyPI-Hashes aller Dateien gegengeprüft, cp315-Wheels vorhanden), Workflow unverändert. Karte: `as_timestamp(…, 0)`, Bibliotheksname streng bereinigt, robust gegen kaputtes Attribut, max. 25 Zeilen, `clipped`-Hinweis. Bot kürzt den Bericht auf 6000 Byte (HA-Recorder: Attribute > 16 KB werden nicht gespeichert, State bleibt nutzbar).
@@ -229,7 +238,7 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 - Renovate replaces Dependabot (`renovate.json`; `.github/dependabot.yml` removed): Monday, Europe/Berlin, groups github-actions + pip, automerge only minor/patch after green CI, majors manual; h3 <2, satori <0.48 guards (this repo's `renovate.json`; TypeScript <7 / @types/node <25 rules dropped 2026-10-26). Website uses satori ^0.47.1; satori >=0.48 is locked without Marco's yes. **Renovate GitHub App not installed yet** (superseded: installed 2026-10-16, Dependency Dashboard #12) (no Renovate check suites/PRs) – Marco/Buddy must install it; until then there are no automatic dependency PRs.
 - New subview `dienste` („Magguu-Dienste“, linked from System): Website status, MagguuBot uptime/build, last Docker deploy (Bot + Website), last bot webhook per source. Shared include `shared/views/dienste.yaml` for mobile + tablet.
-- Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`, `github_status_auth`). TODO in `docs/entities.md`; "Unraid & Server" copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet ("Website") – interim `/api/health`.
+- Sensors live in optional package `docs/optional/magguu_dienste.yaml` (REST, secrets only via !secret: `magguu_bot_status_url`, `magguu_bot_status_auth`, `magguu_website_status_url`; the two public GitHub deploy queries go without token since 2026-11-11, `github_status_auth` is no longer needed, test `tests/test_optional_dienste.py`). TODO in `docs/entities.md`; "Unraid & Server" copies it to /config/packages/ once secrets exist. Bot side: `GET /api/status` (Bearer `STATUS_API_TOKEN`). Website `/api/status` does not exist yet ("Website") – interim `/api/health`.
 
 ## 2026-10-15 Arbeitscomputer
 
