@@ -469,31 +469,26 @@ template:
         state: >-
           {{ states.update | selectattr('state', 'eq', 'on') | list | count }}
 
+      # Single source for "nicht erreichbar" (2026-11-11): the System page list
+      # ("Nicht erreichbar", auto-entities) shows exactly attribute entity_ids,
+      # and Wartung/Navbar badge/"Jetzt wichtig" use this count. Same filter in
+      # state and attribute; tests/test_unavailable_source.py checks they match.
       - name: Magguu Nicht verfuegbar
         unique_id: magguu_nicht_verfuegbar
         icon: mdi:lan-disconnect
         state: >-
-          {% set ids = [
-            'weather.forecast_home',
-            'climate.badezimmer_badezimmer_thermostat',
-            'climate.esszimmer_thermostat',
-            'climate.kinderzimmer_kinderzimmer_thermostat',
-            'climate.schlafzimmer_schlafzimmer_thermostat',
-            'climate.wohnzimmer_wohnzimmer_thermostat',
-            'media_player.av_samsung_soundbar_q90r',
-            'light.badezimmer_badezimmer',
-            'light.esszimmer_esszimmer',
-            'light.kinderzimmer_kinderzimmer',
-            'light.schlafzimmer_schlafzimmer',
-            'light.wohnzimmer_wohnzimmer'
-          ] %}
-          {% set ns = namespace(count=0) %}
-          {% for id in ids %}
-            {% if states(id) in ['unknown', 'unavailable'] %}
-              {% set ns.count = ns.count + 1 %}
-            {% endif %}
-          {% endfor %}
-          {{ ns.count }}
+          {% set excluded = ['light.badezimmer_licht_bad', 'light.sonstiges_festavia_string_lights'] %}
+          {% set candidates = (states.light | list) + (states.switch | list) + (states.climate | list)
+             + (states.cover | list) + (states.media_player | list) %}
+          {{ candidates | selectattr('state', 'eq', 'unavailable')
+             | rejectattr('entity_id', 'in', excluded) | list | count }}
+        attributes:
+          entity_ids: >-
+            {% set excluded = ['light.badezimmer_licht_bad', 'light.sonstiges_festavia_string_lights'] %}
+            {% set candidates = (states.light | list) + (states.switch | list) + (states.climate | list)
+               + (states.cover | list) + (states.media_player | list) %}
+            {{ candidates | selectattr('state', 'eq', 'unavailable')
+               | rejectattr('entity_id', 'in', excluded) | map(attribute='entity_id') | sort | list }}
 
       - name: Magguu Wohnzimmer Temperatur C
         unique_id: magguu_wohnzimmer_temperatur_c
@@ -814,7 +809,7 @@ template:
             {% elif waste_days in [0, 1] %}
               {{ state_attr('calendar.abfuhr', 'message') or 'Abfuhr' }} · {{ 'heute' if waste_days == 0 else 'morgen' }}
             {% elif states('sensor.magguu_nicht_verfuegbar') | int(0) > 0 %}
-              {{ states('sensor.magguu_nicht_verfuegbar') }} wichtiges Gerät bzw. Geräte nicht erreichbar
+              {{ states('sensor.magguu_nicht_verfuegbar') }} Gerät(e) nicht erreichbar
             {% elif is_state('binary_sensor.magguu_iphone_akkuwarnung', 'on') %}
               {{ state_attr('binary_sensor.magguu_iphone_akkuwarnung', 'summary') }}
             {% elif states('sensor.magguu_updates_verfuegbar') | int(0) > 0 %}

@@ -6,6 +6,11 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
 
+## Eine Quelle für „nicht erreichbar“ (2026-11-11)
+
+- Vorher: `sensor.magguu_nicht_verfuegbar` zählte 12 feste IDs (inkl. `weather.forecast_home`, auch `unknown`), die Liste „Nicht erreichbar“ (auto-entities) filterte dagegen alle light/switch/climate/cover/media_player auf `unavailable` minus Bad-Licht/Festavia → Badge/Wartung und Liste liefen auseinander.
+- Jetzt: Der Sensor rechnet genau die Listen-Semantik (Zustand `unavailable`, Domains light/switch/climate/cover/media_player, ohne `light.badezimmer_licht_bad`/`light.sonstiges_festavia_string_lights`) und liefert die IDs als Attribut `entity_ids`; die Liste zeigt per `filter.template` genau dieses Attribut. Bewusste Änderung: Wetter und `unknown` zählen nicht mehr. Jinja-Fallstrick: Filter binden stärker als `+`, deshalb erst `{% set candidates = … %}`, dann filtern. Tests: `tests/test_unavailable_source.py`. Im echten HA ungetestet (auto-entities `template`-Filter).
+
 ## Code-Review-Nachbesserung Ungesehene Medien (2026-10-25, 6.10.4-dev)
 
 - Auftrag (Marco Go): Review-Lows zu fe40542. (2026-10-25: Rollback-Branch `rollback/pre-reviewfix-fe40542`), kein Tag. jinja2 + markupsafe gehasht in `requirements-dev.txt` (CI installiert mit `--require-hashes --no-deps`, deshalb markupsafe explizit; PyPI-Hashes aller Dateien gegengeprüft, cp315-Wheels vorhanden), Workflow unverändert. Karte: `as_timestamp(…, 0)`, Bibliotheksname streng bereinigt, robust gegen kaputtes Attribut, max. 25 Zeilen, `clipped`-Hinweis. Bot kürzt den Bericht auf 6000 Byte (HA-Recorder: Attribute > 16 KB werden nicht gespeichert, State bleibt nutzbar).

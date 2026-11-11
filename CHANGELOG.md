@@ -4,6 +4,8 @@
 
 ### Changed
 
+- „Nicht erreichbar“ hat eine Quelle: `sensor.magguu_nicht_verfuegbar` zählt genau die Geräte, die die Liste auf der System-Seite zeigt (Attribut `entity_ids`, Liste per auto-entities-`template`), damit Wartung, Navbar-Badge, „Jetzt wichtig“ und Liste übereinstimmen. Wetter und `unknown` zählen nicht mehr mit; Text „Gerät(e) nicht erreichbar“.
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.

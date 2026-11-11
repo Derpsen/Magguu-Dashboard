@@ -321,12 +321,14 @@ class DashboardSchemaTest(unittest.TestCase):
                         self.assertIn(feature, types, f"{path.name}: {card['entity']}")
         self.assertGreater(checked, 20)
 
-    def test_unreachable_list_skips_permanently_unavailable_optional_lights(self) -> None:
+    def test_unreachable_list_reads_the_single_source_sensor(self) -> None:
         system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)
         lists = [c for c in _flatten(system) if c.get("type") == "custom:auto-entities" and c.get("card", {}).get("title") == "Nicht erreichbar"]
         self.assertEqual(len(lists), 1)
-        excluded = {rule["entity_id"] for rule in lists[0]["filter"]["exclude"]}
-        self.assertEqual(excluded, {"light.badezimmer_licht_bad", "light.sonstiges_festavia_string_lights"})
+        # No own include/exclude rules: the list is exactly the sensor's entity_ids
+        # (exclusions such as Bad-Licht/Festavia live only in the sensor).
+        self.assertEqual(set(lists[0]["filter"]), {"template"})
+        self.assertIn("state_attr('sensor.magguu_nicht_verfuegbar', 'entity_ids')", lists[0]["filter"]["template"])
 
     def test_backup_card_says_no_backup_yet_when_the_sensor_is_unknown(self) -> None:
         system = load_resolved(REPO_ROOT / "dashboard" / "magguu-dashboard" / "shared" / "sections" / "system.yaml", REPO_ROOT)

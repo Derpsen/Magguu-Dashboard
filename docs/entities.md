@@ -151,7 +151,7 @@ Diese Liste ist die verbindliche Quelle für das Dashboard. Unbekannte Integrati
 - `sensor.magguu_lichter_an`
 - `sensor.magguu_offene_fenster`
 - `sensor.magguu_updates_verfuegbar`
-- `sensor.magguu_nicht_verfuegbar`
+- `sensor.magguu_nicht_verfuegbar` – Anzahl nicht erreichbarer Lichter/Schalter/Thermostate/Rollläden/Mediaplayer (`unavailable`, ohne Bad-Licht und Festavia); Attribut `entity_ids` ist genau die Liste „Nicht erreichbar“ auf der System-Seite (eine Quelle für Liste, Wartung, Navbar-Badge und „Jetzt wichtig“)
 - `sensor.magguu_dashboard_version`
 - `sensor.magguu_dashboard_commit` (installierter Commit, vom Installer gestempelt)
 - `sensor.magguu_dashboard_main_commit` (REST, öffentliche GitHub-API, stündlich, ohne Token)
