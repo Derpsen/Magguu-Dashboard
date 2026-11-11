@@ -4,6 +4,8 @@
 
 ### Changed
 
+- `renovate.json` aufgeräumt: tote npm-Regeln entfernt (kein package.json im Repo), pip-Regel nur noch für `pip-compile` (`pip_requirements` ist abgeschaltet), Gruppe `npm 0.x minor` → `0.x minor` (gilt für alle Manager, heute nur zizmor-action; weiter ohne Automerge). Geprüft mit `renovate-config-validator --strict` (renovate 44.234.1).
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
