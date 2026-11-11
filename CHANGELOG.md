@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
+
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
 
 - Action-Pins einzeilig mit verifiziertem Tag (`@<sha> # vX.Y.Z`, 12 von 14 korrigiert); Rulesets für main (kein Force-Push/Löschen; Pflicht-Checks mit Admin-Bypass) und `v*`-Tags nur für Admins; tote h3/satori-Renovate-Regeln entfernt.

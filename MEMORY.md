@@ -2,6 +2,10 @@
 
 Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.md`.
 
+## Aktuelle stabile Home-Assistant-Version (2026-11-11)
+
+- Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
+
 ## Code-Review-Nachbesserung Ungesehene Medien (2026-10-25, 6.10.4-dev)
 
 - Auftrag (Marco Go): Review-Lows zu fe40542. (2026-10-25: Rollback-Branch `rollback/pre-reviewfix-fe40542`), kein Tag. jinja2 + markupsafe gehasht in `requirements-dev.txt` (CI installiert mit `--require-hashes --no-deps`, deshalb markupsafe explizit; PyPI-Hashes aller Dateien gegengeprüft, cp315-Wheels vorhanden), Workflow unverändert. Karte: `as_timestamp(…, 0)`, Bibliotheksname streng bereinigt, robust gegen kaputtes Attribut, max. 25 Zeilen, `clipped`-Hinweis. Bot kürzt den Bericht auf 6000 Byte (HA-Recorder: Attribute > 16 KB werden nicht gespeichert, State bleibt nutzbar).
@@ -125,7 +129,7 @@ Rollback: Branch `rollback/pre-overhaul-fcf36c1` (= main vor dem Umbau; Tags sin
 
 ### Recherche (nur Verifiziertes; Stand 2026-10-24)
 
-- Aktuelle stabile Version: Home Assistant **2026.10** (Release 2026-10-07; Frontend-Release `20260930.5`). Quellen: https://www.home-assistant.io/blog/2026/10/07/release-202610/ , https://github.com/home-assistant/frontend/releases (API `releases/latest`).
+- Aktuelle stabile Version: Home Assistant **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`). Quellen: https://www.home-assistant.io/blog/2026/11/04/release-202611/ , https://github.com/home-assistant/core/releases/tag/2026.11.1 , https://github.com/home-assistant/frontend/releases (API `releases/latest`). Angabe aktualisiert 2026-11-11; kein Kompatibilitäts-Claim.
 - **Sections** ist der Standard-View-Typ (Header mit Titel/Badges, Footer, Section-Hintergrund, Section-Theme, Section-Sichtbarkeit): https://www.home-assistant.io/dashboards/sections/ , https://www.home-assistant.io/dashboards/views/ . YAML-Schlüssel der View (`max_columns`, `dense_section_placement`, `top_margin`, `header`, `footer`, `sections`, `subview`, `back_path`, `visible`) und der Section (`type: grid`, `cards`, `column_span`, `row_span`, `background`, `theme`, `visibility`; `title` ist deprecated, stattdessen Heading-Karte) stammen aus dem Frontend-Quelltext `src/data/lovelace/config/view.ts` / `section.ts` (Branch `dev`, nicht der Release-Tag; deshalb nur die dort stabilen Felder nutzen).
 - **Heading-Karte** (`type: heading`, `heading`, `heading_style: title|subtitle`, `icon`, `tap_action`, `badges` vom Typ `entity`/`button`): https://www.home-assistant.io/dashboards/heading/
 - **Tile-Karte** (`features`, `features_position: bottom|inline`, `state_content`, `vertical`, `icon_tap_action`, `color`): https://www.home-assistant.io/dashboards/tile/ ; **Features-Liste** (u. a. `light-brightness`, `light-color-temp`, `target-temperature`, `climate-hvac-modes`, `climate-preset-modes`, `cover-open-close`, `cover-position`, `toggle`, `media-player-playback`, `media-player-volume-slider`, `media-player-source`, `numeric-input`, `select-options`, `timer-presets`, `trend-graph`, `update-actions`, `lock-commands`, `lock-open-door`, `alarm-modes`, `bar-gauge`, `temperature-forecast`, `precipitation-forecast`): https://www.home-assistant.io/dashboards/features/
