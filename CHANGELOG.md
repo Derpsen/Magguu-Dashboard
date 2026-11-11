@@ -4,6 +4,8 @@
 
 ### Changed
 
+- `docs/optional/magguu_dienste.yaml`: Die beiden GitHub-Abfragen „letzter Deploy“ (MagguuBot, MagguuUI-Website, beide öffentlich) laufen ohne Token; das Secret `github_status_auth` entfällt (kann aus `secrets.yaml` entfernt und der Token widerrufen werden). Test `tests/test_optional_dienste.py`.
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
