@@ -6,6 +6,10 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
 
+## validate.py ohne layout-card-Altlast (2026-11-11)
+
+- `custom:grid-layout` (View-Typ und erlaubte Karte), View-Schlüssel `layout` und `validate_view_shell_tokens` (prüfte nur grid-layout-Hüllen, griff seit der Sections-Umstellung nie) entfernt; validate.py 937 → 896 Zeilen. Die Theme-Tokens `--mag-space-page-*`, `--mag-content-max-width*`, `--mag-space-navbar-clearance` bleiben im Theme (nicht Teil dieses Schritts).
+
 ## Code-Review-Nachbesserung Ungesehene Medien (2026-10-25, 6.10.4-dev)
 
 - Auftrag (Marco Go): Review-Lows zu fe40542. (2026-10-25: Rollback-Branch `rollback/pre-reviewfix-fe40542`), kein Tag. jinja2 + markupsafe gehasht in `requirements-dev.txt` (CI installiert mit `--require-hashes --no-deps`, deshalb markupsafe explizit; PyPI-Hashes aller Dateien gegengeprüft, cp315-Wheels vorhanden), Workflow unverändert. Karte: `as_timestamp(…, 0)`, Bibliotheksname streng bereinigt, robust gegen kaputtes Attribut, max. 25 Zeilen, `clipped`-Hinweis. Bot kürzt den Bericht auf 6000 Byte (HA-Recorder: Attribute > 16 KB werden nicht gespeichert, State bleibt nutzbar).

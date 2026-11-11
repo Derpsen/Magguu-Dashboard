@@ -284,43 +284,6 @@ def validate_button_card_js(root: Path) -> list[str]:
     return errors
 
 
-def validate_view_shell_tokens(root: Path) -> list[str]:
-    """Ensure mobile/tablet grid-layout shells keep layout spacing on theme tokens."""
-    errors: list[str] = []
-    for device in ("mobile", "tablet"):
-        views_dir = root / "dashboard" / "magguu-dashboard" / device / "views"
-        if not views_dir.is_dir():
-            continue
-        for path in sorted(views_dir.glob("*.yaml")):
-            text = path.read_text(encoding="utf-8")
-            if "type: custom:grid-layout" not in text:
-                continue
-            rel = path.relative_to(root)
-            if "padding:" in text and "var(--mag-space-page-" not in text:
-                errors.append(
-                    f"{rel}: Layout-padding ohne Theme-Token (--mag-space-page-*)"
-                )
-            if device == "mobile" and "padding:" in text and (
-                "var(--mag-space-navbar-clearance" not in text
-            ):
-                errors.append(
-                    f"{rel}: Mobile-Bottom-Padding ohne --mag-space-navbar-clearance"
-                )
-            if device == "tablet" and re.search(
-                r"(?m)^\s*max-width:\s*1460px\s*$", text
-            ):
-                errors.append(
-                    f"{rel}: Tablet max-width hart 1460px statt --mag-content-max-width"
-                )
-            if device == "mobile" and re.search(
-                r"(?m)^\s*max-width:\s*760px\s*$", text
-            ):
-                errors.append(
-                    f"{rel}: Mobile max-width hart 760px statt --mag-content-max-width-narrow"
-                )
-    return errors
-
-
 # shell_command services can be called by any HA user (not admin-gated), so
 # every entry must be a fixed command without templates (no service-data
 # input) and the updater it runs must not read arguments or environment.
@@ -505,12 +468,11 @@ def validate_update_hint(root: Path) -> list[str]:
 # ---------------------------------------------------------------------------
 DASHBOARD_DIR = ("dashboard", "magguu-dashboard")
 DASHBOARD_URLS = {"mobile": "magguu-mobile", "tablet": "magguu-tablet"}
-VIEW_TYPES = {None, "sections", "masonry", "panel", "sidebar", "custom:grid-layout"}
+VIEW_TYPES = {None, "sections", "masonry", "panel", "sidebar"}
 VIEW_KEYS = {
     "title", "path", "icon", "show_icon_and_title", "theme", "panel", "background",
     "visible", "subview", "back_path", "max_columns", "dense_section_placement",
     "top_margin", "type", "badges", "cards", "sections", "header", "footer", "sidebar",
-    "layout",  # layout-card view options (custom:grid-layout)
 }
 SECTION_KEYS = {
     "type", "cards", "badges", "sections", "visibility", "disabled", "column_span",
@@ -529,7 +491,7 @@ BUILTIN_CARD_TYPES = {
     "tile", "todo-list", "vertical-stack", "weather-forecast", "webpage",
 }
 ALLOWED_CUSTOM_CARDS = {
-    "custom:button-card", "custom:grid-layout",  # grid-layout = nur noch View-Typ (Legacy), keine Karten-Abhängigkeit mehr genutzt
+    "custom:button-card",
     "custom:mini-graph-card", "custom:mushroom-template-card",
     "custom:navbar-card", "custom:stack-in-card",
     "custom:auto-entities",
@@ -612,7 +574,7 @@ def load_resolved(path: Path, root: Path, seen: tuple[Path, ...] = ()) -> Any:
 
 
 def _iter_cards(node: Any) -> Iterable[Mapping[str, Any]]:
-    """Yield every card mapping below `node` (stacks, conditionals, sections, layout-card)."""
+    """Yield every card mapping below `node` (stacks, conditionals, sections)."""
     if isinstance(node, Mapping):
         if isinstance(node.get("type"), str) and (
             "entity" in node or "cards" in node or "card" in node or "heading" in node
@@ -708,8 +670,8 @@ def validate_dashboards(root: Path) -> list[str]:
             if vtype == "sections":
                 if not isinstance(view.get("sections"), list) or not view["sections"]:
                     errors.append(f"{where}: sections-View braucht eine nicht leere sections-Liste")
-                if "cards" in view or "layout" in view:
-                    errors.append(f"{where}: sections-View darf weder cards noch layout (layout-card) setzen")
+                if "cards" in view:
+                    errors.append(f"{where}: sections-View darf keine cards setzen")
                 maxc = view.get("max_columns")
                 if maxc is not None and (isinstance(maxc, bool) or not isinstance(maxc, int) or maxc < 1):
                     errors.append(f"{where}: max_columns muss eine ganze Zahl >= 1 sein")
@@ -732,8 +694,6 @@ def validate_dashboards(root: Path) -> list[str]:
                         errors.extend(_validate_conditions(section["visibility"], f"{swhere}/visibility"))
                     for c_index, card in enumerate(section.get("cards") or []):
                         errors.extend(_validate_section_card_height(card, f"{swhere}/card {c_index}"))
-            elif vtype == "custom:grid-layout" and "sections" in view:
-                errors.append(f"{where}: grid-layout-View darf keine sections setzen")
             for card in _iter_cards(view):
                 errors.extend(_validate_card(card, where))
         # Navigation targets inside this dashboard must exist.
@@ -909,7 +869,6 @@ def validate_repository(root: Path = ROOT) -> tuple[int, list[str]]:
         errors.append("docs/entities.md fehlt")
 
     errors.extend(validate_version(root))
-    errors.extend(validate_view_shell_tokens(root))
     errors.extend(validate_button_card_js(root))
     errors.extend(validate_shell_commands(documents, root))
     errors.extend(validate_updater(root))
