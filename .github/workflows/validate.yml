@@ -9,8 +9,10 @@ on:
 permissions:
   contents: read
 
-# One run per ref; superseded PR runs are cancelled, pushes to main and the
-# weekly schedule always finish (the failure alarm must not be cut off).
+# One run per ref. PR runs: a newer push cancels the running one. Pushes to
+# main and the weekly schedule: a running run is never cancelled (the failure
+# alarm must not be cut off); GitHub keeps at most one pending run per group,
+# so a waiting run that has not started yet can be replaced by a newer one.
 concurrency:
   group: validate-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
