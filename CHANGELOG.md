@@ -4,6 +4,8 @@
 
 ### Changed
 
+- `renovate.json` aufgeräumt: tote npm-Regeln entfernt (kein package.json im Repo), pip-Regel nur noch für `pip-compile` (`pip_requirements` ist abgeschaltet), Gruppe `npm 0.x minor` → `0.x minor` (gilt für alle Manager, heute nur zizmor-action; weiter ohne Automerge). Geprüft mit `renovate-config-validator --strict` (renovate 44.234.1).
+
 - CI `validate.yml`: `timeout-minutes` (yaml 15, updater 10) und `concurrency` pro Ref (nur überholte PR-Läufe werden abgebrochen; Pushes auf main und der Wochenlauf laufen immer zu Ende). Pflicht-Check-Namen `yaml`/`updater` unverändert.
 
 - Docs-Drift: README nennt keine veraltete „V6.4-Basis“ mehr (Versionsquelle bleibt `VERSION`), Layout Card aus den Voraussetzungen entfernt (seit der Sections-Umstellung nicht mehr genutzt; validate.py lässt `custom:layout-card` ohnehin nicht zu); TASKS: Installations- und Updatetest abgehakt (automatisiert in `tests/test-install.sh` / CI-Job `updater`).

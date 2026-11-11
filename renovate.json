@@ -38,24 +38,6 @@
   },
   "packageRules": [
     {
-      "description": "npm: wait 3 days after publish (supply-chain safety; security fixes via vulnerabilityAlerts ignore this)",
-      "matchDatasources": [
-        "npm"
-      ],
-      "minimumReleaseAge": "3 days"
-    },
-    {
-      "description": "npm non-major updates in one PR (none today)",
-      "matchManagers": [
-        "npm"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "groupName": "npm non-major"
-    },
-    {
       "description": "GitHub Actions: minor/patch/pin/digest in one PR (digest pins kept); majors get their own PR and are never merged automatically",
       "matchManagers": [
         "github-actions"
@@ -82,7 +64,6 @@
     {
       "description": "pip dev tooling: non-major in one PR (majors separate, never automerged)",
       "matchManagers": [
-        "pip_requirements",
         "pip-compile"
       ],
       "matchUpdateTypes": [
@@ -110,12 +91,12 @@
       "automerge": true
     },
     {
-      "description": "0.x minors: separate PR per package, no automerge",
+      "description": "0.x minors (any manager; today only zizmor-action): own group, never automerged - 0.x minors can break",
       "matchUpdateTypes": [
         "minor"
       ],
       "matchCurrentVersion": "/^0/",
-      "groupName": "npm 0.x minor",
+      "groupName": "0.x minor",
       "automerge": false
     },
     {
