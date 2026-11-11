@@ -86,7 +86,18 @@ if sh "$TEST_DIR/update-ha-https.sh" >/dev/null 2>&1; then
   exit 1
 fi
 test -f "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
+# Home Assistant kills a shell_command after 60 s; a full local update run must
+# stay far below that (the download itself is capped in update-ha.sh).
+update_start=$(date +%s)
 sh "$UPDATER"
+update_secs=$(( $(date +%s) - update_start ))
+if [ "$update_secs" -ge 30 ]; then
+  echo "Update-Lauf dauerte ${update_secs} s (HA-Limit 60 s)." >&2
+  exit 1
+fi
+# The shipped curl call stays inside the HA time budget (also enforced by validate.py).
+grep -q -- '--retry 1 --retry-delay 2 --retry-max-time 25' "$ROOT_DIR/update-ha.sh"
+grep -q -- '--connect-timeout 10 --max-time 20 ' "$ROOT_DIR/update-ha.sh"
 test ! -e "$CONFIG_DIR/dashboard/magguu-dashboard/outdated.marker"
 # Archive without GitHub pax header: commit stays "unbekannt"; env cannot inject one.
 test "$(stamped_state "$PACKAGE_FILE" magguu_dashboard_commit)" = "unbekannt"

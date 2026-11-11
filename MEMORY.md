@@ -6,6 +6,11 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
 
+## Update-Zeitlimit (2026-11-11)
+
+- Fund aus der Dashboard-Durchsicht: HA bricht `shell_command` nach fest 60 s ab (`COMMAND_TIMEOUT = 60` in `homeassistant/components/shell_command/services.py`, wirft dann `HomeAssistantError` ohne Antwort). curl durfte bis 120 s pro Versuch plus Retries bis 300 s laufen; bei langsamem Download brach das Script ab und der Status blieb auf „Aktualisierung läuft“.
+- Fix: curl `--retry 1 --retry-delay 2 --retry-max-time 25 --connect-timeout 10 --max-time 20` (schlimmster Fall 42 s); `continue_on_error: true` am `shell_command`-Schritt, `if` prüft `update_result is defined and update_result is mapping`, Fehlertext nennt das Zeitlimit. Offen: ein HA-Neustart mitten im Lauf lässt den Status weiter stehen (input_text wird wiederhergestellt) – nicht Teil dieses Fixes. Im echten HA ungetestet.
+
 ## validate.py ohne layout-card-Altlast (2026-11-11)
 
 - `custom:grid-layout` (View-Typ und erlaubte Karte), View-Schlüssel `layout` und `validate_view_shell_tokens` (prüfte nur grid-layout-Hüllen, griff seit der Sections-Umstellung nie) entfernt; validate.py 937 → 896 Zeilen. Die Theme-Tokens `--mag-space-page-*`, `--mag-content-max-width*`, `--mag-space-navbar-clearance` bleiben im Theme (nicht Teil dieses Schritts).
