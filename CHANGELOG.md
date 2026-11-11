@@ -4,6 +4,8 @@
 
 ### Changed
 
+- CI `validate.yml`: `timeout-minutes` (yaml 15, updater 10) und `concurrency` pro Ref (nur überholte PR-Läufe werden abgebrochen; Pushes auf main und der Wochenlauf laufen immer zu Ende). Pflicht-Check-Namen `yaml`/`updater` unverändert.
+
 - Docs-Drift: README nennt keine veraltete „V6.4-Basis“ mehr (Versionsquelle bleibt `VERSION`), Layout Card aus den Voraussetzungen entfernt (seit der Sections-Umstellung nicht mehr genutzt; validate.py lässt `custom:layout-card` ohnehin nicht zu); TASKS: Installations- und Updatetest abgehakt (automatisiert in `tests/test-install.sh` / CI-Job `updater`).
 
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.

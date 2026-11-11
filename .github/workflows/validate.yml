@@ -9,9 +9,16 @@ on:
 permissions:
   contents: read
 
+# One run per ref; superseded PR runs are cancelled, pushes to main and the
+# weekly schedule always finish (the failure alarm must not be cut off).
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   yaml:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -26,6 +33,7 @@ jobs:
   updater:
     needs: yaml
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
