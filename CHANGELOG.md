@@ -4,6 +4,8 @@
 
 ### Changed
 
+- Update-Zeitlimit: Der Download in `update-ha.sh` bleibt sicher unter HAs 60-s-Grenze für `shell_command` (`--max-time 20`, 1 Retry, schlimmster Fall 42 s); das Script „Dashboard aktualisieren“ endet bei Zeitlimit oder fehlender Antwort mit „Fehlgeschlagen“ und einer Benachrichtigung statt dauerhaft „Aktualisierung läuft“. `validate.py` erzwingt Zeitbudget und Fehlerpfad (`validate_update_script`); Tests in `tests/test_update_hint.py` und `tests/test-install.sh`.
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.

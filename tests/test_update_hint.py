@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 import re
 import tempfile
 import unittest
 
-from validate import load_yaml, validate_update_hint, validate_updater
+from validate import load_yaml, validate_update_hint, validate_update_script, validate_updater
 
 try:
     import jinja2
@@ -145,10 +146,66 @@ class UpdaterHardeningTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             fixed = (ROOT / "update-ha.sh").read_text(encoding="utf-8")
-            for old in ("CURL_PROTO='=https'", '--proto "$CURL_PROTO"', "--max-time 120"):
+            for old in ("CURL_PROTO='=https'", '--proto "$CURL_PROTO"', "--max-time 20"):
                 self.assertIn(old, fixed)
                 (root / "update-ha.sh").write_text(fixed.replace(old, "", 1), encoding="utf-8")
                 self.assertTrue(validate_updater(root), old)
+
+
+    def test_download_stays_within_ha_timeout(self) -> None:
+        fixed = (ROOT / "update-ha.sh").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "update-ha.sh").write_text(fixed, encoding="utf-8")
+            self.assertEqual(validate_updater(root), [])
+            for old, new in (
+                ("--max-time 20", "--max-time 120"),
+                ("--retry 1 ", "--retry 3 "),
+                ("--retry-delay 2 ", ""),
+            ):
+                self.assertIn(old, fixed)
+                (root / "update-ha.sh").write_text(fixed.replace(old, new, 1), encoding="utf-8")
+                self.assertTrue(validate_updater(root), old)
+
+
+class UpdateScriptTimeoutTest(unittest.TestCase):
+    def errors(self, text: str) -> list[str]:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = root / "packages" / "magguu_dashboard.yaml"
+            path.parent.mkdir()
+            path.write_text(text, encoding="utf-8")
+            return validate_update_script({path: load_yaml(path)}, root)
+
+    def test_real_package_passes(self) -> None:
+        text = (ROOT / "packages" / "magguu_dashboard.yaml").read_text(encoding="utf-8")
+        self.assertEqual(self.errors(text), [])
+
+    def test_mutations_rejected(self) -> None:
+        text = (ROOT / "packages" / "magguu_dashboard.yaml").read_text(encoding="utf-8")
+        for old in ("        continue_on_error: true\n      - if:", "update_result is defined and "):
+            self.assertIn(old, text)
+            mutated = text.replace(old, "      - if:" if old.endswith("if:") else "", 1)
+            self.assertTrue(self.errors(mutated), old)
+
+
+@unittest.skipUnless(jinja2, "jinja2 not installed")
+class UpdateScriptTemplateTest(unittest.TestCase):
+    """The if/else templates render without update_result (shell_command timed out)."""
+
+    def render(self, template: str, **variables: Any) -> str:
+        env = jinja2.Environment()
+        return " ".join(env.from_string(template).render(**variables).split())
+
+    def test_missing_result_goes_to_error_branch(self) -> None:
+        steps = PACKAGE["script"]["magguu_dashboard_aktualisieren"]["sequence"]
+        branch = next(step for step in steps if "if" in step)
+        self.assertEqual(self.render(branch["if"]), "False")
+        self.assertEqual(self.render(branch["if"], update_result={"returncode": 0}), "True")
+        self.assertEqual(self.render(branch["if"], update_result={"returncode": 1}), "False")
+        message = next(s for s in branch["else"] if s["action"] == "persistent_notification.create")["data"]["message"]
+        self.assertIn("Zeitlimit", self.render(message))
+        self.assertIn("boom", self.render(message, update_result={"returncode": 1, "stderr": "boom"}))
 
 
 @unittest.skipUnless(jinja2, "jinja2 not installed")

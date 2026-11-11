@@ -6,6 +6,11 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
 
+## Update-Zeitlimit (2026-11-11)
+
+- Fund aus der Dashboard-Durchsicht: HA bricht `shell_command` nach fest 60 s ab (`COMMAND_TIMEOUT = 60` in `homeassistant/components/shell_command/services.py`, wirft dann `HomeAssistantError` ohne Antwort). curl durfte bis 120 s pro Versuch plus Retries bis 300 s laufen; bei langsamem Download brach das Script ab und der Status blieb auf „Aktualisierung läuft“.
+- Fix: curl `--retry 1 --retry-delay 2 --retry-max-time 25 --connect-timeout 10 --max-time 20` (schlimmster Fall 42 s); `continue_on_error: true` am `shell_command`-Schritt, `if` prüft `update_result is defined and update_result is mapping`, Fehlertext nennt das Zeitlimit. Offen: ein HA-Neustart mitten im Lauf lässt den Status weiter stehen (input_text wird wiederhergestellt) – nicht Teil dieses Fixes. Im echten HA ungetestet.
+
 ## Code-Review-Nachbesserung Ungesehene Medien (2026-10-25, 6.10.4-dev)
 
 - Auftrag (Marco Go): Review-Lows zu fe40542. (2026-10-25: Rollback-Branch `rollback/pre-reviewfix-fe40542`), kein Tag. jinja2 + markupsafe gehasht in `requirements-dev.txt` (CI installiert mit `--require-hashes --no-deps`, deshalb markupsafe explizit; PyPI-Hashes aller Dateien gegengeprüft, cp315-Wheels vorhanden), Workflow unverändert. Karte: `as_timestamp(…, 0)`, Bibliotheksname streng bereinigt, robust gegen kaputtes Attribut, max. 25 Zeilen, `clipped`-Hinweis. Bot kürzt den Bericht auf 6000 Byte (HA-Recorder: Attribute > 16 KB werden nicht gespeichert, State bleibt nutzbar).
