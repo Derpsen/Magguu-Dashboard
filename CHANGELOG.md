@@ -4,6 +4,8 @@
 
 ### Changed
 
+- `validate.py`: Altlast layout-card entfernt – `custom:grid-layout` ist weder erlaubter View-Typ noch erlaubte Karte, der View-Schlüssel `layout` und die nur für grid-layout-Hüllen geltende Prüfung `validate_view_shell_tokens` entfallen (kein View nutzt das seit der Sections-Umstellung). Tests angepasst: ein grid-layout-View wird jetzt abgelehnt.
+
 - Docs: aktuelle stabile Home-Assistant-Versionsangabe in MEMORY.md auf **2026.11.1** (Release 2026-11-09; Frontend `20261028.5`). Kein Kompatibilitäts-Claim.
 
 - Docs: hard-refactor inventur 2026-11-09 — no Dashboard cut (validate.py under LOC trigger); ROI backlog refreshed.
