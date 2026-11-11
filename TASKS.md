@@ -78,8 +78,8 @@ Arbeitsregeln und Buddy-Hub-Publish: siehe `AGENTS.md`.
 
 ## Phase 7 – Veröffentlichung
 
-- [ ] Installationsskript testen
-- [ ] Updateablauf testen
+- [x] Installationsskript testen (automatisiert: `tests/test-install.sh`, CI-Job `updater`)
+- [x] Updateablauf testen (automatisiert: `tests/test-install.sh` inkl. Self-Update, Sperre und Backup-Rotation; Sichtprüfung im echten HA bleibt offen, siehe unten)
 - [ ] Screenshots ergänzen
 - [ ] GitHub Release erstellen
 - [x] HACS-Strategie: YAML+Packages ist kein HACS-Dashboard (in README dokumentiert)
