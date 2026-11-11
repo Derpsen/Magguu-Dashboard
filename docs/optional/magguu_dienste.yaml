@@ -6,7 +6,10 @@
 #   magguu_bot_status_auth       "Bearer <STATUS_API_TOKEN aus dem MagguuBot-Container>"
 #   magguu_website_status_url    Website-Status-Endpoint (TODO: /api/status gibt es noch nicht;
 #                                 bis dahin <website>/api/health)
-#   github_status_auth           "Bearer <GitHub-Token, nur actions:read auf öffentliche Repos>"
+# Die beiden GitHub-Abfragen (letzter Deploy) gehen ohne Token: MagguuBot und MagguuUI-Website
+# sind öffentlich, 2 × 4 Abrufe/h liegen weit unter GitHubs Limit von 60/h ohne Anmeldung.
+# Ein früher gesetztes Secret github_status_auth wird nicht mehr gebraucht und kann aus
+# secrets.yaml entfernt bzw. der Token bei GitHub widerrufen werden.
 rest:
   - resource: !secret magguu_bot_status_url
     headers:
@@ -41,7 +44,6 @@ rest:
 
   - resource: https://api.github.com/repos/Derpsen/MagguuBot/actions/workflows/docker.yml/runs?branch=main&per_page=1
     headers:
-      Authorization: !secret github_status_auth
       Accept: application/vnd.github+json
       User-Agent: magguu-dashboard
     scan_interval: 900
@@ -60,7 +62,6 @@ rest:
 
   - resource: https://api.github.com/repos/Derpsen/MagguuUI-Website/actions/workflows/docker.yml/runs?branch=main&per_page=1
     headers:
-      Authorization: !secret github_status_auth
       Accept: application/vnd.github+json
       User-Agent: magguu-dashboard
     scan_interval: 900
