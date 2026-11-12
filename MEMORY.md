@@ -6,6 +6,11 @@ Helper memory for Magguu-Dashboard. Rules, design system and QA live in `AGENTS.
 
 - Die Versionsangabe unter Recherche ist auf **2026.11.1** (Release 2026-11-09; Frontend-Release `20261028.5`) gesetzt. Quellen: Release-Blog 2026-11-04 und GitHub `releases/latest`. Kein Kompatibilitäts-Claim; die übrige Recherche bleibt Stand 2026-10-24.
 
+## Eine Quelle für „nicht erreichbar“ (2026-11-11)
+
+- Vorher: `sensor.magguu_nicht_verfuegbar` zählte 12 feste IDs (inkl. `weather.forecast_home`, auch `unknown`), die Liste „Nicht erreichbar“ (auto-entities) filterte dagegen alle light/switch/climate/cover/media_player auf `unavailable` minus Bad-Licht/Festavia → Badge/Wartung und Liste liefen auseinander.
+- Jetzt: Der Sensor rechnet genau die Listen-Semantik (Zustand `unavailable`, Domains light/switch/climate/cover/media_player, ohne `light.badezimmer_licht_bad`/`light.sonstiges_festavia_string_lights`) und liefert die IDs als Attribut `entity_ids`; die Liste zeigt per `filter.template` genau dieses Attribut. Bewusste Änderung: Wetter und `unknown` zählen nicht mehr. Jinja-Fallstrick: Filter binden stärker als `+`, deshalb erst `{% set candidates = … %}`, dann filtern. Tests: `tests/test_unavailable_source.py`. Im echten HA ungetestet (auto-entities `template`-Filter).
+
 ## Home „Als Nächstes“ geteilt (2026-11-11)
 
 - Die vier Kalenderkarten lagen doppelt in `mobile/views/01-overview.yaml` und `tablet/views/01-overview.yaml`. Jetzt je eine Datei in `shared/cards/next-events/` (`arbeit`, `abfuhr`, `privat`, `termine`), per einzelnem `!include` eingebunden. Eine einzige Datei geht nicht: eine Liste lässt sich nicht in die cards-Liste der Hülle einfügen (Liste-in-Liste), und die Section unterscheidet sich je Gerät (Tablet: Untertitel + `column_span: 2`, Mobile: Wetterkarte). Beleg: `load_resolved` beider Dashboards vorher/nachher als JSON byte-identisch.

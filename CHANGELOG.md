@@ -4,6 +4,8 @@
 
 ### Changed
 
+- „Nicht erreichbar“ hat eine Quelle: `sensor.magguu_nicht_verfuegbar` zählt genau die Geräte, die die Liste auf der System-Seite zeigt (Attribut `entity_ids`, Liste per auto-entities-`template`), damit Wartung, Navbar-Badge, „Jetzt wichtig“ und Liste übereinstimmen. Wetter und `unknown` zählen nicht mehr mit; Text „Gerät(e) nicht erreichbar“.
+
 - Home „Als Nächstes“: die vier Kalenderkarten (Arbeit, Abfuhr, Privat, Termine) stehen einmal in `dashboard/magguu-dashboard/shared/cards/next-events/` statt doppelt in den Mobile- und Tablet-Hüllen; aufgelöstes Dashboard-YAML byte-identisch (Vergleich vorher/nachher).
 
 - Update-Zeitlimit: Der Download in `update-ha.sh` bleibt sicher unter HAs 60-s-Grenze für `shell_command` (`--max-time 20`, 1 Retry, schlimmster Fall 42 s); das Script „Dashboard aktualisieren“ endet bei Zeitlimit oder fehlender Antwort mit „Fehlgeschlagen“ und einer Benachrichtigung statt dauerhaft „Aktualisierung läuft“. `validate.py` erzwingt Zeitbudget und Fehlerpfad (`validate_update_script`); Tests in `tests/test_update_hint.py` und `tests/test-install.sh`.
